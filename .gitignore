@@ -1,0 +1,5 @@
+bin/Debug/
+bin/Release/
+obj/
+!bin/Release/AdvancedFlaskRoutine.dll
+!bin/Release/AdvancedFlaskRoutine.pdb
