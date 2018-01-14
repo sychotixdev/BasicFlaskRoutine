@@ -1,7 +1,7 @@
 BasicFlaskRoutine
 ======
 
-BasicFlaskRoutine is a PoeHUD plugin example using [BaseTreeRoutine.] (https://github.com/sychotixdev/BaseTreeRoutine) It is a rewrite of [AutoFlaskManager](https://github.com/Xcesius/AutoFlaskManager) to give some insight as to how plugin written using a BaseTreeRoutine compares to the original.
+BasicFlaskRoutine is a PoeHUD plugin example using [BaseTreeRoutine.](https://github.com/sychotixdev/BaseTreeRoutine) It is a rewrite of [AutoFlaskManager](https://github.com/Xcesius/AutoFlaskManager) to give some insight as to how plugin written using a BaseTreeRoutine compares to the original.
 
 ### Credits
 * PoeHUD and all their great contributors. https://github.com/TehCheat/PoEHUD
