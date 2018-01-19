@@ -240,7 +240,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     if (dictionary.TryGetValue(buff.Name, out filterId))
                     {
                         // I'm not sure what the values are here, but this is the effective logic from the old plugin
-                        return (filterId == 0 || filterId != 1) && (minCharges != null || buff.Charges >= minCharges());
+                        return (filterId == 0 || filterId != 1) && (minCharges == null || buff.Charges >= minCharges());
                     }
                 }
                 return false;
