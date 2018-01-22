@@ -79,8 +79,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return new Decorator((x => PlayerHelper.isHealthBelowPercentage(Settings.HPPotion)),
                 new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_life" })),
                  new PrioritySelector(
-                    createUseFlaskAction(FlaskActions.Life),
-                    createUseFlaskAction(FlaskActions.Hybrid)
+                    createUseFlaskAction(FlaskActions.Life, false),
+                    createUseFlaskAction(FlaskActions.Hybrid, false)
                     )
                 )
             );
@@ -98,11 +98,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite createManaPotionComposite()
         {
-            return new Decorator((x => PlayerHelper.isManaBelowPercentage(Settings.ManaPotion)),
+            return new Decorator((x => PlayerHelper.isManaBelowPercentage(Settings.ManaPotion) || PlayerHelper.isManaBelowValue(Settings.MinManaFlask)),
                 new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_mana" })),
                     new PrioritySelector(
-                        createUseFlaskAction(FlaskActions.Mana),
-                        createUseFlaskAction(FlaskActions.Hybrid)
+                        createUseFlaskAction(FlaskActions.Mana, false),
+                        createUseFlaskAction(FlaskActions.Hybrid, false)
                     )
                 )
             );
@@ -151,12 +151,12 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 );
         }
 
-        private Composite createUseFlaskAction(FlaskActions flaskAction, Boolean instant = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private Composite createUseFlaskAction(FlaskActions flaskAction, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
         {
             return createUseFlaskAction(new List<FlaskActions> { flaskAction }, instant, ignoreFlasksWithAction);
         }
 
-        private Composite createUseFlaskAction(List<FlaskActions> flaskActions, Boolean instant = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private Composite createUseFlaskAction(List<FlaskActions> flaskActions, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
         {
             return new UseHotkeyAction(KeyboardHelper, x =>
             {
@@ -171,13 +171,13 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             });
         }
 
-        private PlayerFlask findFlaskMatchingAnyAction(FlaskActions flaskAction, Boolean instant = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private PlayerFlask findFlaskMatchingAnyAction(FlaskActions flaskAction, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
         {
             return findFlaskMatchingAnyAction(new List<FlaskActions> { flaskAction }, instant, ignoreFlasksWithAction);
         }
 
 
-        private PlayerFlask findFlaskMatchingAnyAction (List<FlaskActions> flaskActions, Boolean instant = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private PlayerFlask findFlaskMatchingAnyAction (List<FlaskActions> flaskActions, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
         {
             var allFlasks = FlaskHelper.getAllFlaskInfo();
 
@@ -206,11 +206,13 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             List<FlaskActions> ignoreFlaskActions = ignoreFlasksWithAction == null ? null : ignoreFlasksWithAction();
 
             var flaskList = allFlasks.FindAll(x =>
+                    // Below are cheap operations and should be done first
                     FlaskSettings[x.Index].Enabled                       // Only search for enabled flasks
-                    && (instant && x.Instant                             // Only search for instant if that is what is requested
-                        || !instant && !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1, x.BuffString2 })) // If we don't care if its instant or not, ensure we don't have the buff already      
+                    && (instant == null || instant.GetValueOrDefault() == x.Instant ) // Only search for flasks matching the requested instant value
                     && (flaskActions.Contains(x.Action1) || flaskActions.Contains(x.Action2)) // Find any flask that matches the actions sent in
                     && (ignoreFlaskActions == null || !ignoreFlasksWithAction().Contains(x.Action1) && !ignoreFlasksWithAction().Contains(x.Action2)) // Do not choose ignored flask types
+                    // Below are more expensive operations and should be done last
+                    && (x.Instant || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1, x.BuffString2 })) // If the flask is not instant, ensure we do not already have the flask buff(s)                                                                                                                        // If we want not-instant, make sure we don't already have the flask buff
                     && FlaskHelper.canUsePotion(x)                      // Do not return flasks we can't use
                     );
             if (flaskList != null && flaskList.Count == 0)
