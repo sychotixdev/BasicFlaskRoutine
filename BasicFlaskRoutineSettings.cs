@@ -18,7 +18,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         [Menu("Min Mana % Auto Mana Flask", 15, 10)]
         public RangeNode<int> ManaPotion { get; set; } = new RangeNode<int>(65, 0, 100);
 
-        [Menu("Min Mana % Auto Instant HP Flask (put instant flask in last slot)", 16, 10)]
+        [Menu("Min Mana % Auto Instant MP Flask", 16, 10)]
         public RangeNode<int> InstantManaPotion { get; set; } = new RangeNode<int>(35, 0, 100);
 
         [Menu("Min Mana Auto Mana Flask", 17, 10)]

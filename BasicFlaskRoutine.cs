@@ -211,9 +211,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     && (instant == null || instant.GetValueOrDefault() == x.Instant ) // Only search for flasks matching the requested instant value
                     && (flaskActions.Contains(x.Action1) || flaskActions.Contains(x.Action2)) // Find any flask that matches the actions sent in
                     && (ignoreFlaskActions == null || !ignoreFlasksWithAction().Contains(x.Action1) && !ignoreFlasksWithAction().Contains(x.Action2)) // Do not choose ignored flask types
-                    // Below are more expensive operations and should be done last
-                    && (x.Instant || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1, x.BuffString2 })) // If the flask is not instant, ensure we do not already have the flask buff(s)                                                                                                                        // If we want not-instant, make sure we don't already have the flask buff
                     && FlaskHelper.canUsePotion(x)                      // Do not return flasks we can't use
+                    // Below are more expensive operations and should be done last
+                    && (x.Instant || (!PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString2 }))) // If the flask is not instant, ensure we are missing at least one of the flask buffs
                     );
             if (flaskList != null && flaskList.Count == 0)
             {
