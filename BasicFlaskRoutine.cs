@@ -38,11 +38,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         /// </summary>
         private void PopulateFlaskSettings()
         {
-            FlaskSettings[0] = new FlaskSettings(Settings.FlaskSlot1Enable, Settings.FlaskSlot1Hotkey);
-            FlaskSettings[1] = new FlaskSettings(Settings.FlaskSlot2Enable, Settings.FlaskSlot2Hotkey);
-            FlaskSettings[2] = new FlaskSettings(Settings.FlaskSlot3Enable, Settings.FlaskSlot3Hotkey);
-            FlaskSettings[3] = new FlaskSettings(Settings.FlaskSlot4Enable, Settings.FlaskSlot4Hotkey);
-            FlaskSettings[4] = new FlaskSettings(Settings.FlaskSlot5Enable, Settings.FlaskSlot5Hotkey);
+            FlaskSettings[0] = new FlaskSettings(Settings.FlaskSlot1Enable, Settings.FlaskSlot1Hotkey, Settings.FlaskSlot1ReserveUses);
+            FlaskSettings[1] = new FlaskSettings(Settings.FlaskSlot2Enable, Settings.FlaskSlot2Hotkey, Settings.FlaskSlot2ReserveUses);
+            FlaskSettings[2] = new FlaskSettings(Settings.FlaskSlot3Enable, Settings.FlaskSlot3Hotkey, Settings.FlaskSlot3ReserveUses);
+            FlaskSettings[3] = new FlaskSettings(Settings.FlaskSlot4Enable, Settings.FlaskSlot4Hotkey, Settings.FlaskSlot4ReserveUses);
+            FlaskSettings[4] = new FlaskSettings(Settings.FlaskSlot5Enable, Settings.FlaskSlot5Hotkey, Settings.FlaskSlot5ReserveUses);
 
         }
 
@@ -205,17 +205,20 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
             List<FlaskActions> ignoreFlaskActions = ignoreFlasksWithAction == null ? null : ignoreFlasksWithAction();
 
-            var flaskList = allFlasks.FindAll(x =>
+            var flaskList = allFlasks
+                    .Where(x =>
                     // Below are cheap operations and should be done first
-                    FlaskSettings[x.Index].Enabled                       // Only search for enabled flasks
+                    FlaskSettings[x.Index].Enabled // Only search for enabled flasks
                     && (instant == null || instant.GetValueOrDefault() == x.Instant ) // Only search for flasks matching the requested instant value
                     && (flaskActions.Contains(x.Action1) || flaskActions.Contains(x.Action2)) // Find any flask that matches the actions sent in
                     && (ignoreFlaskActions == null || !ignoreFlasksWithAction().Contains(x.Action1) && !ignoreFlasksWithAction().Contains(x.Action2)) // Do not choose ignored flask types
-                    && FlaskHelper.canUsePotion(x)                      // Do not return flasks we can't use
+                    && FlaskHelper.canUsePotion(x, FlaskSettings[x.Index].ReservedUses) // Do not return flasks we can't use
                     // Below are more expensive operations and should be done last
                     && (x.Instant || (!PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString2 }))) // If the flask is not instant, ensure we are missing at least one of the flask buffs
-                    );
-            if (flaskList != null && flaskList.Count == 0)
+                    ).OrderByDescending(x => x.TotalUses - FlaskSettings[x.Index].ReservedUses);
+
+
+            if (flaskList == null || !flaskList.Any())
             {
                 if (Settings.Debug)
                     LogError("No flasks found for action: " + flaskActions[0], 1);
@@ -223,9 +226,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             }
 
             if (Settings.Debug)
-                LogMessage("Flask(s) found for action: " + flaskActions[0] + " Flask Count: " + flaskList.Count, 1);
+                LogMessage("Flask(s) found for action: " + flaskActions[0] + " Flask Count: " + flaskList.Count(), 1);
 
-            return flaskList[0];
+            return flaskList.First();
         }
 
         private Decorator createCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null)

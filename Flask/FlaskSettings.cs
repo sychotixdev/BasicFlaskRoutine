@@ -9,14 +9,16 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine.Flask
 {
     public class FlaskSettings
     {
-        public FlaskSettings (ToggleNode enabled, HotkeyNode hotkey)
+        public FlaskSettings (ToggleNode enabled, HotkeyNode hotkey, RangeNode<int> reservedUses)
         {
             Enabled = enabled;
             Hotkey = hotkey;
+            ReservedUses = reservedUses;
         }
 
         public HotkeyNode Hotkey { get; }
         public ToggleNode Enabled { get; }
+        public RangeNode<int> ReservedUses { get; }
 
     }
 }

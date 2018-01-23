@@ -91,26 +91,36 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode FlaskSlot1Enable { get; set; } = false;
         [Menu("Hotkey", 131, 130)]
         public HotkeyNode FlaskSlot1Hotkey { get; set; } = new HotkeyNode(Keys.D1);
+        [Menu("Reserve Uses", 132, 130)]
+        public RangeNode<int> FlaskSlot1ReserveUses { get; set; } = new RangeNode<int>(0, 0, 5);
 
         [Menu("Flask Slot 2", 140, 120)]
         public ToggleNode FlaskSlot2Enable { get; set; } = false;
         [Menu("Hotkey", 141, 140)]
         public HotkeyNode FlaskSlot2Hotkey { get; set; } = new HotkeyNode(Keys.D2);
+        [Menu("Reserve Uses", 142, 140)]
+        public RangeNode<int> FlaskSlot2ReserveUses { get; set; } = new RangeNode<int>(0, 0, 5);
 
         [Menu("Flask Slot 3", 150, 120)]
         public ToggleNode FlaskSlot3Enable { get; set; } = false;
         [Menu("Hotkey", 151, 150)]
         public HotkeyNode FlaskSlot3Hotkey { get; set; } = new HotkeyNode(Keys.D3);
+        [Menu("Reserve Uses", 152, 150)]
+        public RangeNode<int> FlaskSlot3ReserveUses { get; set; } = new RangeNode<int>(0, 0, 5);
 
         [Menu("Flask Slot 4", 160, 120)]
         public ToggleNode FlaskSlot4Enable { get; set; } = false;
         [Menu("Hotkey", 161, 160)]
         public HotkeyNode FlaskSlot4Hotkey { get; set; } = new HotkeyNode(Keys.D4);
+        [Menu("Reserve Uses", 162, 160)]
+        public RangeNode<int> FlaskSlot4ReserveUses { get; set; } = new RangeNode<int>(0, 0, 5);
 
         [Menu("Flask Slot 5", 170, 120)]
         public ToggleNode FlaskSlot5Enable { get; set; } = false;
         [Menu("Hotkey", 171, 170)]
         public HotkeyNode FlaskSlot5Hotkey { get; set; } = new HotkeyNode(Keys.D5);
+        [Menu("Reserve Uses", 172, 170)]
+        public RangeNode<int> FlaskSlot5ReserveUses { get; set; } = new RangeNode<int>(0, 0, 5);
 
         #region Settings Menu
         [Menu("UI Settings", 180)]
