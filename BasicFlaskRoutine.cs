@@ -355,6 +355,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 Settings.StrictTickRate.Value = ImGuiExtension.Checkbox("Strict Tick Rate", Settings.StrictTickRate);
                 ImGui.Separator();
                 Settings.Debug.Value = ImGuiExtension.Checkbox("Debug Mode", Settings.Debug);
+                ImGui.TreePop();
             }
 
 
@@ -370,8 +371,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                             currentFlask.Enabled.Value = ImGuiExtension.Checkbox("Enable", currentFlask.Enabled);
                             currentFlask.Hotkey.Value = ImGuiExtension.HotkeySelector("Hotkey", currentFlask.Hotkey);
                             currentFlask.ReservedUses.Value = ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses);
+                            ImGui.TreePop();
                         }
                     }
+
+                    ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNode("Health and Mana"))
@@ -385,6 +389,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.ManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Mana Flask", Settings.ManaPotion);
                     Settings.InstantManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Instant MP Flask", Settings.InstantManaPotion);
                     Settings.MinManaFlask.Value = ImGuiExtension.IntSlider("Min Mana Auto Mana Flask", Settings.MinManaFlask);
+                    ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNode("Remove Ailments"))
@@ -398,6 +403,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.RemPoison.Value = ImGuiExtension.Checkbox("Poison", Settings.RemPoison);
                     Settings.RemBleed.Value = ImGuiExtension.Checkbox("Bleed", Settings.RemBleed);
                     Settings.CorruptCount.Value = ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.MinManaFlask);
+                    ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNode("Speed Flasks"))
@@ -406,6 +412,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     ImGui.Separator();
                     Settings.QuicksilverFlaskEnable.Value = ImGuiExtension.Checkbox("Enable Quicksilver Flask", Settings.QuicksilverFlaskEnable);
                     Settings.SilverFlaskEnable.Value = ImGuiExtension.Checkbox("Enable Silver Flask", Settings.SilverFlaskEnable);
+                    ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNode("Defensive Flasks"))
@@ -415,6 +422,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.HPPercentDefensive.Value = ImGuiExtension.IntSlider("Min HP%", Settings.HPPercentDefensive);
                     Settings.ESPercentDefensive.Value = ImGuiExtension.IntSlider("Min ES%", Settings.ESPercentDefensive);
                     Settings.OffensiveAsDefensiveEnable.Value = ImGuiExtension.Checkbox("Use offensive flasks for defense", Settings.OffensiveAsDefensiveEnable);
+                    ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNode("Offensive Flasks"))
@@ -423,6 +431,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     ImGui.Separator();
                     Settings.HPPercentOffensive.Value = ImGuiExtension.IntSlider("Min HP%", Settings.HPPercentOffensive);
                     Settings.ESPercentOffensive.Value = ImGuiExtension.IntSlider("Min ES%", Settings.ESPercentOffensive);
+                    ImGui.TreePop();
                 }
             }
 
@@ -434,6 +443,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.FlaskPositionX.Value = ImGuiExtension.FloatSlider("X Position", Settings.FlaskPositionX); ;
                     Settings.FlaskPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.FlaskPositionY); ;
                     Settings.FlaskTextSize.Value = ImGuiExtension.IntSlider("Text Size", Settings.FlaskTextSize);
+                    ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNodeEx("Buff UI", TreeNodeFlags.Framed))
@@ -443,7 +453,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.BuffPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.BuffPositionY); ;
                     Settings.BuffTextSize.Value = ImGuiExtension.IntSlider("Text Size", Settings.BuffTextSize);
                     Settings.EnableFlaskAuraBuff.Value = ImGuiExtension.Checkbox("Enable Flask Or Aura Debuff/Buff", Settings.EnableFlaskAuraBuff);
+                    ImGui.TreePop();
                 }
+
+                ImGui.TreePop();
             }
 
 
