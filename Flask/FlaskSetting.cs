@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine.Flask
 {
-    public class FlaskSettings
+    public class FlaskSetting
     {
-        public FlaskSettings (ToggleNode enabled, HotkeyNode hotkey, RangeNode<int> reservedUses)
+        public FlaskSetting (ToggleNode enabled, HotkeyNode hotkey, RangeNode<int> reservedUses)
         {
             Enabled = enabled;
             Hotkey = hotkey;
