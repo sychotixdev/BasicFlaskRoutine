@@ -397,10 +397,13 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.RemAilment.Value = ImGuiExtension.Checkbox("Enable", Settings.RemAilment);
                     ImGui.Separator();
                     Settings.RemFrozen.Value = ImGuiExtension.Checkbox("Frozen", Settings.RemFrozen);
+                    ImGui.SameLine();
                     Settings.RemBurning.Value = ImGuiExtension.Checkbox("Burning", Settings.RemBurning);
                     Settings.RemShocked.Value = ImGuiExtension.Checkbox("Shocked", Settings.RemShocked);
+                    ImGui.SameLine();
                     Settings.RemCurse.Value = ImGuiExtension.Checkbox("Cursed", Settings.RemCurse);
                     Settings.RemPoison.Value = ImGuiExtension.Checkbox("Poison", Settings.RemPoison);
+                    ImGui.SameLine();
                     Settings.RemBleed.Value = ImGuiExtension.Checkbox("Bleed", Settings.RemBleed);
                     Settings.CorruptCount.Value = ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.MinManaFlask);
                     ImGui.TreePop();
@@ -419,8 +422,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 {
                     Settings.DefensiveFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.DefensiveFlaskEnable);
                     ImGui.Separator();
-                    Settings.HPPercentDefensive.Value = ImGuiExtension.IntSlider("Min HP%", Settings.HPPercentDefensive);
-                    Settings.ESPercentDefensive.Value = ImGuiExtension.IntSlider("Min ES%", Settings.ESPercentDefensive);
+                    Settings.HPPercentDefensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentDefensive);
+                    Settings.ESPercentDefensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentDefensive);
                     Settings.OffensiveAsDefensiveEnable.Value = ImGuiExtension.Checkbox("Use offensive flasks for defense", Settings.OffensiveAsDefensiveEnable);
                     ImGui.TreePop();
                 }
@@ -429,8 +432,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 {
                     Settings.OffensiveFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.OffensiveFlaskEnable);
                     ImGui.Separator();
-                    Settings.HPPercentOffensive.Value = ImGuiExtension.IntSlider("Min HP%", Settings.HPPercentOffensive);
-                    Settings.ESPercentOffensive.Value = ImGuiExtension.IntSlider("Min ES%", Settings.ESPercentOffensive);
+                    Settings.HPPercentOffensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentOffensive);
+                    Settings.ESPercentOffensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentOffensive);
                     ImGui.TreePop();
                 }
             }

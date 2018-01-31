@@ -4,11 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine.Flask
 {
     public class FlaskSetting
     {
+        public FlaskSetting()
+        {
+            // Initializing this here seems to fix the deserialization issue with min/max values
+            ReservedUses = new RangeNode<int>(0, 0, 5);
+        }
+
         public FlaskSetting (ToggleNode enabled, HotkeyNode hotkey, RangeNode<int> reservedUses)
         {
             Enabled = enabled;
@@ -16,9 +23,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine.Flask
             ReservedUses = reservedUses;
         }
 
-        public HotkeyNode Hotkey { get; }
-        public ToggleNode Enabled { get; }
-        public RangeNode<int> ReservedUses { get; }
+        public HotkeyNode Hotkey { get; set; }
+        public ToggleNode Enabled { get; set; }
+        public RangeNode<int> ReservedUses { get; set; }
 
     }
 }
