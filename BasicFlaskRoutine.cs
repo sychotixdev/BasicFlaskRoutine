@@ -11,6 +11,8 @@ using PoeHUD.Models.Enums;
 using System.Linq;
 using TreeRoutine.Menu;
 using ImGuiNET;
+using PoeHUD.Framework;
+using PoeHUD.Framework.Helpers;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
@@ -20,6 +22,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
 
         }
+
+        public Composite Tree { get; set; }
+        private Coroutine TreeCoroutine { get; set; }
+
 
         private KeyboardHelper KeyboardHelper { get; set; } = null;
 
@@ -31,6 +37,18 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             KeyboardHelper = new KeyboardHelper(GameController);
 
             Tree = createTree();
+
+            // Add this as a coroutine for this plugin
+            TreeCoroutine = (new Coroutine(CreateTreeTickAction(() => Tree)
+            , new WaitRender(Settings.RunFPS), nameof(BasicFlaskRoutine), "Tree"))
+                .AutoRestart(GameController.CoroutineRunner).Run();
+
+            Settings.RunFPS.OnValueChanged += UpdateCoroutineWaitRender;
+        }
+
+        private void UpdateCoroutineWaitRender()
+        {
+            TreeCoroutine.UpdateCondtion(new WaitRender(Settings.RunFPS));
         }
 
         private Composite createTree()
@@ -351,8 +369,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             {
                 Settings.EnableInHideout.Value = ImGuiExtension.Checkbox("Enable in Hideout", Settings.EnableInHideout);
                 ImGui.Separator();
-                Settings.TickRate.Value = ImGuiExtension.IntSlider("Tick Rate", Settings.TickRate);
-                Settings.StrictTickRate.Value = ImGuiExtension.Checkbox("Strict Tick Rate", Settings.StrictTickRate);
+                Settings.RunFPS.Value = ImGuiExtension.IntSlider("Plugin FPS", Settings.RunFPS); ImGui.SameLine(); ImGuiExtension.ToolTip("Determines how many frames between each run of the plugin.\n10 FPS means we will check if a flask needs used every 10 frames.");
                 ImGui.Separator();
                 Settings.Debug.Value = ImGuiExtension.Checkbox("Debug Mode", Settings.Debug);
                 ImGui.TreePop();
@@ -370,7 +387,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         {
                             currentFlask.Enabled.Value = ImGuiExtension.Checkbox("Enable", currentFlask.Enabled);
                             currentFlask.Hotkey.Value = ImGuiExtension.HotkeySelector("Hotkey", currentFlask.Hotkey);
-                            currentFlask.ReservedUses.Value = ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses);
+                            currentFlask.ReservedUses.Value = ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses); ImGui.SameLine(); ImGuiExtension.ToolTip("The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
                             ImGui.TreePop();
                         }
                     }

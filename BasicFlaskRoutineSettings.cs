@@ -7,6 +7,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
     public class BasicFlaskRoutineSettings : BaseTreeSettings
     {
+        public RangeNode<int> RunFPS { get; set; } = new RangeNode<int>(15, 1, 60);
+
         public ToggleNode EnableInHideout { get; set; } = false;
 
         public ToggleNode AutoFlask { get; set; } = false;
