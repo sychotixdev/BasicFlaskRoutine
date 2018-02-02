@@ -9,6 +9,10 @@ using TreeSharp;
 using SharpDX;
 using PoeHUD.Models.Enums;
 using System.Linq;
+using TreeRoutine.Menu;
+using ImGuiNET;
+using PoeHUD.Framework;
+using PoeHUD.Framework.Helpers;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
@@ -19,7 +23,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         }
 
-        private FlaskSettings[] FlaskSettings { get; set; } = new FlaskSettings[5];
+        public Composite Tree { get; set; }
+        private Coroutine TreeCoroutine { get; set; }
+
+
         private KeyboardHelper KeyboardHelper { get; set; } = null;
 
         public override void Initialise()
@@ -28,22 +35,20 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
             PluginName = "BasicFlaskRoutine";
             KeyboardHelper = new KeyboardHelper(GameController);
-            PopulateFlaskSettings();
 
             Tree = createTree();
+
+            // Add this as a coroutine for this plugin
+            TreeCoroutine = (new Coroutine(CreateTreeTickAction(() => Tree)
+            , new WaitRender(Settings.RunFPS), nameof(BasicFlaskRoutine), "Tree"))
+                .AutoRestart(GameController.CoroutineRunner).Run();
+
+            Settings.RunFPS.OnValueChanged += UpdateCoroutineWaitRender;
         }
 
-        /// <summary>
-        /// There may be a better way to do this... but I don't care enough for this example routine
-        /// </summary>
-        private void PopulateFlaskSettings()
+        private void UpdateCoroutineWaitRender()
         {
-            FlaskSettings[0] = new FlaskSettings(Settings.FlaskSlot1Enable, Settings.FlaskSlot1Hotkey, Settings.FlaskSlot1ReserveUses);
-            FlaskSettings[1] = new FlaskSettings(Settings.FlaskSlot2Enable, Settings.FlaskSlot2Hotkey, Settings.FlaskSlot2ReserveUses);
-            FlaskSettings[2] = new FlaskSettings(Settings.FlaskSlot3Enable, Settings.FlaskSlot3Hotkey, Settings.FlaskSlot3ReserveUses);
-            FlaskSettings[3] = new FlaskSettings(Settings.FlaskSlot4Enable, Settings.FlaskSlot4Hotkey, Settings.FlaskSlot4ReserveUses);
-            FlaskSettings[4] = new FlaskSettings(Settings.FlaskSlot5Enable, Settings.FlaskSlot5Hotkey, Settings.FlaskSlot5ReserveUses);
-
+            TreeCoroutine.UpdateCondtion(new WaitRender(Settings.RunFPS));
         }
 
         private Composite createTree()
@@ -51,10 +56,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return new Decorator(x => TreeHelper.canTick() && !PlayerHelper.isPlayerDead() && (!Cache.InHideout || Settings.EnableInHideout),
                     new PrioritySelector
                     (
-                        createInstantHPPotionComposite(),
-                        createHPPotionComposite(),
-                        createInstantManaPotionComposite(),
-                        createManaPotionComposite(),
+                        new Decorator(x => Settings.AutoFlask,
+                        new PrioritySelector(
+                            createInstantHPPotionComposite(),
+                            createHPPotionComposite(),
+                            createInstantManaPotionComposite(),
+                            createManaPotionComposite()
+                            )
+                        ),
                         createAilmentPotionComposite(),
                         createDefensivePotionComposite(),
                         createSpeedPotionComposite(),
@@ -167,7 +176,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     return null;
                 }
 
-                return FlaskSettings[foundFlask.Index].Hotkey;
+                return Settings.FlaskSettings[foundFlask.Index].Hotkey;
             });
         }
 
@@ -182,13 +191,13 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             var allFlasks = FlaskHelper.getAllFlaskInfo();
 
             // We have no flasks or settings for flasks?
-            if (allFlasks == null || FlaskSettings == null)
+            if (allFlasks == null || Settings.FlaskSettings == null)
             {
                 if (Settings.Debug)
                 {
                     if (allFlasks == null)
                         LogMessage("No flasks to match against.", 5);
-                    else if (FlaskSettings == null)
+                    else if (Settings.FlaskSettings == null)
                         LogMessage("Flask settings were null. Hopefully doesn't happen frequently.", 5);
                 }
 
@@ -208,14 +217,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             var flaskList = allFlasks
                     .Where(x =>
                     // Below are cheap operations and should be done first
-                    FlaskSettings[x.Index].Enabled // Only search for enabled flasks
+                    Settings.FlaskSettings[x.Index].Enabled // Only search for enabled flasks
                     && (instant == null || instant.GetValueOrDefault() == x.Instant ) // Only search for flasks matching the requested instant value
                     && (flaskActions.Contains(x.Action1) || flaskActions.Contains(x.Action2)) // Find any flask that matches the actions sent in
                     && (ignoreFlaskActions == null || !ignoreFlasksWithAction().Contains(x.Action1) && !ignoreFlasksWithAction().Contains(x.Action2)) // Do not choose ignored flask types
-                    && FlaskHelper.canUsePotion(x, FlaskSettings[x.Index].ReservedUses) // Do not return flasks we can't use
+                    && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses) // Do not return flasks we can't use
                     // Below are more expensive operations and should be done last
                     && (x.Instant || (!PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString2 }))) // If the flask is not instant, ensure we are missing at least one of the flask buffs
-                    ).OrderByDescending(x => x.TotalUses - FlaskSettings[x.Index].ReservedUses);
+                    ).OrderByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses);
 
 
             if (flaskList == null || !flaskList.Any())
@@ -303,7 +312,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             int lastIndex = 0;
             foreach (var flasks in allFlasks.OrderBy(flask => flask.Index))
             {
-                if (!FlaskSettings[flasks.Index].Enabled)
+                if (!Settings.FlaskSettings[flasks.Index].Enabled)
                     textColor = Color.Red;
                 else switch (flasks.Mods.ItemRarity)
                     {
@@ -347,6 +356,138 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             if (!Settings.Enable.Value) return;
             FlaskUi();
             BuffUi();
+        }
+
+        protected override void RunWindow()
+        {
+            if (!Settings.ShowWindow) return;
+            TreeNodeFlags collapsingHeaderFlags = TreeNodeFlags.CollapsingHeader;
+
+            ImGuiExtension.BeginWindow($"{PluginName} Settings", Settings.LastSettingPos.X, Settings.LastSettingPos.Y, Settings.LastSettingSize.X, Settings.LastSettingSize.Y);
+
+            if (ImGui.TreeNodeEx("Plugin Options", collapsingHeaderFlags))
+            {
+                Settings.EnableInHideout.Value = ImGuiExtension.Checkbox("Enable in Hideout", Settings.EnableInHideout);
+                ImGui.Separator();
+                Settings.RunFPS.Value = ImGuiExtension.IntSlider("Plugin FPS", Settings.RunFPS); ImGui.SameLine(); ImGuiExtension.ToolTip("Determines how many frames between each run of the plugin.\n10 FPS means we will check if a flask needs used every 10 frames.");
+                ImGui.Separator();
+                Settings.Debug.Value = ImGuiExtension.Checkbox("Debug Mode", Settings.Debug);
+                ImGui.TreePop();
+            }
+
+
+            if (ImGui.TreeNodeEx("Flask Options", collapsingHeaderFlags))
+            {
+                if (ImGui.TreeNode("Individual Flask Settings"))
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        FlaskSetting currentFlask = Settings.FlaskSettings[i];
+                        if (ImGui.TreeNode("Flask " + (i + 1) + " Settings"))
+                        {
+                            currentFlask.Enabled.Value = ImGuiExtension.Checkbox("Enable", currentFlask.Enabled);
+                            currentFlask.Hotkey.Value = ImGuiExtension.HotkeySelector("Hotkey", currentFlask.Hotkey);
+                            currentFlask.ReservedUses.Value = ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses); ImGui.SameLine(); ImGuiExtension.ToolTip("The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
+                            ImGui.TreePop();
+                        }
+                    }
+
+                    ImGui.TreePop();
+                }
+
+                if (ImGui.TreeNode("Health and Mana"))
+                {
+                    Settings.AutoFlask.Value = ImGuiExtension.Checkbox("Enable", Settings.AutoFlask);
+                    ImGui.Separator();
+                    Settings.HPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto HP Flask", Settings.HPPotion);
+                    Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
+                    Settings.DisableLifeSecUse.Value = ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage", Settings.DisableLifeSecUse);
+                    ImGui.Separator();
+                    Settings.ManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Mana Flask", Settings.ManaPotion);
+                    Settings.InstantManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Instant MP Flask", Settings.InstantManaPotion);
+                    Settings.MinManaFlask.Value = ImGuiExtension.IntSlider("Min Mana Auto Mana Flask", Settings.MinManaFlask);
+                    ImGui.TreePop();
+                }
+
+                if (ImGui.TreeNode("Remove Ailments"))
+                {
+                    Settings.RemAilment.Value = ImGuiExtension.Checkbox("Enable", Settings.RemAilment);
+                    ImGui.Separator();
+                    Settings.RemFrozen.Value = ImGuiExtension.Checkbox("Frozen", Settings.RemFrozen);
+                    ImGui.SameLine();
+                    Settings.RemBurning.Value = ImGuiExtension.Checkbox("Burning", Settings.RemBurning);
+                    Settings.RemShocked.Value = ImGuiExtension.Checkbox("Shocked", Settings.RemShocked);
+                    ImGui.SameLine();
+                    Settings.RemCurse.Value = ImGuiExtension.Checkbox("Cursed", Settings.RemCurse);
+                    Settings.RemPoison.Value = ImGuiExtension.Checkbox("Poison", Settings.RemPoison);
+                    ImGui.SameLine();
+                    Settings.RemBleed.Value = ImGuiExtension.Checkbox("Bleed", Settings.RemBleed);
+                    Settings.CorruptCount.Value = ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.MinManaFlask);
+                    ImGui.TreePop();
+                }
+
+                if (ImGui.TreeNode("Speed Flasks"))
+                {
+                    Settings.SpeedFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.SpeedFlaskEnable);
+                    ImGui.Separator();
+                    Settings.QuicksilverFlaskEnable.Value = ImGuiExtension.Checkbox("Enable Quicksilver Flask", Settings.QuicksilverFlaskEnable);
+                    Settings.SilverFlaskEnable.Value = ImGuiExtension.Checkbox("Enable Silver Flask", Settings.SilverFlaskEnable);
+                    ImGui.TreePop();
+                }
+
+                if (ImGui.TreeNode("Defensive Flasks"))
+                {
+                    Settings.DefensiveFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.DefensiveFlaskEnable);
+                    ImGui.Separator();
+                    Settings.HPPercentDefensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentDefensive);
+                    Settings.ESPercentDefensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentDefensive);
+                    Settings.OffensiveAsDefensiveEnable.Value = ImGuiExtension.Checkbox("Use offensive flasks for defense", Settings.OffensiveAsDefensiveEnable);
+                    ImGui.TreePop();
+                }
+
+                if (ImGui.TreeNode("Offensive Flasks"))
+                {
+                    Settings.OffensiveFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.OffensiveFlaskEnable);
+                    ImGui.Separator();
+                    Settings.HPPercentOffensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentOffensive);
+                    Settings.ESPercentOffensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentOffensive);
+                    ImGui.TreePop();
+                }
+            }
+
+            if (ImGui.TreeNodeEx("UI Settings", collapsingHeaderFlags))
+            {
+                if (ImGui.TreeNodeEx("Flask UI", TreeNodeFlags.Framed))
+                {
+                    Settings.FlaskUiEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.FlaskUiEnable);
+                    Settings.FlaskPositionX.Value = ImGuiExtension.FloatSlider("X Position", Settings.FlaskPositionX); ;
+                    Settings.FlaskPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.FlaskPositionY); ;
+                    Settings.FlaskTextSize.Value = ImGuiExtension.IntSlider("Text Size", Settings.FlaskTextSize);
+                    ImGui.TreePop();
+                }
+
+                if (ImGui.TreeNodeEx("Buff UI", TreeNodeFlags.Framed))
+                {
+                    Settings.BuffUiEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.BuffUiEnable);
+                    Settings.BuffPositionX.Value = ImGuiExtension.FloatSlider("X Position", Settings.BuffPositionX); ;
+                    Settings.BuffPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.BuffPositionY); ;
+                    Settings.BuffTextSize.Value = ImGuiExtension.IntSlider("Text Size", Settings.BuffTextSize);
+                    Settings.EnableFlaskAuraBuff.Value = ImGuiExtension.Checkbox("Enable Flask Or Aura Debuff/Buff", Settings.EnableFlaskAuraBuff);
+                    ImGui.TreePop();
+                }
+
+                ImGui.TreePop();
+            }
+
+
+            // Storing window Position and Size changed by the user
+            if (ImGui.GetWindowHeight() > 21)
+            {
+                Settings.LastSettingPos = ImGui.GetWindowPosition();
+                Settings.LastSettingSize = ImGui.GetWindowSize();
+            }
+
+            ImGui.EndWindow();
         }
     }
 }

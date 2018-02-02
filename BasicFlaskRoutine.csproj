@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BaseTreeRoutine.Routine.BasicFlaskRoutine</RootNamespace>
     <AssemblyName>BasicFlaskRoutine</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ImGui.NET, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\PoEHUD\src\packages\ImGui.NET.0.4.0\lib\netstandard1.1\ImGui.NET.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\PoEHUD\src\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -46,6 +50,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -57,11 +63,11 @@
   <ItemGroup>
     <Compile Include="BasicFlaskRoutine.cs" />
     <Compile Include="BasicFlaskRoutineSettings.cs" />
-    <Compile Include="Flask\FlaskSettings.cs" />
+    <Compile Include="Flask\FlaskSetting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NewFlaskManager\TreeRoutine.csproj">
+    <ProjectReference Include="..\BaseTreeRoutine\TreeRoutine.csproj">
       <Project>{2975c63d-6c9a-4824-a619-380994a19ece}</Project>
       <Name>TreeRoutine</Name>
     </ProjectReference>
@@ -70,7 +76,7 @@
       <Name>PoeHUD</Name>
     </ProjectReference>
     <ProjectReference Include="..\TreeSharp\TreeSharp.csproj">
-      <Project>{0EFB3180-8092-494F-B42F-443B77034F67}</Project>
+      <Project>{30311c38-2621-46d1-b4b8-04a65e8f0c5c}</Project>
       <Name>TreeSharp</Name>
     </ProjectReference>
   </ItemGroup>
