@@ -224,7 +224,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses) // Do not return flasks we can't use
                     // Below are more expensive operations and should be done last
                     && (x.Instant || (!PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString2 }))) // If the flask is not instant, ensure we are missing at least one of the flask buffs
-                    ).OrderByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses);
+                    ).OrderByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
 
 
             if (flaskList == null || !flaskList.Any())
@@ -237,7 +237,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             if (Settings.Debug)
                 LogMessage("Flask(s) found for action: " + flaskActions[0] + " Flask Count: " + flaskList.Count(), 1);
 
-            return flaskList.First();
+            return flaskList.FirstOrDefault();
         }
 
         private Decorator createCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null)
