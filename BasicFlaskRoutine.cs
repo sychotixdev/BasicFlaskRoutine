@@ -39,7 +39,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             Tree = createTree();
 
             // Add this as a coroutine for this plugin
-            TreeCoroutine = (new Coroutine(CreateTreeTickAction(() => Tree)
+            TreeCoroutine = (new Coroutine(() => TickTree(Tree)
             , new WaitRender(Settings.RunFPS), nameof(BasicFlaskRoutine), "Tree"))
                 .AutoRestart(GameController.CoroutineRunner).Run();
 
@@ -360,7 +360,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         protected override void RunWindow()
         {
-            if (!Settings.ShowWindow) return;
+            if (!Settings.ShowProfileMenu) return;
             TreeNodeFlags collapsingHeaderFlags = TreeNodeFlags.CollapsingHeader;
 
             ImGuiExtension.BeginWindow($"{PluginName} Settings", Settings.LastSettingPos.X, Settings.LastSettingPos.Y, Settings.LastSettingSize.X, Settings.LastSettingSize.Y);
