@@ -369,7 +369,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             {
                 Settings.EnableInHideout.Value = ImGuiExtension.Checkbox("Enable in Hideout", Settings.EnableInHideout);
                 ImGui.Separator();
-                Settings.RunFPS.Value = ImGuiExtension.IntSlider("Plugin FPS", Settings.RunFPS); ImGui.SameLine(); ImGuiExtension.ToolTip("Determines how many frames between each run of the plugin.\n10 FPS means we will check if a flask needs used every 10 frames.");
+                Settings.RunFPS.Value = ImGuiExtension.IntSlider("Plugin FPS", Settings.RunFPS); ImGui.SameLine(); ImGuiExtension.ToolTipWithText("(?)", "Determines how many frames between each run of the plugin.\n10 FPS means we will check if a flask needs used every 10 frames.");
                 ImGui.Separator();
                 Settings.Debug.Value = ImGuiExtension.Checkbox("Debug Mode", Settings.Debug);
                 ImGui.TreePop();
@@ -387,7 +387,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         {
                             currentFlask.Enabled.Value = ImGuiExtension.Checkbox("Enable", currentFlask.Enabled);
                             currentFlask.Hotkey.Value = ImGuiExtension.HotkeySelector("Hotkey", currentFlask.Hotkey);
-                            currentFlask.ReservedUses.Value = ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses); ImGui.SameLine(); ImGuiExtension.ToolTip("The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
+                            currentFlask.ReservedUses.Value = ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses); ImGui.SameLine(); ImGuiExtension.ToolTipWithText("(?)", "The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
                             ImGui.TreePop();
                         }
                     }
