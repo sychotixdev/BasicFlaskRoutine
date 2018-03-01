@@ -360,7 +360,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         protected override void RunWindow()
         {
-            if (!Settings.ShowProfileMenu) return;
+            if (!Settings.ShowSettings) return;
             TreeNodeFlags collapsingHeaderFlags = TreeNodeFlags.CollapsingHeader;
 
             ImGuiExtension.BeginWindow($"{PluginName} Settings", Settings.LastSettingPos.X, Settings.LastSettingPos.Y, Settings.LastSettingSize.X, Settings.LastSettingSize.Y);
