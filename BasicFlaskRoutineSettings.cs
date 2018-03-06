@@ -7,7 +7,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
     public class BasicFlaskRoutineSettings : BaseTreeSettings
     {
-        public RangeNode<int> RunFPS { get; set; } = new RangeNode<int>(15, 1, 60);
+        public RangeNode<int> TicksPerSecond { get; set; } = new RangeNode<int>(10, 1, 30);
 
         public ToggleNode EnableInHideout { get; set; } = false;
 
@@ -35,6 +35,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode SpeedFlaskEnable { get; set; } = false;
         public ToggleNode QuicksilverFlaskEnable { get; set; } = false;
         public ToggleNode SilverFlaskEnable { get; set; } = false;
+        public RangeNode<int> MinMsPlayerMoving { get; set; } = new RangeNode<int>(1500, 1, 10000);
 
         public ToggleNode DefensiveFlaskEnable { get; set; } = false;
         public RangeNode<int> HPPercentDefensive { get; set; } = new RangeNode<int>(50, 0, 100);
@@ -47,11 +48,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         public FlaskSetting[] FlaskSettings { get; set; } = new FlaskSetting[5]
         {
-            new FlaskSetting(new ToggleNode(false), new HotkeyNode(Keys.D1), new RangeNode<int>(0, 0, 5)),
-            new FlaskSetting(new ToggleNode(false), new HotkeyNode(Keys.D2), new RangeNode<int>(0, 0, 5)),
-            new FlaskSetting(new ToggleNode(false), new HotkeyNode(Keys.D3), new RangeNode<int>(0, 0, 5)),
-            new FlaskSetting(new ToggleNode(false), new HotkeyNode(Keys.D4), new RangeNode<int>(0, 0, 5)),
-            new FlaskSetting(new ToggleNode(false), new HotkeyNode(Keys.D5), new RangeNode<int>(0, 0, 5))
+            new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D1), new RangeNode<int>(0, 0, 5)),
+            new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D2), new RangeNode<int>(0, 0, 5)),
+            new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D3), new RangeNode<int>(0, 0, 5)),
+            new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D4), new RangeNode<int>(0, 0, 5)),
+            new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D5), new RangeNode<int>(0, 0, 5))
         };
 
         

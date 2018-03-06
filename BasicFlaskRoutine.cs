@@ -13,6 +13,7 @@ using TreeRoutine.Menu;
 using ImGuiNET;
 using PoeHUD.Framework;
 using PoeHUD.Framework.Helpers;
+using System.Diagnostics;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
@@ -29,6 +30,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private KeyboardHelper KeyboardHelper { get; set; } = null;
 
+        private Stopwatch PlayerMovingStopwatch { get; set; } = new Stopwatch();
+
         public override void Initialise()
         {
             base.Initialise();
@@ -40,15 +43,36 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
             // Add this as a coroutine for this plugin
             TreeCoroutine = (new Coroutine(() => TickTree(Tree)
-            , new WaitRender(Settings.RunFPS), nameof(BasicFlaskRoutine), "Tree"))
+            , new WaitTime(1000 / Settings.TicksPerSecond), nameof(BasicFlaskRoutine), "Tree"))
                 .AutoRestart(GameController.CoroutineRunner).Run();
 
-            Settings.RunFPS.OnValueChanged += UpdateCoroutineWaitRender;
+            Settings.TicksPerSecond.OnValueChanged += UpdateCoroutineWaitRender;
         }
 
         private void UpdateCoroutineWaitRender()
         {
-            TreeCoroutine.UpdateCondtion(new WaitRender(Settings.RunFPS));
+            TreeCoroutine.UpdateCondtion(new WaitTime(1000 / Settings.TicksPerSecond));
+        }
+
+        protected override void UpdateCache()
+        {
+            base.UpdateCache();
+
+            UpdatePlayerMovingStopwatch();
+        }
+
+        private void UpdatePlayerMovingStopwatch()
+        {
+            var player = GameController.Player.GetComponent<Actor>();
+            if (player != null && player.Address != 0 && player.isMoving)
+            {
+                if (!PlayerMovingStopwatch.IsRunning)
+                    PlayerMovingStopwatch.Start();
+            }
+            else
+            {
+                PlayerMovingStopwatch.Reset();
+            }
         }
 
         private Composite createTree()
@@ -119,7 +143,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite createSpeedPotionComposite()
         {
-            return new Decorator((x => Settings.SpeedFlaskEnable && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint", "flask_utility_haste" }))),
+            return new Decorator((x => Settings.SpeedFlaskEnable && Settings.MinMsPlayerMoving <= PlayerMovingStopwatch.ElapsedMilliseconds && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint", "flask_utility_haste" }))),
                 new PrioritySelector(
                     new Decorator((x => Settings.QuicksilverFlaskEnable), createUseFlaskAction(FlaskActions.Speedrun)),
                     new Decorator((x => Settings.SilverFlaskEnable), createUseFlaskAction(FlaskActions.OFFENSE_AND_SPEEDRUN))
@@ -369,7 +393,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             {
                 Settings.EnableInHideout.Value = ImGuiExtension.Checkbox("Enable in Hideout", Settings.EnableInHideout);
                 ImGui.Separator();
-                Settings.RunFPS.Value = ImGuiExtension.IntSlider("Plugin FPS", Settings.RunFPS); ImGui.SameLine(); ImGuiExtension.ToolTipWithText("(?)", "Determines how many frames between each run of the plugin.\n10 FPS means we will check if a flask needs used every 10 frames.");
+                Settings.TicksPerSecond.Value = ImGuiExtension.IntSlider("Ticks Per Second", Settings.TicksPerSecond); ImGui.SameLine(); ImGuiExtension.ToolTipWithText("(?)", "Determines how many times the plugin checks flasks every second.\nLower for less resources, raise for faster response (but higher chance to chug potions).");
                 ImGui.Separator();
                 Settings.Debug.Value = ImGuiExtension.Checkbox("Debug Mode", Settings.Debug);
                 ImGui.TreePop();
@@ -398,12 +422,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 if (ImGui.TreeNode("Health and Mana"))
                 {
                     Settings.AutoFlask.Value = ImGuiExtension.Checkbox("Enable", Settings.AutoFlask);
-                    ImGui.Separator();
+
+                    ImGuiExtension.SpacedTextHeader("Health Flask");
                     Settings.HPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto HP Flask", Settings.HPPotion);
                     Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
                     Settings.DisableLifeSecUse.Value = ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage", Settings.DisableLifeSecUse);
-                    ImGui.Separator();
-                    Settings.ManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Mana Flask", Settings.ManaPotion);
+
+                    ImGuiExtension.SpacedTextHeader("Mana Flask"); 
+                    ImGui.Spacing(); Settings.ManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Mana Flask", Settings.ManaPotion);
                     Settings.InstantManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Instant MP Flask", Settings.InstantManaPotion);
                     Settings.MinManaFlask.Value = ImGuiExtension.IntSlider("Min Mana Auto Mana Flask", Settings.MinManaFlask);
                     ImGui.TreePop();
@@ -412,7 +438,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 if (ImGui.TreeNode("Remove Ailments"))
                 {
                     Settings.RemAilment.Value = ImGuiExtension.Checkbox("Enable", Settings.RemAilment);
-                    ImGui.Separator();
+
+                    ImGuiExtension.SpacedTextHeader("Ailments");
                     Settings.RemFrozen.Value = ImGuiExtension.Checkbox("Frozen", Settings.RemFrozen);
                     ImGui.SameLine();
                     Settings.RemBurning.Value = ImGuiExtension.Checkbox("Burning", Settings.RemBurning);
@@ -422,22 +449,27 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.RemPoison.Value = ImGuiExtension.Checkbox("Poison", Settings.RemPoison);
                     ImGui.SameLine();
                     Settings.RemBleed.Value = ImGuiExtension.Checkbox("Bleed", Settings.RemBleed);
-                    Settings.CorruptCount.Value = ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.MinManaFlask);
+                    Settings.CorruptCount.Value = ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.CorruptCount);
                     ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNode("Speed Flasks"))
                 {
                     Settings.SpeedFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.SpeedFlaskEnable);
-                    ImGui.Separator();
-                    Settings.QuicksilverFlaskEnable.Value = ImGuiExtension.Checkbox("Enable Quicksilver Flask", Settings.QuicksilverFlaskEnable);
-                    Settings.SilverFlaskEnable.Value = ImGuiExtension.Checkbox("Enable Silver Flask", Settings.SilverFlaskEnable);
+
+                    ImGuiExtension.SpacedTextHeader("Flasks");
+                    Settings.QuicksilverFlaskEnable.Value = ImGuiExtension.Checkbox("Quicksilver Flask", Settings.QuicksilverFlaskEnable);
+                    Settings.SilverFlaskEnable.Value = ImGuiExtension.Checkbox("Silver Flask", Settings.SilverFlaskEnable);
+
+                    ImGuiExtension.SpacedTextHeader("Settings");
+                    Settings.MinMsPlayerMoving.Value = ImGuiExtension.IntSlider("Milliseconds Spent Moving", Settings.MinMsPlayerMoving); ImGuiExtension.ToolTipWithText("(?)", "Milliseconds spent moving before flask will be used.\n1000 milliseconds = 1 second");
                     ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNode("Defensive Flasks"))
                 {
                     Settings.DefensiveFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.DefensiveFlaskEnable);
+                    ImGui.Spacing();
                     ImGui.Separator();
                     Settings.HPPercentDefensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentDefensive);
                     Settings.ESPercentDefensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentDefensive);
@@ -448,11 +480,13 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 if (ImGui.TreeNode("Offensive Flasks"))
                 {
                     Settings.OffensiveFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.OffensiveFlaskEnable);
+                    ImGui.Spacing();
                     ImGui.Separator();
                     Settings.HPPercentOffensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentOffensive);
                     Settings.ESPercentOffensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentOffensive);
                     ImGui.TreePop();
                 }
+                ImGui.TreePop();
             }
 
             if (ImGui.TreeNodeEx("UI Settings", collapsingHeaderFlags))
