@@ -43,7 +43,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
             // Add this as a coroutine for this plugin
             TreeCoroutine = (new Coroutine(() => TickTree(Tree)
-            , new WaitTime(1000 / Settings.TicksPerSecond), nameof(BasicFlaskRoutine), "Tree"))
+            , new WaitTime(1000 / Settings.TicksPerSecond), nameof(BasicFlaskRoutine), "BasicFlaskRoutine Tree"))
                 .AutoRestart(GameController.CoroutineRunner).Run();
 
             Settings.TicksPerSecond.OnValueChanged += UpdateCoroutineWaitRender;
