@@ -232,7 +232,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             {
                 foreach (var flask in allFlasks)
                 {
-                    LogMessage("Flask: " + flask.Name + " Instant: " + flask.Instant + " Action1: " + flask.Action1 + " Action2: " + flask.Action2, 5);
+                    LogMessage("Flask: " + flask.Name + " Instant: " + flask.InstantType.ToString() + " Action1: " + flask.Action1 + " Action2: " + flask.Action2, 5);
                 }
             }
 
@@ -242,12 +242,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     .Where(x =>
                     // Below are cheap operations and should be done first
                     Settings.FlaskSettings[x.Index].Enabled // Only search for enabled flasks
-                    && (instant == null || instant.GetValueOrDefault() == x.Instant ) // Only search for flasks matching the requested instant value
                     && (flaskActions.Contains(x.Action1) || flaskActions.Contains(x.Action2)) // Find any flask that matches the actions sent in
                     && (ignoreFlaskActions == null || !ignoreFlasksWithAction().Contains(x.Action1) && !ignoreFlasksWithAction().Contains(x.Action2)) // Do not choose ignored flask types
                     && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses) // Do not return flasks we can't use
-                    // Below are more expensive operations and should be done last
-                    && (x.Instant || (!PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString2 }))) // If the flask is not instant, ensure we are missing at least one of the flask buffs
+                    && ((instant == null || instant == false && // If we don't care about instant, OR we want a standard flasks AND
+                                           (x.InstantType == FlaskInstantType.None // The flask is not instant
+                                            || x.InstantType == FlaskInstantType.Partial && !Settings.ForceBubblingAsInstantOnly // OR the flask is partially instant, and we aren't forcing as only instant
+                                            || x.InstantType == FlaskInstantType.LowLife && !Settings.ForcePanickedAsInstantOnly))  // OR the flask is a low life instant, and we aren't forcing it as only instant
+                            && (!PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString2 })) // THEN check if we are missing any of this flasks's buffs
+                        || instant == true && (x.InstantType == FlaskInstantType.Partial || x.InstantType == FlaskInstantType.Full || x.InstantType == FlaskInstantType.LowLife && PlayerHelper.isHealthBelowPercentage(35))) // If we want instant only, then search only instant flasks. Only count LowLife as instant if we are low life
                     ).OrderByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
 
 
@@ -422,6 +425,12 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 if (ImGui.TreeNode("Health and Mana"))
                 {
                     Settings.AutoFlask.Value = ImGuiExtension.Checkbox("Enable", Settings.AutoFlask);
+
+                    ImGuiExtension.SpacedTextHeader("Settings");
+                    Settings.ForceBubblingAsInstantOnly = ImGuiExtension.Checkbox("Force Bubbling as Instant only", Settings.ForceBubblingAsInstantOnly);
+                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Bubbling mod will only be used as an instant flask.");
+                    Settings.ForcePanickedAsInstantOnly = ImGuiExtension.Checkbox("Force Panicked as Instant only", Settings.ForcePanickedAsInstantOnly);
+                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Panicked mod will only be used as an instant flask.\nNote, Panicked will not be used until under 35% with this enabled.");
 
                     ImGuiExtension.SpacedTextHeader("Health Flask");
                     Settings.HPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto HP Flask", Settings.HPPotion);

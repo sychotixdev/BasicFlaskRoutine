@@ -13,6 +13,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         public ToggleNode AutoFlask { get; set; } = false;
 
+        public ToggleNode ForceBubblingAsInstantOnly { get; set; } = false;
+        public ToggleNode ForcePanickedAsInstantOnly { get; set; } = false;
+
         public RangeNode<int> HPPotion { get; set; } = new RangeNode<int>(65, 0, 100);
         public RangeNode<int> InstantHPPotion { get; set; } = new RangeNode<int>(35, 0, 100);
         public ToggleNode DisableLifeSecUse { get; set; } = false;
