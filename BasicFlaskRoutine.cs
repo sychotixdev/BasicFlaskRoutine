@@ -271,7 +271,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator((x =>
             {
-                var buffs = Cache.SavedIngameState.Data.LocalPlayer.GetComponent<Life>().Buffs;
+                var buffs = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs;
                 foreach (var buff in buffs)
                 {
                     if (float.IsInfinity(buff.Timer))
@@ -503,8 +503,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 if (ImGui.TreeNodeEx("Flask UI", TreeNodeFlags.Framed))
                 {
                     Settings.FlaskUiEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.FlaskUiEnable);
-                    Settings.FlaskPositionX.Value = ImGuiExtension.FloatSlider("X Position", Settings.FlaskPositionX); ;
-                    Settings.FlaskPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.FlaskPositionY); ;
+                    Settings.FlaskPositionX.Value = ImGuiExtension.FloatSlider("X Position", Settings.FlaskPositionX);
+                    Settings.FlaskPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.FlaskPositionY);
                     Settings.FlaskTextSize.Value = ImGuiExtension.IntSlider("Text Size", Settings.FlaskTextSize);
                     ImGui.TreePop();
                 }
@@ -512,8 +512,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 if (ImGui.TreeNodeEx("Buff UI", TreeNodeFlags.Framed))
                 {
                     Settings.BuffUiEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.BuffUiEnable);
-                    Settings.BuffPositionX.Value = ImGuiExtension.FloatSlider("X Position", Settings.BuffPositionX); ;
-                    Settings.BuffPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.BuffPositionY); ;
+                    Settings.BuffPositionX.Value = ImGuiExtension.FloatSlider("X Position", Settings.BuffPositionX);
+                    Settings.BuffPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.BuffPositionY);
                     Settings.BuffTextSize.Value = ImGuiExtension.IntSlider("Text Size", Settings.BuffTextSize);
                     Settings.EnableFlaskAuraBuff.Value = ImGuiExtension.Checkbox("Enable Flask Or Aura Debuff/Buff", Settings.EnableFlaskAuraBuff);
                     ImGui.TreePop();
