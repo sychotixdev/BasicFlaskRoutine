@@ -385,12 +385,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             BuffUi();
         }
 
-        protected override void RunWindow()
+        public override void InitializeSettingsMenu()
         {
-            if (!Settings.ShowSettings) return;
-            TreeNodeFlags collapsingHeaderFlags = TreeNodeFlags.CollapsingHeader;
 
-            ImGuiExtension.BeginWindow($"{PluginName} Settings", Settings.LastSettingPos.X, Settings.LastSettingPos.Y, Settings.LastSettingSize.X, Settings.LastSettingSize.Y);
+        }
+
+        public override void DrawSettingsMenu()
+        {
+            TreeNodeFlags collapsingHeaderFlags = TreeNodeFlags.CollapsingHeader;
 
             if (ImGui.TreeNodeEx("Plugin Options", collapsingHeaderFlags))
             {
@@ -520,16 +522,6 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
                 ImGui.TreePop();
             }
-
-
-            // Storing window Position and Size changed by the user
-            if (ImGui.GetWindowHeight() > 21)
-            {
-                Settings.LastSettingPos = ImGui.GetWindowPosition();
-                Settings.LastSettingSize = ImGui.GetWindowSize();
-            }
-
-            ImGui.EndWindow();
         }
     }
 }
