@@ -1,0 +1,9 @@
+Owner: sychotixdev
+Name: BasicFlaskRoutine
+Repository
+
+Ignore:
+src
+.gitignore
+README.md
+LICENSE

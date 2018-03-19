@@ -1,3 +1,0 @@
-Owner: sychotixdev
-Name: BasicFlaskRoutine
-Release
