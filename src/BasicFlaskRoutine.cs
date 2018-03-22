@@ -1,4 +1,4 @@
-﻿using TreeRoutine.DefaultBehaviors.Actions;
+﻿    using TreeRoutine.DefaultBehaviors.Actions;
 using TreeRoutine.DefaultBehaviors.Helpers;
 using TreeRoutine.FlaskComponents;
 using TreeRoutine.Routine.BasicFlaskRoutine.Flask;
@@ -220,9 +220,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 if (Settings.Debug)
                 {
                     if (allFlasks == null)
-                        LogMessage("No flasks to match against.", 5);
+                        LogMessage(PluginName + ": No flasks to match against.", 5);
                     else if (Settings.FlaskSettings == null)
-                        LogMessage("Flask settings were null. Hopefully doesn't happen frequently.", 5);
+                        LogMessage(PluginName + ": Flask settings were null. Hopefully doesn't happen frequently.", 5);
                 }
 
                 return null;
@@ -232,7 +232,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             {
                 foreach (var flask in allFlasks)
                 {
-                    LogMessage("Flask: " + flask.Name + " Instant: " + flask.InstantType.ToString() + " Action1: " + flask.Action1 + " Action2: " + flask.Action2, 5);
+                    LogMessage(PluginName + ": Flask: " + flask.Name + " Instant: " + flask.InstantType.ToString() + " Action1: " + flask.Action1 + " Action2: " + flask.Action2, 5);
                 }
             }
 
@@ -257,12 +257,12 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             if (flaskList == null || !flaskList.Any())
             {
                 if (Settings.Debug)
-                    LogError("No flasks found for action: " + flaskActions[0], 1);
+                    LogError(PluginName + ": No flasks found for action: " + flaskActions[0], 1);
                 return null;
             }
 
             if (Settings.Debug)
-                LogMessage("Flask(s) found for action: " + flaskActions[0] + " Flask Count: " + flaskList.Count(), 1);
+                LogMessage(PluginName + ": Flask(s) found for action: " + flaskActions[0] + " Flask Count: " + flaskList.Count(), 1);
 
             return flaskList.FirstOrDefault();
         }
