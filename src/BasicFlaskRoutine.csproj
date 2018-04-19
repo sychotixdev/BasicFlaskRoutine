@@ -35,19 +35,22 @@
   <ItemGroup>
     <Reference Include="ImGui.NET, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\PoEHUD\src\packages\ImGui.NET.0.4.0\lib\netstandard1.1\ImGui.NET.dll</HintPath>
+      <HintPath>..\..\poehud\ImGui.NET.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\PoEHUD\src\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PoeHUD">
+      <HintPath>..\..\PoEHUD-x1.1.6\Release\PoeHUD.exe</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
-      <HintPath>..\PoEHUD\src\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
+      <HintPath>..\..\poehud\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
-      <HintPath>..\PoEHUD\src\packages\SharpDX.Direct3D9.4.0.1\lib\net45\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>..\..\poehud\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
-      <HintPath>..\PoEHUD\src\packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>..\..\poehud\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -60,28 +63,18 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="TreeRoutine">
+      <HintPath>..\TreeRoutine.dll</HintPath>
+    </Reference>
+    <Reference Include="TreeSharp">
+      <HintPath>..\TreeSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicFlaskRoutine.cs" />
     <Compile Include="BasicFlaskRoutineSettings.cs" />
     <Compile Include="Flask\FlaskSetting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\BaseTreeRoutine\src\TreeRoutine.csproj">
-      <Project>{2975c63d-6c9a-4824-a619-380994a19ece}</Project>
-      <Name>TreeRoutine</Name>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </ProjectReference>
-    <ProjectReference Include="..\..\PoEHUD\src\PoeHUD.csproj">
-      <Project>{e86368b2-ae1e-4489-a749-e29a0ab48f83}</Project>
-      <Name>PoeHUD</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TreeSharp\TreeSharp.csproj">
-      <Project>{0EFB3180-8092-494F-B42F-443B77034F67}</Project>
-      <Name>TreeSharp</Name>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
