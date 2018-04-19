@@ -100,8 +100,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator((x => PlayerHelper.isHealthBelowPercentage(Settings.InstantHPPotion)),
                 new PrioritySelector(
-                    createUseFlaskAction(FlaskActions.Life, true),
-                    createUseFlaskAction(FlaskActions.Hybrid, true)
+                    createUseFlaskAction(FlaskActions.Life, true, true),
+                    createUseFlaskAction(FlaskActions.Hybrid, true, true)
                 )
             );
 
@@ -123,8 +123,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator((x => PlayerHelper.isManaBelowPercentage(Settings.InstantManaPotion)),
                 new PrioritySelector(
-                    createUseFlaskAction(FlaskActions.Mana, true),
-                    createUseFlaskAction(FlaskActions.Hybrid, true)
+                    createUseFlaskAction(FlaskActions.Mana, true, true),
+                    createUseFlaskAction(FlaskActions.Hybrid, true, true)
                 )
             );
         }
@@ -184,16 +184,16 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 );
         }
 
-        private Composite createUseFlaskAction(FlaskActions flaskAction, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private Composite createUseFlaskAction(FlaskActions flaskAction, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
         {
-            return createUseFlaskAction(new List<FlaskActions> { flaskAction }, instant, ignoreFlasksWithAction);
+            return createUseFlaskAction(new List<FlaskActions> { flaskAction }, instant, ignoreBuffs, ignoreFlasksWithAction);
         }
 
-        private Composite createUseFlaskAction(List<FlaskActions> flaskActions, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private Composite createUseFlaskAction(List<FlaskActions> flaskActions, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
         {
             return new UseHotkeyAction(KeyboardHelper, x =>
             {
-                var foundFlask = findFlaskMatchingAnyAction(flaskActions, instant, ignoreFlasksWithAction);
+                var foundFlask = findFlaskMatchingAnyAction(flaskActions, instant, ignoreBuffs, ignoreFlasksWithAction);
 
                 if (foundFlask == null)
                 {
@@ -204,13 +204,12 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             });
         }
 
-        private PlayerFlask findFlaskMatchingAnyAction(FlaskActions flaskAction, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private PlayerFlask findFlaskMatchingAnyAction(FlaskActions flaskAction, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
         {
-            return findFlaskMatchingAnyAction(new List<FlaskActions> { flaskAction }, instant, ignoreFlasksWithAction);
+            return findFlaskMatchingAnyAction(new List<FlaskActions> { flaskAction }, instant, ignoreBuffs, ignoreFlasksWithAction);
         }
 
-
-        private PlayerFlask findFlaskMatchingAnyAction (List<FlaskActions> flaskActions, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private PlayerFlask findFlaskMatchingAnyAction(List<FlaskActions> flaskActions, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
         {
             var allFlasks = FlaskHelper.getAllFlaskInfo();
 
@@ -240,24 +239,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
             var flaskList = allFlasks
                     .Where(x =>
-                    // Below are cheap operations and should be done first
-                    Settings.FlaskSettings[x.Index].Enabled // Only search for enabled flasks
-                    && (flaskActions.Contains(x.Action1) || flaskActions.Contains(x.Action2)) // Find any flask that matches the actions sent in
-                    && (ignoreFlaskActions == null || !ignoreFlasksWithAction().Contains(x.Action1) && !ignoreFlasksWithAction().Contains(x.Action2)) // Do not choose ignored flask types
-                    && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses) // Do not return flasks we can't use
-                    // If we don't care if it is instant or not... we don't care to even check buffs
-                    && (instant == null
-                        // If we don't care about instant, OR we want a standard flasks AND
-                        || (instant == false
-                                // Ensure the flask is NOT considered instant right now
-                                && (x.InstantType == FlaskInstantType.None // The flask is not instant
-                                    || x.InstantType == FlaskInstantType.Partial && !Settings.ForceBubblingAsInstantOnly // OR the flask is partially instant, and we aren't forcing as only instant
-                                    || x.InstantType == FlaskInstantType.LowLife && !Settings.ForcePanickedAsInstantOnly)  // OR the flask is a low life instant, and we aren't forcing it as only instant
-                                // Ensure we don't already have a flask of this type popped
-                                && !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString2 })
-                           )
-                        // Only select flasks that are considered instant right now
-                        || instant == true && (x.InstantType == FlaskInstantType.Partial || x.InstantType == FlaskInstantType.Full || x.InstantType == FlaskInstantType.LowLife && PlayerHelper.isHealthBelowPercentage(35))) // If we want instant only, then search only instant flasks. Only count LowLife as instant if we are low life
+                    Settings.FlaskSettings[x.Index].Enabled
+                    && flaskHasAvailableAction(flaskActions, ignoreFlaskActions, x)
+                    && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses)
+                    && FlaskMatchesInstant(x, instant)
+                    && (ignoreBuffs || MissingFlaskBuff(x))
                     ).OrderByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
 
 
@@ -272,6 +258,39 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 LogMessage(PluginName + ": Flask(s) found for action: " + flaskActions[0] + " Flask Count: " + flaskList.Count(), 1);
 
             return flaskList.FirstOrDefault();
+        }
+
+        private bool flaskHasAvailableAction(List<FlaskActions> flaskActions, List<FlaskActions> ignoreFlaskActions, PlayerFlask flask)
+        {
+            return flaskActions.Any(x => x == flask.Action1 || x == flask.Action2)
+                    && (ignoreFlaskActions == null || !ignoreFlaskActions.Any(x => x == flask.Action1 || x == flask.Action2));
+        }
+
+        private bool FlaskMatchesInstant(PlayerFlask playerFlask, Boolean? instant)
+        {
+            return instant == null
+                    || instant == false && CanUseFlaskAsRegen(playerFlask)
+                    || instant == true && CanUseFlaskAsInstant(playerFlask);
+        }
+
+        private bool CanUseFlaskAsInstant(PlayerFlask playerFlask)
+        {
+            // If the flask is instant, no special logic needed
+            return playerFlask.InstantType == FlaskInstantType.Partial
+                    || playerFlask.InstantType == FlaskInstantType.Full
+                    || playerFlask.InstantType == FlaskInstantType.LowLife && PlayerHelper.isHealthBelowPercentage(35);
+        }
+
+        private bool CanUseFlaskAsRegen(PlayerFlask playerFlask)
+        {
+            return playerFlask.InstantType == FlaskInstantType.None
+                    || playerFlask.InstantType == FlaskInstantType.Partial && !Settings.ForceBubblingAsInstantOnly
+                    || playerFlask.InstantType == FlaskInstantType.LowLife && !Settings.ForcePanickedAsInstantOnly;
+        }
+
+        private bool MissingFlaskBuff(PlayerFlask playerFlask)
+        {
+            return !PlayerHelper.playerHasBuffs(new List<string> { playerFlask.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { playerFlask.BuffString2 });
         }
 
         private Decorator createCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null)
