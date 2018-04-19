@@ -1,4 +1,4 @@
-﻿    using TreeRoutine.DefaultBehaviors.Actions;
+﻿using TreeRoutine.DefaultBehaviors.Actions;
 using TreeRoutine.DefaultBehaviors.Helpers;
 using TreeRoutine.FlaskComponents;
 using TreeRoutine.Routine.BasicFlaskRoutine.Flask;
@@ -153,10 +153,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite createDefensivePotionComposite()
         {
-            return new Decorator((x => Settings.DefensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentDefensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentDefensive))),
+            return new Decorator((x => Settings.DefensiveFlaskEnable &&
+            (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentDefensive) ||
+            PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentDefensive))),
                 new PrioritySelector(
                     createUseFlaskAction(FlaskActions.Defense),
-                    new Decorator((x => Settings.OffensiveAsDefensiveEnable), createUseFlaskAction(new List<FlaskActions> { FlaskActions.OFFENSE_AND_SPEEDRUN, FlaskActions.Defense }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ? new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid } : null)))
+                    new Decorator((x => Settings.OffensiveAsDefensiveEnable),
+                    createUseFlaskAction(new List<FlaskActions> { FlaskActions.OFFENSE_AND_SPEEDRUN, FlaskActions.Defense },
+                    ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ? new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid } : null)))
                 )
             );
         }
@@ -164,8 +168,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         private Composite createOffensivePotionComposite()
         {
             return new PrioritySelector(
-                new Decorator((x => Settings.OffensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive))),
-                    createUseFlaskAction(new List<FlaskActions> { FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ?  new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid} : null)))
+                new Decorator((x => Settings.OffensiveFlaskEnable &&
+                (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) ||
+                PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive))),
+                    createUseFlaskAction(new List<FlaskActions> { FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ? new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid } : null)))
             );
         }
 
@@ -209,12 +215,45 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return findFlaskMatchingAnyAction(new List<FlaskActions> { flaskAction }, instant, ignoreFlasksWithAction);
         }
 
-
-        private PlayerFlask findFlaskMatchingAnyAction (List<FlaskActions> flaskActions, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        //It seems horribly inefficient that we're going through all this trouble to create a list and then only using FirstOrDefault() from it.
+        private PlayerFlask findFlaskMatchingAnyAction(List<FlaskActions> flaskActions, Boolean? instant = null, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
         {
-            var allFlasks = FlaskHelper.getAllFlaskInfo();
+            List<PlayerFlask> allFlasks = FlaskHelper.getAllFlaskInfo();
+            if (!AreThereFlasksToUse(allFlasks))
+                return null;
+            LogFlasks(allFlasks);
 
-            // We have no flasks or settings for flasks?
+            var flaskList = GetListOfFlasksToUse(ignoreFlasksWithAction, allFlasks, flaskActions, instant);
+            if (flaskList == null || !flaskList.Any())
+            {
+                LogNoFlasks(flaskActions);
+                return null;
+            }
+            LogFlaskToUse(flaskActions, flaskList);
+
+            return flaskList.FirstOrDefault();
+        }
+
+        private List<PlayerFlask> GetListOfFlasksToUse(Func<List<FlaskActions>> ignoreFlasksWithAction, List<PlayerFlask> allFlasks, List<FlaskActions> flaskActions, bool? instant)
+        {
+            List<FlaskActions> ignoreFlaskActions = ignoreFlasksWithAction == null ? null : ignoreFlasksWithAction();
+
+            List<PlayerFlask> enabledFlasks = allFlasks.Where(x => Settings.FlaskSettings[x.Index].Enabled).ToList();
+            List<PlayerFlask> flasksWithValidActions = GetFlasksWithValidActions(enabledFlasks, flaskActions, ignoreFlaskActions);
+            List<PlayerFlask> notInstantFlasks = GetFlasksThatArentInstant(flasksWithValidActions, instant);
+            List<PlayerFlask> notInstantInactiveFlasks = GetInactiveBuffFlasks(notInstantFlasks);
+            List<PlayerFlask> instantFlasks = GetInstantFlasks(flasksWithValidActions, instant);
+            List<PlayerFlask> instantInactiveFlasks = GetInactiveBuffFlasks(instantFlasks);
+
+            var flaskList = new List<PlayerFlask>();
+            flaskList.AddRange(notInstantInactiveFlasks);
+            flaskList.AddRange(instantInactiveFlasks);
+            flaskList.OrderByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses);
+            return flaskList;
+        }
+        
+        private bool AreThereFlasksToUse(List<PlayerFlask> allFlasks)
+        {
             if (allFlasks == null || Settings.FlaskSettings == null)
             {
                 if (Settings.Debug)
@@ -224,10 +263,48 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     else if (Settings.FlaskSettings == null)
                         LogMessage(PluginName + ": Flask settings were null. Hopefully doesn't happen frequently.", 5);
                 }
-
-                return null;
+                return false;
             }
+            return true;
+        }
 
+        private List<PlayerFlask> GetFlasksWithValidActions(List<PlayerFlask> enabledFlasks, List<FlaskActions> validActions, List<FlaskActions> ignoreActions)
+        {
+            return enabledFlasks.Where(x =>
+                       (validActions.Contains(x.Action1) || validActions.Contains(x.Action2)) // Find any flask that matches the actions sent in
+                       && (ignoreActions == null || !ignoreActions.Contains(x.Action1) && !ignoreActions.Contains(x.Action2)) // Do not choose ignored flask types
+                       && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses) // Do not return flasks we can't use
+                       ).ToList();
+        }
+
+        private List<PlayerFlask> GetFlasksThatArentInstant(List<PlayerFlask> flasksWithValidActions, bool? instant)
+        {
+            return flasksWithValidActions.Where(x =>
+                     (instant == null || (instant == false
+                         && (x.InstantType == FlaskInstantType.None || x.InstantType == FlaskInstantType.Partial && !Settings.ForceBubblingAsInstantOnly
+                         || x.InstantType == FlaskInstantType.LowLife && !Settings.ForcePanickedAsInstantOnly)
+                     ))).ToList();
+        }
+
+        private List<PlayerFlask> GetInactiveBuffFlasks(List<PlayerFlask> possiblyActiveFlasks)
+        {
+            return possiblyActiveFlasks.Where(x =>
+                !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1 }) || 
+                !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString2 })
+            ).ToList();
+        }
+
+        private List<PlayerFlask> GetInstantFlasks(List<PlayerFlask> flasksWithValidActions, bool? instant)
+        {
+            return flasksWithValidActions.Where(x =>
+                instant == true && 
+                    (x.InstantType == FlaskInstantType.Partial || x.InstantType == FlaskInstantType.Full || 
+                    x.InstantType == FlaskInstantType.LowLife && PlayerHelper.isHealthBelowPercentage(35))
+                ).ToList();
+        }
+
+        private void LogFlasks(List<PlayerFlask> allFlasks)
+        {
             if (Settings.Debug)
             {
                 foreach (var flask in allFlasks)
@@ -235,43 +312,19 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     LogMessage(PluginName + ": Flask: " + flask.Name + " Instant: " + flask.InstantType.ToString() + " Action1: " + flask.Action1 + " Action2: " + flask.Action2, 5);
                 }
             }
+        }
 
-            List<FlaskActions> ignoreFlaskActions = ignoreFlasksWithAction == null ? null : ignoreFlasksWithAction();
+        private void LogNoFlasks(List<FlaskActions> flaskActions)
+        {
+            if (Settings.Debug)
+                LogError(PluginName + ": No flasks found for action: " + flaskActions[0], 1);
+        }
 
-            var flaskList = allFlasks
-                    .Where(x =>
-                    // Below are cheap operations and should be done first
-                    Settings.FlaskSettings[x.Index].Enabled // Only search for enabled flasks
-                    && (flaskActions.Contains(x.Action1) || flaskActions.Contains(x.Action2)) // Find any flask that matches the actions sent in
-                    && (ignoreFlaskActions == null || !ignoreFlasksWithAction().Contains(x.Action1) && !ignoreFlasksWithAction().Contains(x.Action2)) // Do not choose ignored flask types
-                    && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses) // Do not return flasks we can't use
-                    // If we don't care if it is instant or not... we don't care to even check buffs
-                    && (instant == null
-                        // If we don't care about instant, OR we want a standard flasks AND
-                        || (instant == false
-                                // Ensure the flask is NOT considered instant right now
-                                && (x.InstantType == FlaskInstantType.None // The flask is not instant
-                                    || x.InstantType == FlaskInstantType.Partial && !Settings.ForceBubblingAsInstantOnly // OR the flask is partially instant, and we aren't forcing as only instant
-                                    || x.InstantType == FlaskInstantType.LowLife && !Settings.ForcePanickedAsInstantOnly)  // OR the flask is a low life instant, and we aren't forcing it as only instant
-                                // Ensure we don't already have a flask of this type popped
-                                && !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { x.BuffString2 })
-                           )
-                        // Only select flasks that are considered instant right now
-                        || instant == true && (x.InstantType == FlaskInstantType.Partial || x.InstantType == FlaskInstantType.Full || x.InstantType == FlaskInstantType.LowLife && PlayerHelper.isHealthBelowPercentage(35))) // If we want instant only, then search only instant flasks. Only count LowLife as instant if we are low life
-                    ).OrderByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
-
-
-            if (flaskList == null || !flaskList.Any())
-            {
-                if (Settings.Debug)
-                    LogError(PluginName + ": No flasks found for action: " + flaskActions[0], 1);
-                return null;
-            }
-
+        private void LogFlaskToUse(List<FlaskActions> flaskActions, List<PlayerFlask> flaskList)
+        {
             if (Settings.Debug)
                 LogMessage(PluginName + ": Flask(s) found for action: " + flaskActions[0] + " Flask Count: " + flaskList.Count(), 1);
 
-            return flaskList.FirstOrDefault();
         }
 
         private Decorator createCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null)
@@ -445,7 +498,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
                     Settings.DisableLifeSecUse.Value = ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage", Settings.DisableLifeSecUse);
 
-                    ImGuiExtension.SpacedTextHeader("Mana Flask"); 
+                    ImGuiExtension.SpacedTextHeader("Mana Flask");
                     ImGui.Spacing(); Settings.ManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Mana Flask", Settings.ManaPotion);
                     Settings.InstantManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Instant MP Flask", Settings.InstantManaPotion);
                     Settings.MinManaFlask.Value = ImGuiExtension.IntSlider("Min Mana Auto Mana Flask", Settings.MinManaFlask);
