@@ -14,6 +14,7 @@ using ImGuiNET;
 using PoeHUD.Framework;
 using PoeHUD.Framework.Helpers;
 using System.Diagnostics;
+using PoeHUD.Models;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
@@ -26,6 +27,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         public Composite Tree { get; set; }
         private Coroutine TreeCoroutine { get; set; }
+        public List<EntityWrapper> LoadedMonsters { get; protected set; } = new List<EntityWrapper>();
 
 
         private KeyboardHelper KeyboardHelper { get; set; } = null;
@@ -153,7 +155,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite createDefensivePotionComposite()
         {
-            return new Decorator((x => Settings.DefensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentDefensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentDefensive))),
+            return new Decorator((x => Settings.DefensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentDefensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentDefensive) || Settings.DefensiveMonsterCount > 0 && hasEnoughNearbyMonsters(Settings.DefensiveMonsterCount, Settings.DefensiveMonsterDistance, Settings.DefensiveCountNormalMonsters, Settings.DefensiveCountRareMonsters, Settings.DefensiveCountMagicMonsters, Settings.DefensiveCountUniqueMonsters))),
                 new PrioritySelector(
                     createUseFlaskAction(FlaskActions.Defense),
                     new Decorator((x => Settings.OffensiveAsDefensiveEnable), createUseFlaskAction(new List<FlaskActions> { FlaskActions.OFFENSE_AND_SPEEDRUN, FlaskActions.Defense }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ? new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid } : null)))
@@ -164,7 +166,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         private Composite createOffensivePotionComposite()
         {
             return new PrioritySelector(
-                new Decorator((x => Settings.OffensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive))),
+                new Decorator((x => Settings.OffensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive) || Settings.OffensiveMonsterCount > 0 && hasEnoughNearbyMonsters(Settings.OffensiveMonsterCount, Settings.OffensiveMonsterDistance, Settings.OffensiveCountNormalMonsters, Settings.OffensiveCountRareMonsters, Settings.OffensiveCountMagicMonsters, Settings.OffensiveCountUniqueMonsters))),
                     createUseFlaskAction(new List<FlaskActions> { FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ?  new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid} : null)))
             );
         }
@@ -202,6 +204,56 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
                 return Settings.FlaskSettings[foundFlask.Index].Hotkey;
             });
+        }
+
+        private Boolean hasEnoughNearbyMonsters(int minimumMonsterCount, int maxDistance, bool countNormal, bool countRare, bool countMagic, bool countUnique)
+        {
+            var mobCount = 0;
+            var maxDistanceSquare = maxDistance * maxDistance;
+
+            var playerPosition = GameController.Player.Pos;
+
+            // Make sure we create our own list to iterate as we may be adding/removing from the list
+            foreach (var monster in new List<PoeHUD.Models.EntityWrapper>(LoadedMonsters))
+            {
+                if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile)
+                    continue;
+
+                var monsterType = monster.GetComponent<ObjectMagicProperties>().Rarity;
+
+                // Don't count this monster type if we are ignoring it
+                if (monsterType == MonsterRarity.White && !countNormal
+                    || monsterType == MonsterRarity.Rare && !countRare
+                    || monsterType == MonsterRarity.Magic && !countMagic
+                    || monsterType == MonsterRarity.Unique && !countUnique)
+                    continue;
+
+                var monsterPosition = monster.Pos;
+
+                var xDiff = playerPosition.X - monsterPosition.X;
+                var yDiff = playerPosition.Y - monsterPosition.Y;
+                var monsterDistanceSquare = (xDiff * xDiff + yDiff * yDiff);
+
+                if (monsterDistanceSquare <= maxDistanceSquare)
+                {
+                    mobCount++;
+                }
+
+                if (mobCount >= minimumMonsterCount)
+                {
+                    if (Settings.Debug)
+                    {
+                        Log("NearbyMonstersCondition returning true because " + mobCount + " mobs valid monsters were found nearby.", 2);
+                    }
+                    return true;
+                }
+            }
+
+            if (Settings.Debug)
+            {
+                Log("NearbyMonstersCondition returning false because " + mobCount + " mobs valid monsters were found nearby.", 2);
+            }
+            return false;
         }
 
         private PlayerFlask findFlaskMatchingAnyAction(FlaskActions flaskAction, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
@@ -510,6 +562,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.HPPercentDefensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentDefensive);
                     Settings.ESPercentDefensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentDefensive);
                     Settings.OffensiveAsDefensiveEnable.Value = ImGuiExtension.Checkbox("Use offensive flasks for defense", Settings.OffensiveAsDefensiveEnable);
+                    ImGui.Separator();
+
+                    Settings.DefensiveMonsterCount.Value = ImGuiExtension.IntSlider("Monster Count", Settings.DefensiveMonsterCount);
+                    Settings.DefensiveMonsterDistance.Value = ImGuiExtension.IntSlider("Monster Distance", Settings.DefensiveMonsterDistance);
+                    Settings.DefensiveCountNormalMonsters = ImGuiExtension.Checkbox("Normal Monsters", Settings.DefensiveCountNormalMonsters);
+                    Settings.DefensiveCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.DefensiveCountRareMonsters);
+                    Settings.DefensiveCountMagicMonsters = ImGuiExtension.Checkbox("Magic Monsters", Settings.DefensiveCountMagicMonsters);
+                    Settings.DefensiveCountUniqueMonsters = ImGuiExtension.Checkbox("Unique Monsters", Settings.DefensiveCountUniqueMonsters);
                     ImGui.TreePop();
                 }
 
@@ -520,6 +580,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     ImGui.Separator();
                     Settings.HPPercentOffensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentOffensive);
                     Settings.ESPercentOffensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentOffensive);
+                    ImGui.Separator();
+                    Settings.OffensiveMonsterCount.Value = ImGuiExtension.IntSlider("Monster Count", Settings.OffensiveMonsterCount);
+                    Settings.OffensiveMonsterDistance.Value = ImGuiExtension.IntSlider("Monster Distance", Settings.OffensiveMonsterDistance);
+                    Settings.OffensiveCountNormalMonsters = ImGuiExtension.Checkbox("Normal Monsters", Settings.OffensiveCountNormalMonsters);
+                    Settings.OffensiveCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.OffensiveCountRareMonsters);
+                    Settings.OffensiveCountMagicMonsters = ImGuiExtension.Checkbox("Magic Monsters", Settings.OffensiveCountMagicMonsters);
+                    Settings.OffensiveCountUniqueMonsters = ImGuiExtension.Checkbox("Unique Monsters", Settings.OffensiveCountUniqueMonsters);
+
                     ImGui.TreePop();
                 }
                 ImGui.TreePop();
@@ -548,6 +616,19 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
                 ImGui.TreePop();
             }
+        }
+
+        public override void EntityAdded(EntityWrapper entityWrapper)
+        {
+            if (entityWrapper.HasComponent<Monster>())
+            {
+                LoadedMonsters.Add(entityWrapper);
+            }
+        }
+
+        public override void EntityRemoved(EntityWrapper entityWrapper)
+        {
+            LoadedMonsters.Remove(entityWrapper);
         }
     }
 }

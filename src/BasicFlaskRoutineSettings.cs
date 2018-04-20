@@ -45,9 +45,24 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public RangeNode<int> ESPercentDefensive { get; set; } = new RangeNode<int>(50, 0, 100);
         public ToggleNode OffensiveAsDefensiveEnable { get; set; } = false;
 
+        public RangeNode<int> DefensiveMonsterCount { get; set; } = new RangeNode<int>(0, 0, 30);
+        public RangeNode<int> DefensiveMonsterDistance { get; set; } = new RangeNode<int>(400, 0, 1500);
+        public ToggleNode DefensiveCountNormalMonsters { get; set; } = false;
+        public ToggleNode DefensiveCountRareMonsters { get; set; } = false;
+        public ToggleNode DefensiveCountMagicMonsters { get; set; } = false;
+        public ToggleNode DefensiveCountUniqueMonsters { get; set; } = false;
+
+
         public ToggleNode OffensiveFlaskEnable { get; set; } = false;
         public RangeNode<int> HPPercentOffensive { get; set; } = new RangeNode<int>(50, 0, 100);
         public RangeNode<int> ESPercentOffensive { get; set; } = new RangeNode<int>(50, 0, 100);
+
+        public RangeNode<int> OffensiveMonsterCount { get; set; } = new RangeNode<int>(0, 0, 30);
+        public RangeNode<int> OffensiveMonsterDistance { get; set; } = new RangeNode<int>(400, 0, 1500);
+        public ToggleNode OffensiveCountNormalMonsters { get; set; } = false;
+        public ToggleNode OffensiveCountRareMonsters { get; set; } = false;
+        public ToggleNode OffensiveCountMagicMonsters { get; set; } = false;
+        public ToggleNode OffensiveCountUniqueMonsters { get; set; } = false;
 
         public FlaskSetting[] FlaskSettings { get; set; } = new FlaskSetting[5]
         {
