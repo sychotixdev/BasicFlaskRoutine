@@ -293,7 +293,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     .Where(x =>
                     Settings.FlaskSettings[x.Index].Enabled
                     && flaskHasAvailableAction(flaskActions, ignoreFlaskActions, x)
-                    && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses)
+                    && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses, instant == null)
                     && FlaskMatchesInstant(x, instant)
                     && (ignoreBuffs || MissingFlaskBuff(x))
                     ).OrderByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
