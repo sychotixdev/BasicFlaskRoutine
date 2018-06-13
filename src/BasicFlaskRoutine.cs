@@ -296,7 +296,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses, instant == null)
                     && FlaskMatchesInstant(x, instant)
                     && (ignoreBuffs || MissingFlaskBuff(x))
-                    ).OrderByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
+                    ).OrderByDescending(x => flaskActions.Contains(x.Action1)).ThenByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
 
 
             if (flaskList == null || !flaskList.Any())
