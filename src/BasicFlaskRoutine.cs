@@ -175,27 +175,27 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator(x => Settings.RemAilment,
                 new PrioritySelector(
-                    new Decorator(x => Settings.RemBleed, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Bleeding, createUseFlaskAction(FlaskActions.BleedImmune))),
-                    new Decorator(x => Settings.RemBurning, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Burning, createUseFlaskAction(FlaskActions.IgniteImmune))),
-                    createCurableDebuffDecorator(Cache.DebuffPanelConfig.Corruption, createUseFlaskAction(FlaskActions.BleedImmune), (() => Settings.CorruptCount)),
-                    new Decorator(x => Settings.RemFrozen, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Frozen, createUseFlaskAction(FlaskActions.FreezeImmune))),
-                    new Decorator(x => Settings.RemPoison, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Poisoned, createUseFlaskAction(FlaskActions.PoisonImmune))),
-                    new Decorator(x => Settings.RemShocked, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Shocked, createUseFlaskAction(FlaskActions.ShockImmune))),
-                    new Decorator(x => Settings.RemCurse, createCurableDebuffDecorator(Cache.DebuffPanelConfig.WeakenedSlowed, createUseFlaskAction(FlaskActions.CurseImmune)))
+                    new Decorator(x => Settings.RemBleed, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Bleeding, createUseFlaskAction(FlaskActions.BleedImmune, isCleansing:true))),
+                    new Decorator(x => Settings.RemBurning, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Burning, createUseFlaskAction(FlaskActions.IgniteImmune, isCleansing: true))),
+                    createCurableDebuffDecorator(Cache.DebuffPanelConfig.Corruption, createUseFlaskAction(FlaskActions.BleedImmune, isCleansing: true), (() => Settings.CorruptCount)),
+                    new Decorator(x => Settings.RemFrozen, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Frozen, createUseFlaskAction(FlaskActions.FreezeImmune, isCleansing: true))),
+                    new Decorator(x => Settings.RemPoison, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Poisoned, createUseFlaskAction(FlaskActions.PoisonImmune, isCleansing: true))),
+                    new Decorator(x => Settings.RemShocked, createCurableDebuffDecorator(Cache.DebuffPanelConfig.Shocked, createUseFlaskAction(FlaskActions.ShockImmune, isCleansing: true))),
+                    new Decorator(x => Settings.RemCurse, createCurableDebuffDecorator(Cache.DebuffPanelConfig.WeakenedSlowed, createUseFlaskAction(FlaskActions.CurseImmune, isCleansing: true)))
                     )
                 );
         }
 
-        private Composite createUseFlaskAction(FlaskActions flaskAction, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private Composite createUseFlaskAction(FlaskActions flaskAction, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null, Boolean isCleansing = false)
         {
-            return createUseFlaskAction(new List<FlaskActions> { flaskAction }, instant, ignoreBuffs, ignoreFlasksWithAction);
+            return createUseFlaskAction(new List<FlaskActions> { flaskAction }, instant, ignoreBuffs, ignoreFlasksWithAction, isCleansing);
         }
 
-        private Composite createUseFlaskAction(List<FlaskActions> flaskActions, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private Composite createUseFlaskAction(List<FlaskActions> flaskActions, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null, Boolean isCleansing = false)
         {
             return new UseHotkeyAction(KeyboardHelper, x =>
             {
-                var foundFlask = findFlaskMatchingAnyAction(flaskActions, instant, ignoreBuffs, ignoreFlasksWithAction);
+                var foundFlask = findFlaskMatchingAnyAction(flaskActions, instant, ignoreBuffs, ignoreFlasksWithAction, isCleansing);
 
                 if (foundFlask == null)
                 {
@@ -256,12 +256,12 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return false;
         }
 
-        private PlayerFlask findFlaskMatchingAnyAction(FlaskActions flaskAction, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private PlayerFlask findFlaskMatchingAnyAction(FlaskActions flaskAction, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null, Boolean isCleansing = false)
         {
-            return findFlaskMatchingAnyAction(new List<FlaskActions> { flaskAction }, instant, ignoreBuffs, ignoreFlasksWithAction);
+            return findFlaskMatchingAnyAction(new List<FlaskActions> { flaskAction }, instant, ignoreBuffs, ignoreFlasksWithAction, isCleansing);
         }
 
-        private PlayerFlask findFlaskMatchingAnyAction(List<FlaskActions> flaskActions, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null)
+        private PlayerFlask findFlaskMatchingAnyAction(List<FlaskActions> flaskActions, Boolean? instant = null, Boolean ignoreBuffs = false, Func<List<FlaskActions>> ignoreFlasksWithAction = null, Boolean isCleansing = false)
         {
             var allFlasks = FlaskHelper.getAllFlaskInfo();
 
@@ -293,7 +293,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     .Where(x =>
                     Settings.FlaskSettings[x.Index].Enabled
                     && flaskHasAvailableAction(flaskActions, ignoreFlaskActions, x)
-                    && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses, instant == null)
+                    && FlaskHelper.canUsePotion(x, Settings.FlaskSettings[x.Index].ReservedUses, isCleansing)
                     && FlaskMatchesInstant(x, instant)
                     && (ignoreBuffs || MissingFlaskBuff(x))
                     ).OrderByDescending(x => flaskActions.Contains(x.Action1)).ThenByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
