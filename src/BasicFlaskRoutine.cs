@@ -82,7 +82,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return new Decorator(x => TreeHelper.canTick() && !PlayerHelper.isPlayerDead() && (!Cache.InHideout || Settings.EnableInHideout),
                     new PrioritySelector
                     (
-                        new Decorator(x => Settings.AutoFlask && !PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "grace_period" }),
+                        new Decorator(x => Settings.AutoFlask && PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "grace_period" }),
                         new PrioritySelector(
                             createInstantHPPotionComposite(),
                             createHPPotionComposite(),
