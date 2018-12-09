@@ -213,40 +213,46 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
             var playerPosition = GameController.Player.Pos;
 
-            // Make sure we create our own list to iterate as we may be adding/removing from the list
-            foreach (var monster in new List<PoeHUD.Models.EntityWrapper>(LoadedMonsters))
+            if (LoadedMonsters != null)
             {
-                if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile)
-                    continue;
-
-                var monsterType = monster.GetComponent<ObjectMagicProperties>().Rarity;
-
-                // Don't count this monster type if we are ignoring it
-                if (monsterType == MonsterRarity.White && !countNormal
-                    || monsterType == MonsterRarity.Rare && !countRare
-                    || monsterType == MonsterRarity.Magic && !countMagic
-                    || monsterType == MonsterRarity.Unique && !countUnique)
-                    continue;
-
-                var monsterPosition = monster.Pos;
-
-                var xDiff = playerPosition.X - monsterPosition.X;
-                var yDiff = playerPosition.Y - monsterPosition.Y;
-                var monsterDistanceSquare = (xDiff * xDiff + yDiff * yDiff);
-
-                if (monsterDistanceSquare <= maxDistanceSquare)
+                // Make sure we create our own list to iterate as we may be adding/removing from the list
+                foreach (var monster in new List<PoeHUD.Models.EntityWrapper>(LoadedMonsters))
                 {
-                    mobCount++;
-                }
+                    if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile)
+                        continue;
 
-                if (mobCount >= minimumMonsterCount)
-                {
-                    if (Settings.Debug)
+                    var monsterType = monster.GetComponent<ObjectMagicProperties>().Rarity;
+
+                    // Don't count this monster type if we are ignoring it
+                    if (monsterType == MonsterRarity.White && !countNormal
+                        || monsterType == MonsterRarity.Rare && !countRare
+                        || monsterType == MonsterRarity.Magic && !countMagic
+                        || monsterType == MonsterRarity.Unique && !countUnique)
+                        continue;
+
+                    var monsterPosition = monster.Pos;
+
+                    var xDiff = playerPosition.X - monsterPosition.X;
+                    var yDiff = playerPosition.Y - monsterPosition.Y;
+                    var monsterDistanceSquare = (xDiff * xDiff + yDiff * yDiff);
+
+                    if (monsterDistanceSquare <= maxDistanceSquare)
                     {
-                        Log("NearbyMonstersCondition returning true because " + mobCount + " mobs valid monsters were found nearby.", 2);
+                        mobCount++;
                     }
-                    return true;
+
+                    if (mobCount >= minimumMonsterCount)
+                    {
+                        if (Settings.Debug)
+                        {
+                            Log("NearbyMonstersCondition returning true because " + mobCount + " mobs valid monsters were found nearby.", 2);
+                        }
+                        return true;
+                    }
                 }
+            } else if (Settings.Debug)
+            {
+                Log("NearbyMonstersCondition returning false because mob list was invalid.", 2);
             }
 
             if (Settings.Debug)
