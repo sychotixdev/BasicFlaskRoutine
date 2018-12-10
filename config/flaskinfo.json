@@ -53,7 +53,8 @@
     "The Wise Oak": 8,
     "Witchfire Brew": 8,
     "Soul Ripper": 5,
-    "Soul Catcher":  5
+    "Soul Catcher": 5,
+    "JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect": 8
   },
   "FlaskTypes": {
     "Small Life Flask": 2,
