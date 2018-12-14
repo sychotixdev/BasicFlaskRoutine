@@ -54,7 +54,6 @@
     "Witchfire Brew": 8,
     "Soul Ripper": 5,
     "Soul Catcher": 5,
-    "JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect": 8,
     "Cinderswallow Urn": 16
   },
   "FlaskTypes": {
@@ -146,6 +145,7 @@
     "FlaskBuffEvasionWhileHealing": 5,
     "FlaskBuffResistancesWhileHealing": 5,
     "FlaskRemovesBleeding": 13,
-    "FlaskCurseImmunity": 14
+    "FlaskCurseImmunity": 14,
+	"JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect": 8
   }
 }
