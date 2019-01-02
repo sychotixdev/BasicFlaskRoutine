@@ -27,6 +27,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         public Composite Tree { get; set; }
         private Coroutine TreeCoroutine { get; set; }
+        public Object LoadedMonstersLock { get; set; } = new Object();
         public List<EntityWrapper> LoadedMonsters { get; protected set; } = new List<EntityWrapper>();
 
 
@@ -215,8 +216,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
             if (LoadedMonsters != null)
             {
+                List<PoeHUD.Models.EntityWrapper> localLoadedMonsters = null;
+                lock (LoadedMonstersLock)
+                {
+                    localLoadedMonsters = new List<PoeHUD.Models.EntityWrapper>(LoadedMonsters);
+                }
+
                 // Make sure we create our own list to iterate as we may be adding/removing from the list
-                foreach (var monster in new List<PoeHUD.Models.EntityWrapper>(LoadedMonsters))
+                foreach (var monster in localLoadedMonsters)
                 {
                     if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile)
                         continue;
@@ -628,13 +635,19 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             if (entityWrapper.HasComponent<Monster>())
             {
-                LoadedMonsters.Add(entityWrapper);
+                lock (LoadedMonstersLock)
+                {
+                    LoadedMonsters.Add(entityWrapper);
+                }
             }
         }
 
         public override void EntityRemoved(EntityWrapper entityWrapper)
         {
-            LoadedMonsters.Remove(entityWrapper);
+            lock (LoadedMonstersLock)
+            {
+                LoadedMonsters.Remove(entityWrapper);
+            }
         }
     }
 }
