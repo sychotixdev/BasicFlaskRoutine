@@ -5,7 +5,6 @@ using TreeRoutine.Routine.BasicFlaskRoutine.Flask;
 using PoeHUD.Poe.Components;
 using System;
 using System.Collections.Generic;
-using TreeSharp;
 using SharpDX;
 using PoeHUD.Models.Enums;
 using System.Linq;
@@ -15,6 +14,7 @@ using PoeHUD.Framework;
 using PoeHUD.Framework.Helpers;
 using System.Diagnostics;
 using PoeHUD.Models;
+    using TreeRoutine.TreeSharp;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
@@ -296,7 +296,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             {
                 foreach (var flask in allFlasks)
                 {
-                    LogMessage(PluginName + ": Flask: " + flask.Name + " Instant: " + flask.InstantType.ToString() + " Action1: " + flask.Action1 + " Action2: " + flask.Action2, 5);
+                    LogMessage($"{PluginName}: Flask: {flask.Name} Slot: {flask.Index} Instant: {flask.InstantType} Action1: {flask.Action1} Action2: {flask.Action2}", 5);
                 }
             }
 

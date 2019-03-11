@@ -68,7 +68,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(POEHUD_PATH)\System.Numerics.Vectors.dll</HintPath>
       <Private>False</Private>
-    </Reference>    <Reference Include="System.Windows.Forms" />
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -86,16 +87,6 @@
     <ProjectReference Include="..\..\BaseTreeRoutine\src\TreeRoutine.csproj">
       <Project>{2975c63d-6c9a-4824-a619-380994a19ece}</Project>
       <Name>TreeRoutine</Name>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </ProjectReference>
-    <ProjectReference Include="..\..\PoEHUD\src\PoeHUD.csproj">
-      <Project>{e86368b2-ae1e-4489-a749-e29a0ab48f83}</Project>
-      <Name>PoeHUD</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TreeSharp\TreeSharp.csproj">
-      <Project>{0EFB3180-8092-494F-B42F-443B77034F67}</Project>
-      <Name>TreeSharp</Name>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
