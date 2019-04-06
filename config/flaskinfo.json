@@ -148,10 +148,12 @@
     "FlaskCurseImmunity": 14,
 	"JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect": 8,
 	"JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect1": 8,
+    "JunMaster2LocalFlaskCriticalStrikeChanceDuringFlaskEffect1": 8,
 	"JunMasterLocalFlaskLifeLeechOnDamageTakenPermyriadDuringFlaskEffect": 2,
     "JunMasterLocalFlaskItemFoundRarityDuringFlaskEffect": 0,
     "JunMasterLocalFlaskSkillManaCostDuringFlaskEffect": 8,
     "JunMasterLocalFlaskAvoidStunChanceAndMovementSpeedDuringFlaskEffect": 7,
     "JunMasterLocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect": 8
+
   }
 }
