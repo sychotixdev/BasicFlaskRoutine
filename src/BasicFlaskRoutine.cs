@@ -225,7 +225,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 // Make sure we create our own list to iterate as we may be adding/removing from the list
                 foreach (var monster in localLoadedMonsters)
                 {
-                    if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile || !monster.Invincible || !monster.CannotBeDamaged)
+                    if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile || monster.Invincible || monster.CannotBeDamaged)
                         continue;
 
                     var monsterType = monster.GetComponent<ObjectMagicProperties>().Rarity;
