@@ -87,7 +87,6 @@
     <ProjectReference Include="..\..\BaseTreeRoutine\src\TreeRoutine.csproj">
       <Project>{2975c63d-6c9a-4824-a619-380994a19ece}</Project>
       <Name>TreeRoutine</Name>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
