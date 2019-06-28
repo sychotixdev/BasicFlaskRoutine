@@ -1,3 +1,7 @@
 /src/bin/
 /src/obj/
-/.vs
+*.vs/
+*.pdb
+/*.sln
+ErrorLog.txt
+config.ini

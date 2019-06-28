@@ -18,6 +18,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         public RangeNode<int> HPPotion { get; set; } = new RangeNode<int>(65, 0, 100);
         public RangeNode<int> InstantHPPotion { get; set; } = new RangeNode<int>(35, 0, 100);
+
+        public ToggleNode EnableESAsLife { get; set; } = false;
+        public RangeNode<int> ESPotion { get; set; } = new RangeNode<int>(65, 0, 100);
+        public RangeNode<int> InstantESPotion { get; set; } = new RangeNode<int>(35, 0, 100);
+
         public ToggleNode DisableLifeSecUse { get; set; } = false;
 
         public RangeNode<int> ManaPotion { get; set; } = new RangeNode<int>(65, 0, 100);

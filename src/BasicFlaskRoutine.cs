@@ -1,4 +1,4 @@
-﻿    using TreeRoutine.DefaultBehaviors.Actions;
+﻿using TreeRoutine.DefaultBehaviors.Actions;
 using TreeRoutine.DefaultBehaviors.Helpers;
 using TreeRoutine.FlaskComponents;
 using TreeRoutine.Routine.BasicFlaskRoutine.Flask;
@@ -14,7 +14,7 @@ using PoeHUD.Framework;
 using PoeHUD.Framework.Helpers;
 using System.Diagnostics;
 using PoeHUD.Models;
-    using TreeRoutine.TreeSharp;
+using TreeRoutine.TreeSharp;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
@@ -85,7 +85,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     (
                         new Decorator(x => Settings.AutoFlask,
                         new PrioritySelector(
+                            CreateInstantESPotionComposite(),
                             CreateInstantHPPotionComposite(),
+                            CreateESPotionComposite(),
                             CreateHPPotionComposite(),
                             CreateInstantManaPotionComposite(),
                             CreateManaPotionComposite()
@@ -107,7 +109,16 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     CreateUseFlaskAction(FlaskActions.Hybrid, true, true)
                 )
             );
+        }
 
+        private Composite CreateInstantESPotionComposite()
+        {
+            return new Decorator((x => PlayerHelper.isEnergyShieldBelowPercentage(Settings.InstantESPotion)),
+                new PrioritySelector(
+                    CreateUseFlaskAction(FlaskActions.Life, true, true),
+                    CreateUseFlaskAction(FlaskActions.Hybrid, true, true)
+                )
+            );
         }
 
         private Composite CreateHPPotionComposite()
@@ -118,6 +129,18 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     CreateUseFlaskAction(FlaskActions.Life, false),
                     CreateUseFlaskAction(FlaskActions.Hybrid, false)
                     )
+                )
+            );
+        }
+
+        private Composite CreateESPotionComposite()
+        {
+            return new Decorator((x => PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPotion)),
+                new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_life" })),
+                 new PrioritySelector(
+                     CreateUseFlaskAction(FlaskActions.Life, false),
+                     CreateUseFlaskAction(FlaskActions.Hybrid, false)
+                     )
                 )
             );
         }
@@ -527,6 +550,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     ImGuiExtension.SpacedTextHeader("Health Flask");
                     Settings.HPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto HP Flask", Settings.HPPotion);
                     Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
+                    Settings.EnableESAsLife.Value = ImGuiExtension.Checkbox("Enable use Life/Hybrid Flasks to restore Energy Shield", Settings.EnableESAsLife);
+                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, Life-restore flasks will also be used to restore Energy Shield.");
+                    Settings.ESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto HP Flask", Settings.ESPotion);
+                    Settings.InstantESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto Instant HP Flask", Settings.InstantESPotion);
                     Settings.DisableLifeSecUse.Value = ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage", Settings.DisableLifeSecUse);
 
                     ImGuiExtension.SpacedTextHeader("Mana Flask"); 
