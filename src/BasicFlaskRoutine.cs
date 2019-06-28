@@ -115,8 +115,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator((x => PlayerHelper.isEnergyShieldBelowPercentage(Settings.InstantESPotion)),
                 new PrioritySelector(
-                    CreateUseFlaskAction(FlaskActions.Life, true, true),
-                    CreateUseFlaskAction(FlaskActions.Hybrid, true, true)
+                    new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Life, true, true)),
+                    new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Hybrid, true, true))
                 )
             );
         }
@@ -138,8 +138,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return new Decorator((x => PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPotion)),
                 new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_life" })),
                  new PrioritySelector(
-                     CreateUseFlaskAction(FlaskActions.Life, false),
-                     CreateUseFlaskAction(FlaskActions.Hybrid, false)
+                     new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Life, false)),
+                     new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Hybrid, false))
                      )
                 )
             );
@@ -373,7 +373,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return playerFlask.InstantType == FlaskInstantType.None
                     || playerFlask.InstantType == FlaskInstantType.Partial && !Settings.ForceBubblingAsInstantOnly
-                    || playerFlask.InstantType == FlaskInstantType.LowLife && !Settings.ForcePanickedAsInstantOnly;
+                    || playerFlask.InstantType == FlaskInstantType.LowLife && (!Settings.ForcePanickedAsInstantOnly || Settings.EnableEnergyShieldInsteadOfLife);
         }
 
         private bool MissingFlaskBuff(PlayerFlask playerFlask)
@@ -546,12 +546,13 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.ForceBubblingAsInstantOnly = ImGuiExtension.Checkbox("Force Bubbling as Instant only", Settings.ForceBubblingAsInstantOnly);
                     ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Bubbling mod will only be used as an instant flask.");
                     Settings.ForcePanickedAsInstantOnly = ImGuiExtension.Checkbox("Force Panicked as Instant only", Settings.ForcePanickedAsInstantOnly);
-                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Panicked mod will only be used as an instant flask. \nNote, Panicked will not be used until under 35%% with this enabled."); //
+                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Panicked mod will only be used as an instant flask. " +
+                                                          "\nNote, Panicked will not be used until under 35%% with this enabled."); //
                     ImGuiExtension.SpacedTextHeader("Health Flask");
                     Settings.HPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto HP Flask", Settings.HPPotion);
                     Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
-                    Settings.EnableESAsLife.Value = ImGuiExtension.Checkbox("Enable use Life/Hybrid Flasks to restore Energy Shield", Settings.EnableESAsLife);
-                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, Life-restore flasks will also be used to restore Energy Shield.");
+                    Settings.EnableEnergyShieldInsteadOfLife.Value = ImGuiExtension.Checkbox("Enable use Life/Hybrid Flasks to restore Energy Shield", Settings.EnableEnergyShieldInsteadOfLife);
+                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, Life-recovery flasks will also be used to recovery Energy Shield.");
                     Settings.ESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto HP Flask", Settings.ESPotion);
                     Settings.InstantESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto Instant HP Flask", Settings.InstantESPotion);
                     Settings.DisableLifeSecUse.Value = ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage", Settings.DisableLifeSecUse);
