@@ -1,4 +1,4 @@
-﻿    using TreeRoutine.DefaultBehaviors.Actions;
+﻿using TreeRoutine.DefaultBehaviors.Actions;
 using TreeRoutine.DefaultBehaviors.Helpers;
 using TreeRoutine.FlaskComponents;
 using TreeRoutine.Routine.BasicFlaskRoutine.Flask;
@@ -14,7 +14,7 @@ using PoeHUD.Framework;
 using PoeHUD.Framework.Helpers;
 using System.Diagnostics;
 using PoeHUD.Models;
-    using TreeRoutine.TreeSharp;
+using TreeRoutine.TreeSharp;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
@@ -85,7 +85,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     (
                         new Decorator(x => Settings.AutoFlask,
                         new PrioritySelector(
+                            CreateInstantESPotionComposite(),
                             CreateInstantHPPotionComposite(),
+                            CreateESPotionComposite(),
                             CreateHPPotionComposite(),
                             CreateInstantManaPotionComposite(),
                             CreateManaPotionComposite()
@@ -107,7 +109,16 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     CreateUseFlaskAction(FlaskActions.Hybrid, true, true)
                 )
             );
+        }
 
+        private Composite CreateInstantESPotionComposite()
+        {
+            return new Decorator((x => PlayerHelper.isEnergyShieldBelowPercentage(Settings.InstantESPotion)),
+                new PrioritySelector(
+                    new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Life, true, true)),
+                    new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Hybrid, true, true))
+                )
+            );
         }
 
         private Composite CreateHPPotionComposite()
@@ -118,6 +129,18 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     CreateUseFlaskAction(FlaskActions.Life, false),
                     CreateUseFlaskAction(FlaskActions.Hybrid, false)
                     )
+                )
+            );
+        }
+
+        private Composite CreateESPotionComposite()
+        {
+            return new Decorator((x => PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPotion)),
+                new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_life" })),
+                 new PrioritySelector(
+                     new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Life, false)),
+                     new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Hybrid, false))
+                     )
                 )
             );
         }
@@ -146,7 +169,20 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite CreateSpeedPotionComposite()
         {
-            return new Decorator((x => Settings.SpeedFlaskEnable && Settings.MinMsPlayerMoving <= PlayerMovingStopwatch.ElapsedMilliseconds && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint" }) && (!Settings.SilverFlaskEnable || PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_utility_haste" })))),
+            return new Decorator((x => Settings.SpeedFlaskEnable
+                                    && (Settings.MinMsPlayerMoving <= PlayerMovingStopwatch.ElapsedMilliseconds
+                                        || Settings.UseWhileCycloning
+                                            && IsCycloning()
+                                            // && (PlayerHelper.playerHasBuffs(new List<string>() { "cyclone_channelled_stage" })
+                                                    // && 
+                                        ) 
+                                    && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(
+                                        new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint" }) 
+                                        && (!Settings.SilverFlaskEnable 
+                                            || PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_utility_haste" })
+                                           )
+                                       )
+                                  ),
                 new PrioritySelector(
                     new Decorator((x => Settings.QuicksilverFlaskEnable), CreateUseFlaskAction(FlaskActions.Speedrun)),
                     new Decorator((x => Settings.SilverFlaskEnable), CreateUseFlaskAction(FlaskActions.OFFENSE_AND_SPEEDRUN))
@@ -350,12 +386,36 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return playerFlask.InstantType == FlaskInstantType.None
                     || playerFlask.InstantType == FlaskInstantType.Partial && !Settings.ForceBubblingAsInstantOnly
-                    || playerFlask.InstantType == FlaskInstantType.LowLife && !Settings.ForcePanickedAsInstantOnly;
+                    || playerFlask.InstantType == FlaskInstantType.LowLife && (!Settings.ForcePanickedAsInstantOnly || Settings.EnableEnergyShieldInsteadOfLife);
         }
 
         private bool MissingFlaskBuff(PlayerFlask playerFlask)
         {
             return !PlayerHelper.playerHasBuffs(new List<string> { playerFlask.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { playerFlask.BuffString2 });
+        }
+
+        private bool IsCycloning()
+        {
+            try
+            {
+                foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
+                {
+                    bool isCycloneBuff = buff.Name.ToLower().Equals("cyclone_channelled_stage");
+
+                    if (isCycloneBuff)
+                    {
+                        return float.IsInfinity(buff.Timer);
+                    }
+
+                }
+            }
+            catch
+            {
+                if (Settings.Debug)
+                    LogError("BasicFlaskRoutine: Using Speed Flasks while Cycloning is enabled, but cannot get player buffs. Try to update PoeHUD.", 5);
+            }
+
+            return false;
         }
 
         private Decorator CreateCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null)
@@ -523,10 +583,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.ForceBubblingAsInstantOnly = ImGuiExtension.Checkbox("Force Bubbling as Instant only", Settings.ForceBubblingAsInstantOnly);
                     ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Bubbling mod will only be used as an instant flask.");
                     Settings.ForcePanickedAsInstantOnly = ImGuiExtension.Checkbox("Force Panicked as Instant only", Settings.ForcePanickedAsInstantOnly);
-                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Panicked mod will only be used as an instant flask. \nNote, Panicked will not be used until under 35%% with this enabled."); //
+                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Panicked mod will only be used as an instant flask. " +
+                                                          "\nNote, Panicked will not be used until under 35%% with this enabled."); //
                     ImGuiExtension.SpacedTextHeader("Health Flask");
                     Settings.HPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto HP Flask", Settings.HPPotion);
                     Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
+                    Settings.EnableEnergyShieldInsteadOfLife.Value = ImGuiExtension.Checkbox("Enable use Life/Hybrid Flasks to restore Energy Shield", Settings.EnableEnergyShieldInsteadOfLife);
+                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, Life-recovery flasks will also be used to recovery Energy Shield.");
+                    Settings.ESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto HP Flask", Settings.ESPotion);
+                    Settings.InstantESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto Instant HP Flask", Settings.InstantESPotion);
                     Settings.DisableLifeSecUse.Value = ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage", Settings.DisableLifeSecUse);
 
                     ImGuiExtension.SpacedTextHeader("Mana Flask"); 
@@ -564,6 +629,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
                     ImGuiExtension.SpacedTextHeader("Settings");
                     Settings.MinMsPlayerMoving.Value = ImGuiExtension.IntSlider("Milliseconds Spent Moving", Settings.MinMsPlayerMoving); ImGuiExtension.ToolTipWithText("(?)", "Milliseconds spent moving before flask will be used.\n1000 milliseconds = 1 second");
+
+                    ImGuiExtension.SpacedTextHeader("Cyclone");
+                    Settings.UseWhileCycloning.Value = ImGuiExtension.Checkbox("Using Speed Flasks while Cycloning", Settings.UseWhileCycloning);
                     ImGui.TreePop();
                 }
 
