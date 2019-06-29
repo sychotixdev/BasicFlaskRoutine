@@ -39,11 +39,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode RemBleed { get; set; } = false;
         public RangeNode<int> CorruptCount { get; set; } = new RangeNode<int>(10, 0, 20);
 
-
         public ToggleNode SpeedFlaskEnable { get; set; } = false;
         public ToggleNode QuicksilverFlaskEnable { get; set; } = false;
         public ToggleNode SilverFlaskEnable { get; set; } = false;
         public RangeNode<int> MinMsPlayerMoving { get; set; } = new RangeNode<int>(1500, 1, 10000);
+        public ToggleNode UseWhileCycloning { get; set; } = false;
 
         public ToggleNode DefensiveFlaskEnable { get; set; } = false;
         public RangeNode<int> HPPercentDefensive { get; set; } = new RangeNode<int>(50, 0, 100);
