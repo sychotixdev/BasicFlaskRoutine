@@ -171,11 +171,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator((x => Settings.SpeedFlaskEnable
                                     && (Settings.MinMsPlayerMoving <= PlayerMovingStopwatch.ElapsedMilliseconds
-                                        || Settings.UseWhileCycloning
-                                            && IsCycloning()
-                                            // && (PlayerHelper.playerHasBuffs(new List<string>() { "cyclone_channelled_stage" })
-                                                    // && 
-                                        ) 
+                                        || Settings.UseWhileCycloning && IsCycloning()
+										) 
                                     && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(
                                         new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint" }) 
                                         && (!Settings.SilverFlaskEnable 
