@@ -85,9 +85,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     (
                         new Decorator(x => Settings.AutoFlask,
                         new PrioritySelector(
-                            CreateInstantESPotionComposite(),
                             CreateInstantHPPotionComposite(),
-                            CreateESPotionComposite(),
                             CreateHPPotionComposite(),
                             CreateInstantManaPotionComposite(),
                             CreateManaPotionComposite()
@@ -103,7 +101,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite CreateInstantHPPotionComposite()
         {
-            return new Decorator((x => PlayerHelper.isHealthBelowPercentage(Settings.InstantHPPotion)),
+            return new Decorator((x => PlayerHelper.isHealthBelowPercentage(Settings.InstantHPPotion) 
+                                        || (Settings.AllocatedSupremeDecadence && PlayerHelper.isEnergyShieldBelowPercentage(Settings.InstantESPotion))
+                                ),
                 new PrioritySelector(
                     CreateUseFlaskAction(FlaskActions.Life, true, true),
                     CreateUseFlaskAction(FlaskActions.Hybrid, true, true)
@@ -111,36 +111,16 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             );
         }
 
-        private Composite CreateInstantESPotionComposite()
-        {
-            return new Decorator((x => PlayerHelper.isEnergyShieldBelowPercentage(Settings.InstantESPotion)),
-                new PrioritySelector(
-                    new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Life, true, true)),
-                    new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Hybrid, true, true))
-                )
-            );
-        }
-
         private Composite CreateHPPotionComposite()
         {
-            return new Decorator((x => PlayerHelper.isHealthBelowPercentage(Settings.HPPotion)),
+            return new Decorator((x => PlayerHelper.isHealthBelowPercentage(Settings.HPPotion)
+                                        || (Settings.AllocatedSupremeDecadence && PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPotion))
+                                ),
                 new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_life" })),
                  new PrioritySelector(
                     CreateUseFlaskAction(FlaskActions.Life, false),
                     CreateUseFlaskAction(FlaskActions.Hybrid, false)
                     )
-                )
-            );
-        }
-
-        private Composite CreateESPotionComposite()
-        {
-            return new Decorator((x => PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPotion)),
-                new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_life" })),
-                 new PrioritySelector(
-                     new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Life, false)),
-                     new Decorator((x => Settings.EnableEnergyShieldInsteadOfLife), CreateUseFlaskAction(FlaskActions.Hybrid, false))
-                     )
                 )
             );
         }
@@ -171,15 +151,18 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator((x => Settings.SpeedFlaskEnable
                                     && (Settings.MinMsPlayerMoving <= PlayerMovingStopwatch.ElapsedMilliseconds
-                                        || Settings.UseWhileCycloning && IsCycloning()
-										) 
-                                    && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(
-                                        new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint" }) 
+                                        || Settings.UseWhileCycloning 
+                                            && IsCycloning() 
+                                            && (Settings.CycloningMonsterCount == 0 
+                                                || HasEnoughNearbyMonsters(Settings.CycloningMonsterCount, 
+                                                                           Settings.CycloningMonsterDistance, 
+                                                                           Settings.CycloningCountNormalMonsters, 
+                                                                           Settings.CycloningCountRareMonsters, 
+                                                                           Settings.CycloningCountMagicMonsters, 
+                                                                           Settings.CycloningCountUniqueMonsters))) 
+                                    && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint" }) 
                                         && (!Settings.SilverFlaskEnable 
-                                            || PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_utility_haste" })
-                                           )
-                                       )
-                                  ),
+                                            || PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_utility_haste" })))),
                 new PrioritySelector(
                     new Decorator((x => Settings.QuicksilverFlaskEnable), CreateUseFlaskAction(FlaskActions.Speedrun)),
                     new Decorator((x => Settings.SilverFlaskEnable), CreateUseFlaskAction(FlaskActions.OFFENSE_AND_SPEEDRUN))
@@ -383,7 +366,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return playerFlask.InstantType == FlaskInstantType.None
                     || playerFlask.InstantType == FlaskInstantType.Partial && !Settings.ForceBubblingAsInstantOnly
-                    || playerFlask.InstantType == FlaskInstantType.LowLife && (!Settings.ForcePanickedAsInstantOnly || Settings.EnableEnergyShieldInsteadOfLife);
+                    || playerFlask.InstantType == FlaskInstantType.LowLife && (!Settings.ForcePanickedAsInstantOnly || Settings.AllocatedSupremeDecadence);
         }
 
         private bool MissingFlaskBuff(PlayerFlask playerFlask)
@@ -585,7 +568,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     ImGuiExtension.SpacedTextHeader("Health Flask");
                     Settings.HPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto HP Flask", Settings.HPPotion);
                     Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
-                    Settings.EnableEnergyShieldInsteadOfLife.Value = ImGuiExtension.Checkbox("Enable use Life/Hybrid Flasks to restore Energy Shield", Settings.EnableEnergyShieldInsteadOfLife);
+                    Settings.AllocatedSupremeDecadence.Value = ImGuiExtension.Checkbox("Enable use Life/Hybrid Flasks to restore Energy Shield", Settings.AllocatedSupremeDecadence);
                     ImGuiExtension.ToolTipWithText("(?)", "When enabled, Life-recovery flasks will also be used to recovery Energy Shield.");
                     Settings.ESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto HP Flask", Settings.ESPotion);
                     Settings.InstantESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto Instant HP Flask", Settings.InstantESPotion);
@@ -629,6 +612,13 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
                     ImGuiExtension.SpacedTextHeader("Cyclone");
                     Settings.UseWhileCycloning.Value = ImGuiExtension.Checkbox("Using Speed Flasks while Cycloning", Settings.UseWhileCycloning);
+                    Settings.CycloningMonsterCount.Value = ImGuiExtension.IntSlider("Monster Count", Settings.CycloningMonsterCount);
+                    ImGuiExtension.ToolTipWithText("(?)","Set to 0 to disable.");
+                    Settings.CycloningMonsterDistance.Value = ImGuiExtension.IntSlider("Monster Distance", Settings.CycloningMonsterDistance);
+                    Settings.CycloningCountNormalMonsters = ImGuiExtension.Checkbox("Normal Monsters", Settings.CycloningCountNormalMonsters);
+                    Settings.CycloningCountMagicMonsters = ImGuiExtension.Checkbox("Magic Monsters", Settings.CycloningCountMagicMonsters);
+                    Settings.CycloningCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.CycloningCountRareMonsters);
+                    Settings.CycloningCountUniqueMonsters = ImGuiExtension.Checkbox("Unique Monsters", Settings.CycloningCountUniqueMonsters);
                     ImGui.TreePop();
                 }
 
@@ -645,8 +635,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.DefensiveMonsterCount.Value = ImGuiExtension.IntSlider("Monster Count", Settings.DefensiveMonsterCount);
                     Settings.DefensiveMonsterDistance.Value = ImGuiExtension.IntSlider("Monster Distance", Settings.DefensiveMonsterDistance);
                     Settings.DefensiveCountNormalMonsters = ImGuiExtension.Checkbox("Normal Monsters", Settings.DefensiveCountNormalMonsters);
-                    Settings.DefensiveCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.DefensiveCountRareMonsters);
                     Settings.DefensiveCountMagicMonsters = ImGuiExtension.Checkbox("Magic Monsters", Settings.DefensiveCountMagicMonsters);
+                    Settings.DefensiveCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.DefensiveCountRareMonsters);
                     Settings.DefensiveCountUniqueMonsters = ImGuiExtension.Checkbox("Unique Monsters", Settings.DefensiveCountUniqueMonsters);
                     ImGui.TreePop();
                 }
@@ -662,8 +652,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.OffensiveMonsterCount.Value = ImGuiExtension.IntSlider("Monster Count", Settings.OffensiveMonsterCount);
                     Settings.OffensiveMonsterDistance.Value = ImGuiExtension.IntSlider("Monster Distance", Settings.OffensiveMonsterDistance);
                     Settings.OffensiveCountNormalMonsters = ImGuiExtension.Checkbox("Normal Monsters", Settings.OffensiveCountNormalMonsters);
-                    Settings.OffensiveCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.OffensiveCountRareMonsters);
                     Settings.OffensiveCountMagicMonsters = ImGuiExtension.Checkbox("Magic Monsters", Settings.OffensiveCountMagicMonsters);
+                    Settings.OffensiveCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.OffensiveCountRareMonsters);
                     Settings.OffensiveCountUniqueMonsters = ImGuiExtension.Checkbox("Unique Monsters", Settings.OffensiveCountUniqueMonsters);
 
                     ImGui.TreePop();

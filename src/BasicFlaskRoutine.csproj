@@ -1,4 +1,4 @@
-﻿﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -34,39 +34,38 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ImGui.NET">
-      <HintPath>$(POEHUD_PATH)\ImGui.NET.dll</HintPath>
+      <HintPath>..\..\PoEHUD\Release\ImGui.NET.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>$(POEHUD_PATH)\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\PoEHUD\Release\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PoeHUD">
-      <HintPath>$(POEHUD_PATH)\PoeHUD.exe</HintPath>
+      <HintPath>..\..\PoEHUD\Release\PoeHUD.exe</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>$(POEHUD_PATH)\SharpDX.dll</HintPath>
+      <HintPath>..\..\PoEHUD\Release\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Desktop">
-      <HintPath>$(POEHUD_PATH)\SharpDX.Desktop.dll</HintPath>
+      <HintPath>..\..\PoEHUD\Release\SharpDX.Desktop.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>$(POEHUD_PATH)\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>..\..\PoEHUD\Release\SharpDX.Direct3D9.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>$(POEHUD_PATH)\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>..\..\PoEHUD\Release\SharpDX.Mathematics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(POEHUD_PATH)\System.Numerics.Vectors.dll</HintPath>
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>..\..\PoEHUD\Release\System.Numerics.Vectors.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Windows.Forms" />
@@ -88,6 +87,6 @@
       <Project>{2975c63d-6c9a-4824-a619-380994a19ece}</Project>
       <Name>TreeRoutine</Name>
     </ProjectReference>
-  </ItemGroup>
+</ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
