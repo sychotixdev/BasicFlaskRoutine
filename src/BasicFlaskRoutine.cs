@@ -359,14 +359,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             // If the flask is instant, no special logic needed
             return playerFlask.InstantType == FlaskInstantType.Partial
                     || playerFlask.InstantType == FlaskInstantType.Full
-                    || playerFlask.InstantType == FlaskInstantType.LowLife && PlayerHelper.isHealthBelowPercentage(35);
+                    || (playerFlask.InstantType == FlaskInstantType.LowLife && (PlayerHelper.isHealthBelowPercentage(35)
+                                                                                || Settings.AllocatedSupremeDecadence && IsReallyLowLife()));
         }
 
         private bool CanUseFlaskAsRegen(PlayerFlask playerFlask)
         {
             return playerFlask.InstantType == FlaskInstantType.None
                     || playerFlask.InstantType == FlaskInstantType.Partial && !Settings.ForceBubblingAsInstantOnly
-                    || playerFlask.InstantType == FlaskInstantType.LowLife && (!Settings.ForcePanickedAsInstantOnly || Settings.AllocatedSupremeDecadence);
+                    || playerFlask.InstantType == FlaskInstantType.LowLife && !Settings.ForcePanickedAsInstantOnly;
         }
 
         private bool MissingFlaskBuff(PlayerFlask playerFlask)
@@ -378,7 +379,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             try
             {
-                foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
+                var buffs = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs;
+
+                foreach (var buff in buffs)
                 {
                     bool isCycloneBuff = buff.Name.ToLower().Equals("cyclone_channelled_stage");
 
@@ -396,6 +399,13 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             }
 
             return false;
+        }
+
+        // When mana is reserved, IngameState.Data.LocalPlayer.GetComponent<Life>().HPPercentage returns an invalid value.
+        private bool IsReallyLowLife()
+        {
+            var playerLife = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
+            return (playerLife.CurHP / playerLife.MaxHP) * 100 < 35;
         }
 
         private Decorator CreateCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null)
@@ -569,7 +579,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.HPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto HP Flask", Settings.HPPotion);
                     Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
                     Settings.AllocatedSupremeDecadence.Value = ImGuiExtension.Checkbox("Enable use Life/Hybrid Flasks to restore Energy Shield", Settings.AllocatedSupremeDecadence);
-                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, Life-recovery flasks will also be used to recovery Energy Shield.");
+                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, Life-recovery flasks will also be used to recovery Energy Shield." +
+                                                          "\nWarning: non-Instant Life/Hybrid Flasks without Remove Ailments affix will not be used when on full life " +
+                                                          "\n        (non-Reserved Life is always equal full life) because it is game mechanics.");
                     Settings.ESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto HP Flask", Settings.ESPotion);
                     Settings.InstantESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto Instant HP Flask", Settings.InstantESPotion);
                     Settings.DisableLifeSecUse.Value = ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage", Settings.DisableLifeSecUse);
@@ -608,7 +620,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.SilverFlaskEnable.Value = ImGuiExtension.Checkbox("Silver Flask", Settings.SilverFlaskEnable);
 
                     ImGuiExtension.SpacedTextHeader("Settings");
-                    Settings.MinMsPlayerMoving.Value = ImGuiExtension.IntSlider("Milliseconds Spent Moving", Settings.MinMsPlayerMoving); ImGuiExtension.ToolTipWithText("(?)", "Milliseconds spent moving before flask will be used.\n1000 milliseconds = 1 second");
+                    Settings.MinMsPlayerMoving.Value = ImGuiExtension.IntSlider("Milliseconds Spent Moving", Settings.MinMsPlayerMoving);
+                    ImGuiExtension.ToolTipWithText("(?)", "Milliseconds spent moving before flask will be used.\n1000 milliseconds = 1 second");
 
                     ImGuiExtension.SpacedTextHeader("Cyclone");
                     Settings.UseWhileCycloning.Value = ImGuiExtension.Checkbox("Using Speed Flasks while Cycloning", Settings.UseWhileCycloning);
