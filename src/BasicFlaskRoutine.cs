@@ -401,7 +401,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return false;
         }
 
-        // When mana is reserved, IngameState.Data.LocalPlayer.GetComponent<Life>().HPPercentage returns an invalid value.
+        // When life is reserved, IngameState.Data.LocalPlayer.GetComponent<Life>().HPPercentage returns an invalid value.
         private bool IsReallyLowLife()
         {
             var playerLife = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
@@ -580,8 +580,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
                     Settings.AllocatedSupremeDecadence.Value = ImGuiExtension.Checkbox("Enable use Life/Hybrid Flasks to restore Energy Shield", Settings.AllocatedSupremeDecadence);
                     ImGuiExtension.ToolTipWithText("(?)", "When enabled, Life-recovery flasks will also be used to recovery Energy Shield." +
-                                                          "\nWarning: non-Instant Life/Hybrid Flasks without Remove Ailments affix will not be used when on full life " +
-                                                          "\n        (non-Reserved Life is always equal full life) because it is game mechanics.");
+                                                          "\nWarning: Life/Hybrid Flasks without Remove Ailments affix will not be used when on full life " +
+                                                          "\n        (example: ~20 points non-Reserved Life is always equal full life) because it is game mechanics.");
                     Settings.ESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto HP Flask", Settings.ESPotion);
                     Settings.InstantESPotion.Value = ImGuiExtension.IntSlider("Min Energy Shield % Auto Instant HP Flask", Settings.InstantESPotion);
                     Settings.DisableLifeSecUse.Value = ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage", Settings.DisableLifeSecUse);
