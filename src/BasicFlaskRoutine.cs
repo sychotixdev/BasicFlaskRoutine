@@ -150,7 +150,20 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite CreateSpeedPotionComposite()
         {
-            return new Decorator((x => Settings.SpeedFlaskEnable && Settings.MinMsPlayerMoving <= PlayerMovingStopwatch.ElapsedMilliseconds && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint" }) && (!Settings.SilverFlaskEnable || PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_utility_haste" })))),
+            return new Decorator((x => Settings.SpeedFlaskEnable
+                                    && (Settings.MinMsPlayerMoving <= PlayerMovingStopwatch.ElapsedMilliseconds
+                                        || Settings.UseWhileCycloning 
+                                            && IsCycloning() 
+                                            && (Settings.CycloningMonsterCount == 0 
+                                                || HasEnoughNearbyMonsters(Settings.CycloningMonsterCount, 
+                                                                           Settings.CycloningMonsterDistance, 
+                                                                           Settings.CycloningCountNormalMonsters, 
+                                                                           Settings.CycloningCountRareMonsters, 
+                                                                           Settings.CycloningCountMagicMonsters, 
+                                                                           Settings.CycloningCountUniqueMonsters))) 
+                                    && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint" }) 
+                                        && (!Settings.SilverFlaskEnable 
+                                            || PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_utility_haste" })))),
                 new PrioritySelector(
                     new Decorator((x => Settings.QuicksilverFlaskEnable), CreateUseFlaskAction(FlaskActions.Speedrun)),
                     new Decorator((x => Settings.SilverFlaskEnable), CreateUseFlaskAction(FlaskActions.OFFENSE_AND_SPEEDRUN))
@@ -363,6 +376,31 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return !PlayerHelper.playerHasBuffs(new List<string> { playerFlask.BuffString1 }) || !PlayerHelper.playerHasBuffs(new List<string> { playerFlask.BuffString2 });
         }
 
+        private bool IsCycloning()
+        {
+            try
+            {
+                var buffs = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs;
+
+                foreach (var buff in buffs)
+                {
+                    bool isCycloneBuff = buff.Name.ToLower().Equals("cyclone_channelled_stage");
+
+                    if (isCycloneBuff)
+                    {
+                        return float.IsInfinity(buff.Timer);
+                    }
+
+                }
+            }
+            catch
+            {
+                if (Settings.Debug)
+                    LogError("BasicFlaskRoutine: Using Speed Flasks while Cycloning is enabled, but cannot get player buffs. Try to update PoeHUD.", 5);
+            }
+
+            return false;
+        }
 
         // When life is reserved, IngameState.Data.LocalPlayer.GetComponent<Life>().HPPercentage returns an invalid value.
         private bool IsReallyLowLife()
@@ -586,6 +624,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.MinMsPlayerMoving.Value = ImGuiExtension.IntSlider("Milliseconds Spent Moving", Settings.MinMsPlayerMoving);
                     ImGuiExtension.ToolTipWithText("(?)", "Milliseconds spent moving before flask will be used.\n1000 milliseconds = 1 second");
 
+                    ImGuiExtension.SpacedTextHeader("Cyclone");
+                    Settings.UseWhileCycloning.Value = ImGuiExtension.Checkbox("Using Speed Flasks while Cycloning", Settings.UseWhileCycloning);
+                    Settings.CycloningMonsterCount.Value = ImGuiExtension.IntSlider("Monster Count", Settings.CycloningMonsterCount);
+                    ImGuiExtension.ToolTipWithText("(?)","Set to 0 to disable.");
+                    Settings.CycloningMonsterDistance.Value = ImGuiExtension.IntSlider("Monster Distance", Settings.CycloningMonsterDistance);
+                    Settings.CycloningCountNormalMonsters = ImGuiExtension.Checkbox("Normal Monsters", Settings.CycloningCountNormalMonsters);
+                    Settings.CycloningCountMagicMonsters = ImGuiExtension.Checkbox("Magic Monsters", Settings.CycloningCountMagicMonsters);
+                    Settings.CycloningCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.CycloningCountRareMonsters);
+                    Settings.CycloningCountUniqueMonsters = ImGuiExtension.Checkbox("Unique Monsters", Settings.CycloningCountUniqueMonsters);
                     ImGui.TreePop();
                 }
 

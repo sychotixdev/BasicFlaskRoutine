@@ -44,6 +44,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode SilverFlaskEnable { get; set; } = false;
         public RangeNode<int> MinMsPlayerMoving { get; set; } = new RangeNode<int>(1500, 1, 10000);
 
+        public ToggleNode UseWhileCycloning { get; set; } = false;
+        public RangeNode<int> CycloningMonsterCount { get; set; } = new RangeNode<int>(0, 0, 30);
+        public RangeNode<int> CycloningMonsterDistance { get; set; } = new RangeNode<int>(400, 0, 1500);
+        public ToggleNode CycloningCountNormalMonsters { get; set; } = false;
+        public ToggleNode CycloningCountMagicMonsters { get; set; } = false;
+        public ToggleNode CycloningCountRareMonsters { get; set; } = false;
+        public ToggleNode CycloningCountUniqueMonsters { get; set; } = false;
+
         public ToggleNode DefensiveFlaskEnable { get; set; } = false;
         public RangeNode<int> HPPercentDefensive { get; set; } = new RangeNode<int>(50, 0, 100);
         public RangeNode<int> ESPercentDefensive { get; set; } = new RangeNode<int>(50, 0, 100);
