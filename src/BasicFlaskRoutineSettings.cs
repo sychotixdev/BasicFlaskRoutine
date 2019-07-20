@@ -18,6 +18,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         public RangeNode<int> HPPotion { get; set; } = new RangeNode<int>(65, 0, 100);
         public RangeNode<int> InstantHPPotion { get; set; } = new RangeNode<int>(35, 0, 100);
+
+        public ToggleNode AllocatedSupremeDecadence { get; set; } = false;
+        public RangeNode<int> ESPotion { get; set; } = new RangeNode<int>(65, 0, 100);
+        public RangeNode<int> InstantESPotion { get; set; } = new RangeNode<int>(35, 0, 100);
+
         public ToggleNode DisableLifeSecUse { get; set; } = false;
 
         public RangeNode<int> ManaPotion { get; set; } = new RangeNode<int>(65, 0, 100);
@@ -34,7 +39,6 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode RemBleed { get; set; } = false;
         public RangeNode<int> CorruptCount { get; set; } = new RangeNode<int>(10, 0, 20);
 
-
         public ToggleNode SpeedFlaskEnable { get; set; } = false;
         public ToggleNode QuicksilverFlaskEnable { get; set; } = false;
         public ToggleNode SilverFlaskEnable { get; set; } = false;
@@ -48,8 +52,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public RangeNode<int> DefensiveMonsterCount { get; set; } = new RangeNode<int>(0, 0, 30);
         public RangeNode<int> DefensiveMonsterDistance { get; set; } = new RangeNode<int>(400, 0, 1500);
         public ToggleNode DefensiveCountNormalMonsters { get; set; } = false;
-        public ToggleNode DefensiveCountRareMonsters { get; set; } = false;
         public ToggleNode DefensiveCountMagicMonsters { get; set; } = false;
+        public ToggleNode DefensiveCountRareMonsters { get; set; } = false;
         public ToggleNode DefensiveCountUniqueMonsters { get; set; } = false;
 
 
@@ -60,8 +64,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public RangeNode<int> OffensiveMonsterCount { get; set; } = new RangeNode<int>(0, 0, 30);
         public RangeNode<int> OffensiveMonsterDistance { get; set; } = new RangeNode<int>(400, 0, 1500);
         public ToggleNode OffensiveCountNormalMonsters { get; set; } = false;
-        public ToggleNode OffensiveCountRareMonsters { get; set; } = false;
         public ToggleNode OffensiveCountMagicMonsters { get; set; } = false;
+        public ToggleNode OffensiveCountRareMonsters { get; set; } = false;
         public ToggleNode OffensiveCountUniqueMonsters { get; set; } = false;
 
         public FlaskSetting[] FlaskSettings { get; set; } = new FlaskSetting[5]
