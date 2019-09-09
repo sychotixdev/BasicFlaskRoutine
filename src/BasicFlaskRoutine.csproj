@@ -78,6 +78,9 @@
     <Compile Include="BasicFlaskRoutine\BasicFlaskRoutine.cs" />
     <Compile Include="BasicFlaskRoutine\BasicFlaskRoutineSettings.cs" />
     <Compile Include="BasicFlaskRoutine\Flask\FlaskSetting.cs" />
+    <None Include="config\debuffPanel.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TreeRoutine\BaseTreeCache.cs" />
     <Compile Include="TreeRoutine\BaseTreeRoutinePlugin.cs" />
