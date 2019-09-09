@@ -232,8 +232,6 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     return null;
                 }
 
-                LogMessage($"foundFlask: {foundFlask} {foundFlask.Index} Flask hotkey is: " + Settings.FlaskSettings[foundFlask.Index].Hotkey.Value);
-
                 return Settings.FlaskSettings[foundFlask.Index].Hotkey;
             });
         }
@@ -341,18 +339,6 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     && FlaskMatchesInstant(x, instant)
                     && (ignoreBuffs || MissingFlaskBuff(x))
                     ).OrderByDescending(x => flaskActions.Contains(x.Action1)).ThenByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
-
-            if (flaskActions.Any(x => x == FlaskActions.Mana))
-            {
-                var manaFlask = allFlasks.FirstOrDefault(x => x.Action1 == FlaskActions.Mana);
-                LogError($"0: {manaFlask}");
-                LogError($"1: {Settings.FlaskSettings[manaFlask.Index].Enabled}");
-                LogError($"2: {flaskActions.FirstOrDefault()} {FlaskHasAvailableAction(flaskActions, ignoreFlaskActions, manaFlask)}");
-                LogError($"3: {FlaskHelper.CanUsePotion(manaFlask, Settings.FlaskSettings[manaFlask.Index].ReservedUses, isCleansing)}");
-                LogError($"4: {instant} {FlaskMatchesInstant(manaFlask, instant)}");
-                LogError($"5: {(ignoreBuffs || MissingFlaskBuff(manaFlask))} {manaFlask.BuffString1}");
-            }
-            
 
             if (flaskList == null || !flaskList.Any())
             {

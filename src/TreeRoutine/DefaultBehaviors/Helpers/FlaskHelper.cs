@@ -26,7 +26,6 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             List<PlayerFlask> flaskList = new List<PlayerFlask>();
             foreach (var flaskItem in flaskItems)
             {
-                Core.LogMessage($"FlaskStuff: {flaskItem.Address} {flaskItem}");
                 var flask = GetFlaskInfo((int)flaskItem.PosX, flaskItem.Item);
                 if (flask != null)
                     flaskList.Add(flask);
