@@ -1,20 +1,20 @@
-﻿    using TreeRoutine.DefaultBehaviors.Actions;
+﻿using TreeRoutine.DefaultBehaviors.Actions;
 using TreeRoutine.DefaultBehaviors.Helpers;
 using TreeRoutine.FlaskComponents;
 using TreeRoutine.Routine.BasicFlaskRoutine.Flask;
-using PoeHUD.Poe.Components;
 using System;
 using System.Collections.Generic;
 using SharpDX;
-using PoeHUD.Models.Enums;
 using System.Linq;
 using TreeRoutine.Menu;
 using ImGuiNET;
-using PoeHUD.Framework;
-using PoeHUD.Framework.Helpers;
 using System.Diagnostics;
-using PoeHUD.Models;
-    using TreeRoutine.TreeSharp;
+using Exile;
+using Exile.PoEMemory.MemoryObjects;
+using PoEMemory.Components;
+using Shared;
+using Shared.Enums;
+using TreeRoutine.TreeSharp;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine
 {
@@ -28,28 +28,52 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public Composite Tree { get; set; }
         private Coroutine TreeCoroutine { get; set; }
         public Object LoadedMonstersLock { get; set; } = new Object();
-        public List<EntityWrapper> LoadedMonsters { get; protected set; } = new List<EntityWrapper>();
+        public List<Entity> LoadedMonsters { get; protected set; } = new List<Entity>();
 
 
         private KeyboardHelper KeyboardHelper { get; set; } = null;
 
         private Stopwatch PlayerMovingStopwatch { get; set; } = new Stopwatch();
 
-        public override void Initialise()
+        private const string basicFlaskRoutineChecker = "BasicFlaskRoutine Checker";
+
+
+
+        public override bool Initialise()
         {
             base.Initialise();
 
-            PluginName = "BasicFlaskRoutine";
+            Name = "BasicFlaskRoutine";
             KeyboardHelper = new KeyboardHelper(GameController);
 
             Tree = CreateTree();
 
             // Add this as a coroutine for this plugin
-            TreeCoroutine = (new Coroutine(() => TickTree(Tree)
-            , new WaitTime(1000 / Settings.TicksPerSecond), nameof(BasicFlaskRoutine), "BasicFlaskRoutine Tree"))
-                .AutoRestart(GameController.CoroutineRunner).Run();
+            Settings.Enable.OnValueChanged += (sender, b) =>
+            {
+                if (b)
+                {
+                    if (Core.ParallelRunner.FindByName(basicFlaskRoutineChecker) == null) InitCoroutine();
+                    TreeCoroutine?.Resume();
+                }
+                else
+                    TreeCoroutine?.Pause();
 
-            Settings.TicksPerSecond.OnValueChanged += UpdateCoroutineWaitRender;
+            };
+            InitCoroutine();
+
+            Settings.TicksPerSecond.OnValueChanged += (sender, b) =>
+            {
+                UpdateCoroutineWaitRender();
+            };
+
+            return true;
+        }
+
+        private void InitCoroutine()
+        {
+            TreeCoroutine = new Coroutine(() => TickTree(Tree), new WaitTime(1000 / Settings.TicksPerSecond), this, "BasicFlaskRoutine Tree");
+            Core.ParallelRunner.Run(TreeCoroutine);
         }
 
         private void UpdateCoroutineWaitRender()
@@ -104,7 +128,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return new Decorator((x => PlayerHelper.isHealthBelowPercentage(Settings.InstantHPPotion)),
                 new PrioritySelector(
                     CreateUseFlaskAction(FlaskActions.Life, true, true),
-                    CreateUseFlaskAction(FlaskActions.Hybrid, true, true)
+                    CreateUseFlaskAction(FlaskActions.Hybrid, true, true),
+                    CreateUseFlaskAction(FlaskActions.Life),
+                    CreateUseFlaskAction(FlaskActions.Hybrid)
                 )
             );
 
@@ -117,7 +143,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                  new PrioritySelector(
                     CreateUseFlaskAction(FlaskActions.Life, false),
                     CreateUseFlaskAction(FlaskActions.Hybrid, false)
-                    )
+                 )
                 )
             );
         }
@@ -127,7 +153,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return new Decorator((x => PlayerHelper.isManaBelowPercentage(Settings.InstantManaPotion)),
                 new PrioritySelector(
                     CreateUseFlaskAction(FlaskActions.Mana, true, true),
-                    CreateUseFlaskAction(FlaskActions.Hybrid, true, true)
+                    CreateUseFlaskAction(FlaskActions.Hybrid, true, true),
+                    CreateUseFlaskAction(FlaskActions.Mana),
+                    CreateUseFlaskAction(FlaskActions.Hybrid)
+
                 )
             );
         }
@@ -203,6 +232,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     return null;
                 }
 
+                LogMessage($"foundFlask: {foundFlask} {foundFlask.Index} Flask hotkey is: " + Settings.FlaskSettings[foundFlask.Index].Hotkey.Value);
+
                 return Settings.FlaskSettings[foundFlask.Index].Hotkey;
             });
         }
@@ -216,16 +247,16 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
             if (LoadedMonsters != null)
             {
-                List<PoeHUD.Models.EntityWrapper> localLoadedMonsters = null;
+                List<Entity> localLoadedMonsters = null;
                 lock (LoadedMonstersLock)
                 {
-                    localLoadedMonsters = new List<PoeHUD.Models.EntityWrapper>(LoadedMonsters);
+                    localLoadedMonsters = new List<Entity>(LoadedMonsters);
                 }
 
                 // Make sure we create our own list to iterate as we may be adding/removing from the list
                 foreach (var monster in localLoadedMonsters)
                 {
-                    if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile || monster.Invincible || monster.CannotBeDamaged)
+                    if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile)
                         continue;
 
                     var monsterType = monster.GetComponent<ObjectMagicProperties>().Rarity;
@@ -284,9 +315,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 if (Settings.Debug)
                 {
                     if (allFlasks == null)
-                        LogMessage(PluginName + ": No flasks to match against.", 5);
+                        LogMessage(Name + ": No flasks to match against.", 5);
                     else if (Settings.FlaskSettings == null)
-                        LogMessage(PluginName + ": Flask settings were null. Hopefully doesn't happen frequently.", 5);
+                        LogMessage(Name + ": Flask settings were null. Hopefully doesn't happen frequently.", 5);
                 }
 
                 return null;
@@ -296,7 +327,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             {
                 foreach (var flask in allFlasks)
                 {
-                    LogMessage($"{PluginName}: Flask: {flask.Name} Slot: {flask.Index} Instant: {flask.InstantType} Action1: {flask.Action1} Action2: {flask.Action2}", 5);
+                    LogMessage($"{Name}: Flask: {flask.Name} Slot: {flask.Index} Instant: {flask.InstantType} Action1: {flask.Action1} Action2: {flask.Action2}", 5);
                 }
             }
 
@@ -311,16 +342,27 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     && (ignoreBuffs || MissingFlaskBuff(x))
                     ).OrderByDescending(x => flaskActions.Contains(x.Action1)).ThenByDescending(x => x.TotalUses - Settings.FlaskSettings[x.Index].ReservedUses).ToList();
 
+            if (flaskActions.Any(x => x == FlaskActions.Mana))
+            {
+                var manaFlask = allFlasks.FirstOrDefault(x => x.Action1 == FlaskActions.Mana);
+                LogError($"0: {manaFlask}");
+                LogError($"1: {Settings.FlaskSettings[manaFlask.Index].Enabled}");
+                LogError($"2: {flaskActions.FirstOrDefault()} {FlaskHasAvailableAction(flaskActions, ignoreFlaskActions, manaFlask)}");
+                LogError($"3: {FlaskHelper.CanUsePotion(manaFlask, Settings.FlaskSettings[manaFlask.Index].ReservedUses, isCleansing)}");
+                LogError($"4: {instant} {FlaskMatchesInstant(manaFlask, instant)}");
+                LogError($"5: {(ignoreBuffs || MissingFlaskBuff(manaFlask))} {manaFlask.BuffString1}");
+            }
+            
 
             if (flaskList == null || !flaskList.Any())
             {
                 if (Settings.Debug)
-                    LogError(PluginName + ": No flasks found for action: " + flaskActions[0], 1);
+                    LogError(Name + ": No flasks found for action: (instant:" + instant + ") " + flaskActions[0], 1);
                 return null;
             }
 
             if (Settings.Debug)
-                LogMessage(PluginName + ": Flask(s) found for action: " + flaskActions[0] + " Flask Count: " + flaskList.Count(), 1);
+                LogMessage(Name + ": Flask(s) found for action: " + flaskActions[0] + " Flask Count: " + flaskList.Count(), 1);
 
             return flaskList.FirstOrDefault();
         }
@@ -333,7 +375,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private bool FlaskMatchesInstant(PlayerFlask playerFlask, Boolean? instant)
         {
-            return instant == null
+            return instant == null 
                     || instant == false && CanUseFlaskAsRegen(playerFlask)
                     || instant == true && CanUseFlaskAsInstant(playerFlask);
         }
@@ -379,111 +421,17 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             }), child);
         }
 
-        public void BuffUi()
-        {
-            if (!Settings.BuffUiEnable.Value || Cache.InTown) return;
-            var x = GameController.Window.GetWindowRectangle().Width * Settings.BuffPositionX.Value * .01f;
-            var y = GameController.Window.GetWindowRectangle().Height * Settings.BuffPositionY.Value * .01f;
-            var position = new Vector2(x, y);
-            float maxWidth = 0;
-            float maxheight = 0;
-            foreach (var buff in GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs)
-            {
-                var isInfinity = float.IsInfinity(buff.Timer);
-                var isFlaskBuff = buff.Name.ToLower().Contains("flask");
-                if (!Settings.EnableFlaskAuraBuff.Value && (isInfinity || isFlaskBuff))
-                    continue;
-
-                Color textColor;
-                if (isFlaskBuff)
-                    textColor = Color.SpringGreen;
-                else if (isInfinity)
-                    textColor = Color.Purple;
-                else
-                    textColor = Color.WhiteSmoke;
-
-                var size = Graphics.DrawText(buff.Name + ":" + buff.Timer, Settings.BuffTextSize.Value, position, textColor);
-                position.Y += size.Height;
-                maxheight += size.Height;
-                maxWidth = Math.Max(maxWidth, size.Width);
-            }
-            var background = new RectangleF(x, y, maxWidth, maxheight);
-            Graphics.DrawFrame(background, 5, Color.Black);
-            Graphics.DrawImage("lightBackground.png", background);
-        }
-        public void FlaskUi()
-        {
-            if (!Settings.FlaskUiEnable.Value) return;
-
-            var allFlasks = FlaskHelper.GetAllFlaskInfo();
-
-            if (allFlasks == null || allFlasks.Count == 0)
-                return;
-
-            var x = GameController.Window.GetWindowRectangle().Width * Settings.FlaskPositionX.Value * .01f;
-            var y = GameController.Window.GetWindowRectangle().Height * Settings.FlaskPositionY.Value * .01f;
-            var position = new Vector2(x, y);
-            float maxWidth = 0;
-            float maxheight = 0;
-            var textColor = Color.WhiteSmoke;
-
-            int lastIndex = 0;
-            foreach (var flasks in allFlasks.OrderBy(flask => flask.Index))
-            {
-                if (!Settings.FlaskSettings[flasks.Index].Enabled)
-                    textColor = Color.Red;
-                else switch (flasks.Mods.ItemRarity)
-                    {
-                        case ItemRarity.Magic:
-                            textColor = Color.CornflowerBlue;
-                            break;
-                        case ItemRarity.Unique:
-                            textColor = Color.Chocolate;
-                            break;
-                        case ItemRarity.Normal:
-                            break;
-                        case ItemRarity.Rare:
-                            break;
-                        default:
-                            textColor = Color.WhiteSmoke;
-                            break;
-                    }
-
-                // Flasks are returned in a list that may not contain every flask
-                // We need to make sure we are drawing to the right place
-                while (lastIndex++ < flasks.Index)
-                {
-                    var skippedSize = Graphics.DrawText("", Settings.FlaskTextSize.Value, position, textColor);
-                    position.Y += skippedSize.Height;
-                    maxheight += skippedSize.Height;
-                    maxWidth = Math.Max(maxWidth, skippedSize.Width);
-                }
-
-                var size = Graphics.DrawText(flasks.Name, Settings.FlaskTextSize.Value, position, textColor);
-                position.Y += size.Height;
-                maxheight += size.Height;
-                maxWidth = Math.Max(maxWidth, size.Width);
-            }
-            var background = new RectangleF(x, y, maxWidth, maxheight);
-            Graphics.DrawFrame(background, 5, Color.Black);
-            Graphics.DrawImage("lightBackground.png", background);
-        }
         public override void Render()
         {
             base.Render();
             if (!Settings.Enable.Value) return;
-            FlaskUi();
-            BuffUi();
         }
 
-        public override void InitializeSettingsMenu()
+        public override void DrawSettings()
         {
+            //base.DrawSettings();
 
-        }
-
-        public override void DrawSettingsMenu()
-        {
-            TreeNodeFlags collapsingHeaderFlags = TreeNodeFlags.CollapsingHeader;
+            ImGuiTreeNodeFlags collapsingHeaderFlags = ImGuiTreeNodeFlags.CollapsingHeader;
 
             if (ImGui.TreeNodeEx("Plugin Options", collapsingHeaderFlags))
             {
@@ -507,7 +455,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         {
                             currentFlask.Enabled.Value = ImGuiExtension.Checkbox("Enable", currentFlask.Enabled);
                             currentFlask.Hotkey.Value = ImGuiExtension.HotkeySelector("Hotkey", currentFlask.Hotkey);
-                            currentFlask.ReservedUses.Value = ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses); ImGuiExtension.ToolTipWithText("(?)", "The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
+                            currentFlask.ReservedUses.Value =
+                                ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses);
+                            ImGuiExtension.ToolTipWithText("(?)",
+                                "The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
                             ImGui.TreePop();
                         }
                     }
@@ -520,19 +471,30 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.AutoFlask.Value = ImGuiExtension.Checkbox("Enable", Settings.AutoFlask);
 
                     ImGuiExtension.SpacedTextHeader("Settings");
-                    Settings.ForceBubblingAsInstantOnly = ImGuiExtension.Checkbox("Force Bubbling as Instant only", Settings.ForceBubblingAsInstantOnly);
-                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Bubbling mod will only be used as an instant flask.");
-                    Settings.ForcePanickedAsInstantOnly = ImGuiExtension.Checkbox("Force Panicked as Instant only", Settings.ForcePanickedAsInstantOnly);
-                    ImGuiExtension.ToolTipWithText("(?)", "When enabled, flasks with the Panicked mod will only be used as an instant flask. \nNote, Panicked will not be used until under 35%% with this enabled."); //
+                    Settings.ForceBubblingAsInstantOnly.Value =
+                        ImGuiExtension.Checkbox("Force Bubbling as Instant only", Settings.ForceBubblingAsInstantOnly);
+                    ImGuiExtension.ToolTipWithText("(?)",
+                        "When enabled, flasks with the Bubbling mod will only be used as an instant flask.");
+                    Settings.ForcePanickedAsInstantOnly.Value =
+                        ImGuiExtension.Checkbox("Force Panicked as Instant only", Settings.ForcePanickedAsInstantOnly);
+                    ImGuiExtension.ToolTipWithText("(?)",
+                        "When enabled, flasks with the Panicked mod will only be used as an instant flask. \nNote, Panicked will not be used until under 35%% with this enabled."); //
                     ImGuiExtension.SpacedTextHeader("Health Flask");
                     Settings.HPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto HP Flask", Settings.HPPotion);
-                    Settings.InstantHPPotion.Value = ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
-                    Settings.DisableLifeSecUse.Value = ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage", Settings.DisableLifeSecUse);
+                    Settings.InstantHPPotion.Value =
+                        ImGuiExtension.IntSlider("Min Life % Auto Instant HP Flask", Settings.InstantHPPotion);
+                    Settings.DisableLifeSecUse.Value =
+                        ImGuiExtension.Checkbox("Disable Life/Hybrid Flask Offensive/Defensive Usage",
+                            Settings.DisableLifeSecUse);
 
-                    ImGuiExtension.SpacedTextHeader("Mana Flask"); 
-                    ImGui.Spacing(); Settings.ManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Mana Flask", Settings.ManaPotion);
-                    Settings.InstantManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Instant MP Flask", Settings.InstantManaPotion);
-                    Settings.MinManaFlask.Value = ImGuiExtension.IntSlider("Min Mana Auto Mana Flask", Settings.MinManaFlask);
+                    ImGuiExtension.SpacedTextHeader("Mana Flask");
+                    ImGui.Spacing();
+                    Settings.ManaPotion.Value =
+                        ImGuiExtension.IntSlider("Min Mana % Auto Mana Flask", Settings.ManaPotion);
+                    Settings.InstantManaPotion.Value = ImGuiExtension.IntSlider("Min Mana % Auto Instant MP Flask",
+                        Settings.InstantManaPotion);
+                    Settings.MinManaFlask.Value =
+                        ImGuiExtension.IntSlider("Min Mana Auto Mana Flask", Settings.MinManaFlask);
                     ImGui.TreePop();
                 }
 
@@ -550,7 +512,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.RemPoison.Value = ImGuiExtension.Checkbox("Poison", Settings.RemPoison);
                     ImGui.SameLine();
                     Settings.RemBleed.Value = ImGuiExtension.Checkbox("Bleed", Settings.RemBleed);
-                    Settings.CorruptCount.Value = ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.CorruptCount);
+                    Settings.CorruptCount.Value =
+                        ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.CorruptCount);
                     ImGui.TreePop();
                 }
 
@@ -559,71 +522,73 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.SpeedFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.SpeedFlaskEnable);
 
                     ImGuiExtension.SpacedTextHeader("Flasks");
-                    Settings.QuicksilverFlaskEnable.Value = ImGuiExtension.Checkbox("Quicksilver Flask", Settings.QuicksilverFlaskEnable);
-                    Settings.SilverFlaskEnable.Value = ImGuiExtension.Checkbox("Silver Flask", Settings.SilverFlaskEnable);
+                    Settings.QuicksilverFlaskEnable.Value =
+                        ImGuiExtension.Checkbox("Quicksilver Flask", Settings.QuicksilverFlaskEnable);
+                    Settings.SilverFlaskEnable.Value =
+                        ImGuiExtension.Checkbox("Silver Flask", Settings.SilverFlaskEnable);
 
                     ImGuiExtension.SpacedTextHeader("Settings");
-                    Settings.MinMsPlayerMoving.Value = ImGuiExtension.IntSlider("Milliseconds Spent Moving", Settings.MinMsPlayerMoving); ImGuiExtension.ToolTipWithText("(?)", "Milliseconds spent moving before flask will be used.\n1000 milliseconds = 1 second");
+                    Settings.MinMsPlayerMoving.Value =
+                        ImGuiExtension.IntSlider("Milliseconds Spent Moving", Settings.MinMsPlayerMoving);
+                    ImGuiExtension.ToolTipWithText("(?)",
+                        "Milliseconds spent moving before flask will be used.\n1000 milliseconds = 1 second");
                     ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNode("Defensive Flasks"))
                 {
-                    Settings.DefensiveFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.DefensiveFlaskEnable);
+                    Settings.DefensiveFlaskEnable.Value =
+                        ImGuiExtension.Checkbox("Enable", Settings.DefensiveFlaskEnable);
                     ImGui.Spacing();
                     ImGui.Separator();
-                    Settings.HPPercentDefensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentDefensive);
-                    Settings.ESPercentDefensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentDefensive);
-                    Settings.OffensiveAsDefensiveEnable.Value = ImGuiExtension.Checkbox("Use offensive flasks for defense", Settings.OffensiveAsDefensiveEnable);
+                    Settings.HPPercentDefensive.Value =
+                        ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentDefensive);
+                    Settings.ESPercentDefensive.Value =
+                        ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentDefensive);
+                    Settings.OffensiveAsDefensiveEnable.Value =
+                        ImGuiExtension.Checkbox("Use offensive flasks for defense",
+                            Settings.OffensiveAsDefensiveEnable);
                     ImGui.Separator();
 
-                    Settings.DefensiveMonsterCount.Value = ImGuiExtension.IntSlider("Monster Count", Settings.DefensiveMonsterCount);
-                    Settings.DefensiveMonsterDistance.Value = ImGuiExtension.IntSlider("Monster Distance", Settings.DefensiveMonsterDistance);
-                    Settings.DefensiveCountNormalMonsters = ImGuiExtension.Checkbox("Normal Monsters", Settings.DefensiveCountNormalMonsters);
-                    Settings.DefensiveCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.DefensiveCountRareMonsters);
-                    Settings.DefensiveCountMagicMonsters = ImGuiExtension.Checkbox("Magic Monsters", Settings.DefensiveCountMagicMonsters);
-                    Settings.DefensiveCountUniqueMonsters = ImGuiExtension.Checkbox("Unique Monsters", Settings.DefensiveCountUniqueMonsters);
+                    Settings.DefensiveMonsterCount.Value =
+                        ImGuiExtension.IntSlider("Monster Count", Settings.DefensiveMonsterCount);
+                    Settings.DefensiveMonsterDistance.Value =
+                        ImGuiExtension.IntSlider("Monster Distance", Settings.DefensiveMonsterDistance);
+                    Settings.DefensiveCountNormalMonsters.Value =
+                        ImGuiExtension.Checkbox("Normal Monsters", Settings.DefensiveCountNormalMonsters);
+                    Settings.DefensiveCountRareMonsters.Value =
+                        ImGuiExtension.Checkbox("Rare Monsters", Settings.DefensiveCountRareMonsters);
+                    Settings.DefensiveCountMagicMonsters.Value =
+                        ImGuiExtension.Checkbox("Magic Monsters", Settings.DefensiveCountMagicMonsters);
+                    Settings.DefensiveCountUniqueMonsters.Value =
+                        ImGuiExtension.Checkbox("Unique Monsters", Settings.DefensiveCountUniqueMonsters);
                     ImGui.TreePop();
                 }
 
                 if (ImGui.TreeNode("Offensive Flasks"))
                 {
-                    Settings.OffensiveFlaskEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.OffensiveFlaskEnable);
+                    Settings.OffensiveFlaskEnable.Value =
+                        ImGuiExtension.Checkbox("Enable", Settings.OffensiveFlaskEnable);
                     ImGui.Spacing();
                     ImGui.Separator();
-                    Settings.HPPercentOffensive.Value = ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentOffensive);
-                    Settings.ESPercentOffensive.Value = ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentOffensive);
+                    Settings.HPPercentOffensive.Value =
+                        ImGuiExtension.IntSlider("Min Life %", Settings.HPPercentOffensive);
+                    Settings.ESPercentOffensive.Value =
+                        ImGuiExtension.IntSlider("Min ES %", Settings.ESPercentOffensive);
                     ImGui.Separator();
-                    Settings.OffensiveMonsterCount.Value = ImGuiExtension.IntSlider("Monster Count", Settings.OffensiveMonsterCount);
-                    Settings.OffensiveMonsterDistance.Value = ImGuiExtension.IntSlider("Monster Distance", Settings.OffensiveMonsterDistance);
-                    Settings.OffensiveCountNormalMonsters = ImGuiExtension.Checkbox("Normal Monsters", Settings.OffensiveCountNormalMonsters);
-                    Settings.OffensiveCountRareMonsters = ImGuiExtension.Checkbox("Rare Monsters", Settings.OffensiveCountRareMonsters);
-                    Settings.OffensiveCountMagicMonsters = ImGuiExtension.Checkbox("Magic Monsters", Settings.OffensiveCountMagicMonsters);
-                    Settings.OffensiveCountUniqueMonsters = ImGuiExtension.Checkbox("Unique Monsters", Settings.OffensiveCountUniqueMonsters);
+                    Settings.OffensiveMonsterCount.Value =
+                        ImGuiExtension.IntSlider("Monster Count", Settings.OffensiveMonsterCount);
+                    Settings.OffensiveMonsterDistance.Value =
+                        ImGuiExtension.IntSlider("Monster Distance", Settings.OffensiveMonsterDistance);
+                    Settings.OffensiveCountNormalMonsters.Value =
+                        ImGuiExtension.Checkbox("Normal Monsters", Settings.OffensiveCountNormalMonsters);
+                    Settings.OffensiveCountRareMonsters.Value =
+                        ImGuiExtension.Checkbox("Rare Monsters", Settings.OffensiveCountRareMonsters);
+                    Settings.OffensiveCountMagicMonsters.Value =
+                        ImGuiExtension.Checkbox("Magic Monsters", Settings.OffensiveCountMagicMonsters);
+                    Settings.OffensiveCountUniqueMonsters.Value =
+                        ImGuiExtension.Checkbox("Unique Monsters", Settings.OffensiveCountUniqueMonsters);
 
-                    ImGui.TreePop();
-                }
-                ImGui.TreePop();
-            }
-
-            if (ImGui.TreeNodeEx("UI Settings", collapsingHeaderFlags))
-            {
-                if (ImGui.TreeNodeEx("Flask UI", TreeNodeFlags.Framed))
-                {
-                    Settings.FlaskUiEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.FlaskUiEnable);
-                    Settings.FlaskPositionX.Value = ImGuiExtension.FloatSlider("X Position", Settings.FlaskPositionX);
-                    Settings.FlaskPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.FlaskPositionY);
-                    Settings.FlaskTextSize.Value = ImGuiExtension.IntSlider("Text Size", Settings.FlaskTextSize);
-                    ImGui.TreePop();
-                }
-
-                if (ImGui.TreeNodeEx("Buff UI", TreeNodeFlags.Framed))
-                {
-                    Settings.BuffUiEnable.Value = ImGuiExtension.Checkbox("Enable", Settings.BuffUiEnable);
-                    Settings.BuffPositionX.Value = ImGuiExtension.FloatSlider("X Position", Settings.BuffPositionX);
-                    Settings.BuffPositionY.Value = ImGuiExtension.FloatSlider("Y Position", Settings.BuffPositionY);
-                    Settings.BuffTextSize.Value = ImGuiExtension.IntSlider("Text Size", Settings.BuffTextSize);
-                    Settings.EnableFlaskAuraBuff.Value = ImGuiExtension.Checkbox("Enable Flask Or Aura Debuff/Buff", Settings.EnableFlaskAuraBuff);
                     ImGui.TreePop();
                 }
 
@@ -631,7 +596,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             }
         }
 
-        public override void EntityAdded(EntityWrapper entityWrapper)
+        public override void EntityAdded(Entity entityWrapper)
         {
             if (entityWrapper.HasComponent<Monster>())
             {
@@ -642,7 +607,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             }
         }
 
-        public override void EntityRemoved(EntityWrapper entityWrapper)
+        public override void EntityRemoved(Entity entityWrapper)
         {
             lock (LoadedMonstersLock)
             {
