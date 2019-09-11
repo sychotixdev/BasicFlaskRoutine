@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Exile;
 using PoEMemory.Components;
+using Shared.Enums;
 
 namespace TreeRoutine.DefaultBehaviors.Helpers
 {
@@ -72,6 +73,15 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             return true;
         }
 
+        public int? getPlayerStat(string playerStat)
+        {
+            int statValue = 0;
+            
+            if (!Core.GameController.EntityListWrapper.Player.Stats.TryGetValue((GameStat)Core.GameController.Files.Stats.records[playerStat].ID, out statValue))
+                return null;
+
+            return statValue;
+        }
 
         public Boolean playerDoesNotHaveAnyOfBuffs(List<String> buffs)
         {

@@ -130,6 +130,59 @@ namespace TreeRoutine.Menu
             }
         }
 
+        public static int ComboBox(string sideLabel, int currentSelectedItem, List<string> objectList)
+        {
+            ImGui.Combo(sideLabel, ref currentSelectedItem, objectList.ToArray(), objectList.Count);
+
+            return currentSelectedItem;
+        }
+        public static string ComboBox(string sideLabel, string currentSelectedItem, List<string> objectList, ImGuiComboFlags comboFlags = ImGuiComboFlags.HeightRegular)
+        {
+            if (ImGui.BeginCombo(sideLabel, currentSelectedItem, comboFlags))
+            {
+                var refObject = currentSelectedItem;
+                for (var n = 0; n < objectList.Count; n++)
+                {
+                    var isSelected = refObject == objectList[n];
+                    if (ImGui.Selectable(objectList[n], isSelected)) return objectList[n];
+                    if (isSelected) ImGui.SetItemDefaultFocus();
+                }
+
+                ImGui.EndCombo();
+            }
+
+            return currentSelectedItem;
+        }
+        public static string ComboBox(string sideLabel, string currentSelectedItem, List<string> objectList, out bool didChange, ImGuiComboFlags comboFlags = ImGuiComboFlags.HeightRegular)
+        {
+            if (ImGui.BeginCombo(sideLabel, currentSelectedItem, comboFlags))
+            {
+                var refObject = currentSelectedItem;
+                for (var n = 0; n < objectList.Count; n++)
+                {
+                    var isSelected = refObject == objectList[n];
+                    if (ImGui.Selectable(objectList[n], isSelected))
+                    {
+                        didChange = true;
+                        return objectList[n];
+                    }
+                    if (isSelected) ImGui.SetItemDefaultFocus();
+                }
+
+                ImGui.EndCombo();
+            }
+
+            didChange = false;
+            return currentSelectedItem;
+        }
+
+        public static string InputText(string label, string currentValue, uint maxLength, ImGuiInputTextFlags flags)
+        {
+            byte[] buff = new byte[maxLength];
+            ImGui.InputText(label, buff, maxLength, flags);
+            return Encoding.Default.GetString(buff).TrimEnd('\0');
+        }
+
         public static Keys HotkeySelector(string buttonName, Keys currentKey)
         {
             var open = true;
