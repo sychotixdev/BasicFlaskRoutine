@@ -199,10 +199,10 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             if (ignoreActionType)
                 return true;
 
-            if (flask.Action1 == FlaskActions.Life && !Core.PlayerHelper.isHealthBelowPercentage(99))
+            if (flask.Action1 == FlaskActions.Life && !(Core.PlayerHelper.isHealthBelowPercentage(99) || Core.PlayerHelper.isEnergyShieldBelowPercentage(99)))
             {
                 if (Core.Settings.Debug)
-                    Core.Log(Core.Name + ": Can't use life flask " + flask.Name + " at full health.", 1);
+                    Core.Log(Core.Name + ": Can't use life flask " + flask.Name + " at full health and energy shiled.", 1);
                 return false;
             }
 

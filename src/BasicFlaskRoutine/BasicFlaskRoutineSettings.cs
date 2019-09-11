@@ -15,7 +15,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             ForcePanickedAsInstantOnly = new ToggleNode(false);
             HPPotion = new RangeNode<int>(65, 0, 100);
             InstantHPPotion = new RangeNode<int>(35, 0, 100);
-            DisableLifeSecUse = new ToggleNode(false);
+            AllocatedSupremeDecadence = new ToggleNode(false);
+            ESPotion = new RangeNode<int>(65, 0, 100);
+            InstantESPotion = new RangeNode<int>(35, 0, 100);
+
+        DisableLifeSecUse = new ToggleNode(false);
             ManaPotion = new RangeNode<int>(65, 0, 100);
             InstantManaPotion = new RangeNode<int>(35, 0, 100);
             MinManaFlask = new RangeNode<int>(50, 0, 100);
@@ -31,7 +35,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             QuicksilverFlaskEnable = new ToggleNode(false);
             SilverFlaskEnable = new ToggleNode(false);
             MinMsPlayerMoving = new RangeNode<int>(1500, 1, 10000);
-            DefensiveFlaskEnable = new ToggleNode(false);
+            UseWhileCycloning = new ToggleNode(false);
+            CycloningMonsterCount = new RangeNode<int>(0, 0, 30);
+            CycloningMonsterDistance = new RangeNode<int>(400, 0, 1500);
+            CycloningCountNormalMonsters = new ToggleNode(false);
+            CycloningCountMagicMonsters = new ToggleNode(false);
+            CycloningCountRareMonsters = new ToggleNode(false);
+            CycloningCountUniqueMonsters = new ToggleNode(false);
+
+        DefensiveFlaskEnable = new ToggleNode(false);
             HPPercentDefensive = new RangeNode<int>(50, 0, 100);
             ESPercentDefensive = new RangeNode<int>(50, 0, 100);
             OffensiveAsDefensiveEnable = new ToggleNode(false);
@@ -71,6 +83,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         public RangeNode<int> HPPotion { get; set; }
         public RangeNode<int> InstantHPPotion { get; set; }
+        public ToggleNode AllocatedSupremeDecadence { get; set; }
+        public RangeNode<int> ESPotion { get; set; }
+        public RangeNode<int> InstantESPotion { get; set; }
         public ToggleNode DisableLifeSecUse { get; set; }
 
         public RangeNode<int> ManaPotion { get; set; }
@@ -92,6 +107,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode QuicksilverFlaskEnable { get; set; }
         public ToggleNode SilverFlaskEnable { get; set; }
         public RangeNode<int> MinMsPlayerMoving { get; set; }
+
+        public ToggleNode UseWhileCycloning { get; set; } 
+        public RangeNode<int> CycloningMonsterCount { get; set; }
+        public RangeNode<int> CycloningMonsterDistance { get; set; }
+        public ToggleNode CycloningCountNormalMonsters { get; set; }
+        public ToggleNode CycloningCountMagicMonsters { get; set; }
+        public ToggleNode CycloningCountRareMonsters { get; set; }
+        public ToggleNode CycloningCountUniqueMonsters { get; set; }
+
 
         public ToggleNode DefensiveFlaskEnable { get; set; }
         public RangeNode<int> HPPercentDefensive { get; set; }
