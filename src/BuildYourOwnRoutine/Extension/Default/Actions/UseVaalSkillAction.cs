@@ -78,8 +78,10 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions
             return true;
         }
 
+        
         public override Composite GetComposite(ExtensionParameter profileParameter)
         {
+            /*
             var playerBuff = profileParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
             var playerBuffs = profileParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs;
             var player = profileParameter.Plugin.PlayerHelper;
@@ -149,13 +151,17 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions
             }
             #endregion
 
+            */
 
             return new PrioritySelector(
-         new Decorator(x => ((VaalHasteUseable && useVaalHaste) || (VaalGraceUseable && useVaalGrace) || (VaalClarityUseable && useVaalClarity) ||
-                             (VaalReaveUseable && useVaalReave)),
+         /* new Decorator(x => ((VaalHasteUseable && useVaalHaste) || (VaalGraceUseable && useVaalGrace) || (VaalClarityUseable && useVaalClarity) ||
+                             (VaalReaveUseable && useVaalReave)), */
+         new Decorator(x => false,
              new UseHotkeyAction(profileParameter.Plugin.KeyboardHelper, x => (Keys)Key)
         ));
+        
         }
+        
                 
         public override string GetDisplayName(bool isAddingNew)
         {

@@ -18,8 +18,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             AllocatedSupremeDecadence = new ToggleNode(false);
             ESPotion = new RangeNode<int>(65, 0, 100);
             InstantESPotion = new RangeNode<int>(35, 0, 100);
-
-        DisableLifeSecUse = new ToggleNode(false);
+            DisableLifeSecUse = new ToggleNode(false);
             ManaPotion = new RangeNode<int>(65, 0, 100);
             InstantManaPotion = new RangeNode<int>(35, 0, 100);
             MinManaFlask = new RangeNode<int>(50, 0, 100);
@@ -42,8 +41,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             CycloningCountMagicMonsters = new ToggleNode(false);
             CycloningCountRareMonsters = new ToggleNode(false);
             CycloningCountUniqueMonsters = new ToggleNode(false);
-
-        DefensiveFlaskEnable = new ToggleNode(false);
+            DefensiveFlaskEnable = new ToggleNode(false);
             HPPercentDefensive = new RangeNode<int>(50, 0, 100);
             ESPercentDefensive = new RangeNode<int>(50, 0, 100);
             OffensiveAsDefensiveEnable = new ToggleNode(false);
