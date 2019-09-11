@@ -40,6 +40,9 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
                     Core.LogMessage("Player is in town.", 0.2f);
                 return false;
             }
+            if (Core.Settings.Debug)
+                Core.LogMessage("Can tick!.", 0.2f);
+
             return true;
         }
     }

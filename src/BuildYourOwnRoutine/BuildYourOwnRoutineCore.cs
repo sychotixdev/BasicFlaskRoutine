@@ -139,9 +139,10 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine
             Tree = new ProfileTreeBuilder(ExtensionCache, extensionParameter).BuildTreeFromTriggerComposite(Settings.LoadedProfile.Composite);
 
             // Append the cache action to the built tree
-            Tree = new Sequence(
+            Tree = new Decorator(x => TreeHelper.CanTick(), 
+                    new Sequence(
                     new TreeSharp.Action(x => ExtensionCache.LoadedExtensions.ForEach(ext => ext.UpdateCache(extensionParameter, ExtensionCache.Cache))),
-                    Tree);
+                    Tree));
 
             // Add this as a coroutine for this plugin
             TreeCoroutine = new Coroutine(() => TickTree(Tree), new WaitTime(1000 / Settings.TicksPerSecond), this, "BuildYourOwnRoutine Tree");
