@@ -191,7 +191,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                                                                            Settings.CycloningCountMagicMonsters, 
                                                                            Settings.CycloningCountUniqueMonsters))) 
                                     && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint" }) 
-                                        && (!Settings.SilverFlaskEnable 
+                                        || (!Settings.SilverFlaskEnable 
                                             || PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_utility_haste" })))),
                 new PrioritySelector(
                     new Decorator((x => Settings.QuicksilverFlaskEnable), CreateUseFlaskAction(FlaskActions.Speedrun)),
