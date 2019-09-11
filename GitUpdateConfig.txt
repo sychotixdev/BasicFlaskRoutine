@@ -1,9 +1,3 @@
-Owner: sychotixdev
+Owner: IlliumIv
 Name: BasicFlaskRoutine
-Repository
-
-Ignore:
-src
-.gitignore
-README.md
-LICENSE
+Release
