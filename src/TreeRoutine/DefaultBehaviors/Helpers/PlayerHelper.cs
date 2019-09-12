@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Exile;
-using PoEMemory.Components;
-using Shared.Enums;
+using ExileCore.PoEMemory.Components;
+using ExileCore.Shared.Enums;
 
 namespace TreeRoutine.DefaultBehaviors.Helpers
 {

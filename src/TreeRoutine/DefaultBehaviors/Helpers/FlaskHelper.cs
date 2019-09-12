@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Exile;
-using Exile.PoEMemory.MemoryObjects;
-using PoEMemory;
-using PoEMemory.Components;
-using Shared.Enums;
+using ExileCore.PoEMemory.Components;
+using ExileCore.PoEMemory.MemoryObjects;
+using ExileCore.Shared.Enums;
 
 namespace TreeRoutine.DefaultBehaviors.Helpers
 {

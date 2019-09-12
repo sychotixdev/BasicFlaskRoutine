@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Exile;
+using ExileCore;
+using ExileCore.Shared.Nodes;
 using ImGuiNET;
-using Shared;
 using SharpDX;
-using Shared.Nodes;
 using ImGuiVector2 = System.Numerics.Vector2;
 using ImGuiVector4 = System.Numerics.Vector4;
 
@@ -179,6 +178,11 @@ namespace TreeRoutine.Menu
         public static string InputText(string label, string currentValue, uint maxLength, ImGuiInputTextFlags flags)
         {
             byte[] buff = new byte[maxLength];
+            if (!String.IsNullOrEmpty(currentValue))
+            {
+                byte[] currentValueBytes = Encoding.UTF8.GetBytes(currentValue);
+                Array.Copy(currentValueBytes, buff, currentValueBytes.Length);
+            }
             ImGui.InputText(label, buff, maxLength, flags);
             return Encoding.Default.GetString(buff).TrimEnd('\0');
         }

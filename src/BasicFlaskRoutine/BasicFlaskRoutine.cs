@@ -9,11 +9,11 @@ using System.Linq;
 using TreeRoutine.Menu;
 using ImGuiNET;
 using System.Diagnostics;
-using Exile;
-using Exile.PoEMemory.MemoryObjects;
-using PoEMemory.Components;
-using Shared;
-using Shared.Enums;
+using ExileCore;
+using ExileCore.PoEMemory.Components;
+using ExileCore.PoEMemory.MemoryObjects;
+using ExileCore.Shared;
+using ExileCore.Shared.Enums;
 using TreeRoutine.TreeSharp;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine

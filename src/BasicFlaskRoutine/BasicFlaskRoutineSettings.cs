@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using Shared.Nodes;
+using ExileCore.Shared.Nodes;
 using TreeRoutine.Routine.BasicFlaskRoutine.Flask;
 
 namespace TreeRoutine.Routine.BasicFlaskRoutine

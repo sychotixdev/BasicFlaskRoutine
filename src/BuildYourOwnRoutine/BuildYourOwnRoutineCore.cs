@@ -15,10 +15,10 @@ using System.Reflection;
 using TreeRoutine.Routine.BuildYourOwnRoutine.UI.MenuItem;
 using TreeRoutine.Routine.BuildYourOwnRoutine.Flask;
 using System.Collections.Concurrent;
-using Exile;
-using Exile.PoEMemory.MemoryObjects;
-using PoEMemory.Components;
-using Shared;
+using ExileCore;
+using ExileCore.PoEMemory.Components;
+using ExileCore.PoEMemory.MemoryObjects;
+using ExileCore.Shared;
 using TreeRoutine.TreeSharp;
 
 namespace TreeRoutine.Routine.BuildYourOwnRoutine

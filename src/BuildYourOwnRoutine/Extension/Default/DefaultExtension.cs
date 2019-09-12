@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PoEMemory.Components;
+using ExileCore.PoEMemory.Components;
 using TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions;
 using TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions;
 
@@ -29,7 +29,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default
                 new UseFlaskActionFactory(Name),
                 new SendKeyActionFactory(Name),
                 new UseFlaskTypeActionFactory(Name),
-                new UseVaalSkillActionFactory(Name),
+                //new UseVaalSkillActionFactory(Name),
                 new TimerActionFactory(Name)
             };
 
