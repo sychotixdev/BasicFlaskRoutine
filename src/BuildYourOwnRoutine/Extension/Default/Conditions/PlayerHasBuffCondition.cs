@@ -28,7 +28,8 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
 
         public int RemainingDuration { get; set; } = 0;
         public string RemainingDurationString { get; set; } = "RemainingDuration";
-
+        public int MinimumCharges { get; set; } = 0;
+        public string MinimumChargesString { get; set; } = "MinimumCharges";
 
         public static List<string> GetEnumList<T>()
         {
@@ -55,6 +56,8 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
             HasBuffReady = ExtensionComponent.InitialiseParameterString(SearchingBuff, HasBuffReady, ref Parameters);
             SearchString = ExtensionComponent.InitialiseParameterString(SearchStringString, SearchString, ref Parameters);
             RemainingDuration = ExtensionComponent.InitialiseParameterInt32(RemainingDurationString, RemainingDuration, ref Parameters);
+            MinimumCharges = ExtensionComponent.InitialiseParameterInt32(MinimumChargesString, MinimumCharges, ref Parameters);
+
         }
 
         public override bool CreateConfigurationMenu(ExtensionParameter extensionParameter, ref Dictionary<String, Object> Parameters)
@@ -75,6 +78,10 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
             RemainingDuration = ImGuiExtension.IntSlider("Remaining Duration", RemainingDuration, 0, 4000);
             ImGuiExtension.ToolTipWithText("(?)", "Includes buffs with duration longer than specified. Set to 0 to ignore duration.");
             Parameters[RemainingDurationString] = RemainingDuration.ToString();
+
+            MinimumCharges = ImGuiExtension.IntSlider("Minimum Charges", MinimumCharges, 0, 20);
+            ImGuiExtension.ToolTipWithText("(?)", "Includes buffs with charges greater or equal to specified value. Set to 0 to ignore charges.");
+            Parameters[MinimumChargesString] = MinimumCharges.ToString();
             return true;
         }
 
@@ -82,16 +89,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
         {
             return () =>
             {
-                var playerBuff = extensionParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
-                var player = extensionParameter.Plugin.PlayerHelper;
-                var localPlayer = extensionParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer;
-                var playeraccess = localPlayer.GetComponent<Actor>().ActorSkills;
-                var playerhasBuff = playerBuff.Buffs.Any(x => x.Name == HasBuffReady && (x.Timer >= RemainingDuration * 1000));
-
-                if(playerhasBuff)
-                    return true;
-
-                return false;
+                return extensionParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.Buffs.Any(x => x.Name == HasBuffReady && (x.Timer >= RemainingDuration * 1000) && x.Charges >= MinimumCharges);
             };
         }
 

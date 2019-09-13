@@ -19,14 +19,14 @@ namespace TreeRoutine.Menu
         public static int IntSlider(string labelString, int value, int minValue, int maxValue)
         {
             var refValue = value;
-            ImGui.SliderInt(labelString, ref refValue, minValue, maxValue, "%.00f");
+            ImGui.SliderInt(labelString, ref refValue, minValue, maxValue);
             return refValue;
         }
 
         public static int IntSlider(string labelString, string sliderString, int value, int minValue, int maxValue)
         {
             var refValue = value;
-            ImGui.SliderInt(labelString, ref refValue, minValue, maxValue, $"{sliderString}: {value}");
+            ImGui.SliderInt(labelString, ref refValue, minValue, maxValue);
             return refValue;
         }
 
@@ -40,7 +40,7 @@ namespace TreeRoutine.Menu
         public static int IntSlider(string labelString, string sliderString, RangeNode<int> setting)
         {
             var refValue = setting.Value;
-            ImGui.SliderInt(labelString, ref refValue, setting.Min, setting.Max, $"{sliderString}: {setting.Value}");
+            ImGui.SliderInt(labelString, ref refValue, setting.Min, setting.Max);
             return refValue;
         }
 
