@@ -49,7 +49,8 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
         {
             return () =>
             {
-                bool retVal = Input.IsKeyDown((Keys) Key);
+                extensionParameter.Plugin.LogMessage($"Key: {Key}");
+                bool retVal = Input.GetKeyState((Keys)Key);
                 ///extensionParameter.Plugin.Log($"Evaluated condition: {retVal}", 3);
                 return retVal;
             };
