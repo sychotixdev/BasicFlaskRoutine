@@ -49,7 +49,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
         {
             return () =>
             {
-                extensionParameter.Plugin.LogMessage($"Key: {Key}");
+                //extensionParameter.Plugin.LogMessage($"Key: {Key}");
                 bool retVal = Input.GetKeyState((Keys)Key);
                 ///extensionParameter.Plugin.Log($"Evaluated condition: {retVal}", 3);
                 return retVal;
