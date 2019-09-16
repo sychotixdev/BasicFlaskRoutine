@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PoEMemory.Components;
+using ExileCore.PoEMemory.Components;
 using TreeRoutine.Menu;
 
 namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions

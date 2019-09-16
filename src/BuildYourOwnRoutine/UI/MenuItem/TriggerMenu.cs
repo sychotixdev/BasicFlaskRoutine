@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExileCore;
 using TreeRoutine.Menu;
 using TreeRoutine.Routine.BuildYourOwnRoutine.Extension;
 using TreeRoutine.Routine.BuildYourOwnRoutine.Trigger;
@@ -132,14 +133,14 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.UI
                         ImGuiExtension.ToolTipWithText("(?)", "When enabled, the decorator will not end a sequence, even if its child fails.");
 
                         SelectedOption1 = ImGuiExtension.ComboBox("Conditions", SelectedOption1, TriggerComposite.ConditionList.Select(x => x.Owner + ": " + x.Name).ToList());
-                        if (ImGui.Button("Add"))
+                        if (ImGui.Button("AddCondition"))
                         {
                             //if (ActiveWorkingTriggerCondition == null)
                             //{
                                 ActiveWorkingTriggerCondition = new TriggerCondition();
                             //}
 
-                            ImGui.OpenPopup("Add condition");
+                            ImGui.OpenPopup("Add Condition");
                         }
 
                         var selectedCondition = TriggerComposite.ConditionList.ElementAtOrDefault(SelectedOption1);
@@ -155,7 +156,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.UI
                                     EditedTriggerCondition = selectedCondition;
                                 //}
 
-                                ImGui.OpenPopup("Add condition");
+                                ImGui.OpenPopup("Add Condition");
                             }
 
                             ImGui.SameLine();
@@ -229,8 +230,9 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.UI
         private void RenderAddConditionMenu()
         {
             bool testOpen = true;
-            if (ImGui.BeginPopupModal("Add condition", ref testOpen, ImGuiWindowFlags.AlwaysAutoResize))
+            if (ImGui.BeginPopupModal("Add Condition", ref testOpen, ImGuiWindowFlags.AlwaysAutoResize))
             {
+                ExtensionParameter.Plugin.LogMessage("Message Logged!", 5.0f);
                 // TODO: HashSet is not guaranteed ordered. This should be fixed later
                 var filterList = ExtensionParameter.Plugin.ExtensionCache.ConditionFilterList.ToList();
                 FilterOption = ImGuiExtension.ComboBox("Filter Type", FilterOption, filterList);

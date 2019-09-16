@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Exile;
-using Exile.PoEMemory.MemoryObjects;
-using PoEMemory.Components;
-using Shared.Enums;
+using ExileCore.PoEMemory.Components;
+using ExileCore.PoEMemory.MemoryObjects;
+using ExileCore.Shared.Enums;
 using TreeRoutine.Menu;
 
 namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
@@ -195,7 +194,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
                     {
                         // If the monster is still too healthy, don't count it
                         var monsterLife = monster.GetComponent<Life>();
-                        if (monsterLife != null && monsterLife.Address > 0 && ((monsterLife.CurHP / Math.Min(1, monsterLife.MaxHP)) * 100 >= MonsterHealthPercentThreshold) != MonsterAboveHealthThreshold)
+                        if (monsterLife != null && monsterLife.Address > 0 && ((monsterLife.CurHP / Math.Max(1, monsterLife.MaxHP)) * 100 >= MonsterHealthPercentThreshold) != MonsterAboveHealthThreshold)
                             continue;
                     }
 

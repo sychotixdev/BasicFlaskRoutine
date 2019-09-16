@@ -1,7 +1,6 @@
 ﻿using TreeRoutine.Routine.BuildYourOwnRoutine.Profile;
 using System.Windows.Forms;
-using PoEMemory;
-using Shared.Nodes;
+using ExileCore.Shared.Nodes;
 using TreeRoutine.Routine.BuildYourOwnRoutine.Flask;
 using ImGuiVector2 = System.Numerics.Vector2;
 using ImGuiVector4 = System.Numerics.Vector4;

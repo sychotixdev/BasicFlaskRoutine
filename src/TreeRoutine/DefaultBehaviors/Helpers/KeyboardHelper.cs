@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using Exile;
+using ExileCore;
 
 namespace TreeRoutine.DefaultBehaviors.Helpers
 {

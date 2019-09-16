@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using Exile;
+using ExileCore;
 using TreeRoutine.DefaultBehaviors.Helpers;
 using TreeRoutine.FlaskComponents;
 using Newtonsoft.Json;
