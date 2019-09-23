@@ -925,6 +925,7 @@ namespace TreeRoutine.Buffs
         bestiary_tiger_boss_aura1,
         elemental_warding_buff,
         bestiary_legendary_enrage,
+        delve_degen_buff,
         royale_pain
     }
 }
