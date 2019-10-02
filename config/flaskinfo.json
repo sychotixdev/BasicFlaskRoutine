@@ -159,6 +159,7 @@
     "FlaskBuffAttackSpeedWhileHealing": 0,
     "FlaskManaRecoveryAtEnd" : 0,
     "FlaskBuffReducedManaCostWhileHealing" : 0,
-    "FlaskFullRechargeOnHit" : 0
+    "FlaskFullRechargeOnHit" : 0,
+    "FlaskEffectNotRemovedOnFullMana" : 0
   }
 }
