@@ -153,6 +153,12 @@
     "JunMasterLocalFlaskItemFoundRarityDuringFlaskEffect": 0,
     "JunMasterLocalFlaskSkillManaCostDuringFlaskEffect": 8,
     "JunMasterLocalFlaskAvoidStunChanceAndMovementSpeedDuringFlaskEffect": 7,
-    "JunMasterLocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect": 8
+    "JunMasterLocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect": 8,
+    "FlaskBuffFreezeShockIgniteChanceWhileHealing": 0,
+    "FlaskBuffCastSpeedWhileHealing": 0,
+    "FlaskBuffAttackSpeedWhileHealing": 0,
+    "FlaskManaRecoveryAtEnd" : 0,
+    "FlaskBuffReducedManaCostWhileHealing" : 0,
+    "FlaskFullRechargeOnHit" : 0
   }
 }
