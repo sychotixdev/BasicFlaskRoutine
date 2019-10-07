@@ -925,6 +925,12 @@ namespace TreeRoutine.Buffs
         bestiary_tiger_boss_aura1,
         elemental_warding_buff,
         bestiary_legendary_enrage,
+        delve_degen_buff,
+        sand_armour,
+        blood_armour,
+        player_aura_accuracy_and_crits,
+        bloodstained_banner_buff_aura,
+        player_physical_damage_aura,
         royale_pain
     }
 }
