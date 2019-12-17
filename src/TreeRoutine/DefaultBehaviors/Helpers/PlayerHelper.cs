@@ -64,7 +64,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
 
             foreach (var buff in buffs)
             {
-                if (!String.IsNullOrEmpty(buff) && !playerBuffs.Any(x => x.Name == buff))
+                if (!String.IsNullOrEmpty(buff) && !playerBuffs.Any(x => !String.IsNullOrWhiteSpace(x.Name) && buff.StartsWith(x.Name)))
                 {
                     return false;
                 }
@@ -95,7 +95,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
 
             foreach (var buff in buffs)
             {
-                if (!String.IsNullOrEmpty(buff) && playerBuffs.Any(x => x.Name == buff))
+                if (!String.IsNullOrEmpty(buff) && playerBuffs.Any(x => !String.IsNullOrWhiteSpace(x.Name) && buff.StartsWith(x.Name)))
                 {
                     return false;
                 }

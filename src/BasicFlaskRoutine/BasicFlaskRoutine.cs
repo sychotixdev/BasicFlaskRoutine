@@ -164,7 +164,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         private Composite CreateManaPotionComposite()
         {
             return new Decorator((x => PlayerHelper.isManaBelowPercentage(Settings.ManaPotion) || PlayerHelper.isManaBelowValue(Settings.MinManaFlask)),
-                new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_mana" })),
+                new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_mana", "flask_effect_mana_not_removed_when_full" })),
                     new PrioritySelector(
                         CreateUseFlaskAction(FlaskActions.Mana, false),
                         CreateUseFlaskAction(FlaskActions.Hybrid, false)
