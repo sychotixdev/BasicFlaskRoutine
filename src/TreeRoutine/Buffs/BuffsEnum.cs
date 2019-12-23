@@ -931,6 +931,7 @@ namespace TreeRoutine.Buffs
         player_aura_accuracy_and_crits,
         bloodstained_banner_buff_aura,
         player_physical_damage_aura,
-        royale_pain
+        royale_pain,
+        quick_guard
     }
 }

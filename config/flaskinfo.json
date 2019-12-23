@@ -147,6 +147,7 @@
     "FlaskBuffResistancesWhileHealing": 5,
     "FlaskRemovesBleeding": 13,
     "FlaskCurseImmunity": 14,
+    "flaskBuffAttackLifeLeechWhileHealing":  5, 
     
 	"JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect": 8,
 	"JunMasterLocalFlaskLifeLeechOnDamageTakenPermyriadDuringFlaskEffect": 2,
@@ -154,12 +155,5 @@
     "JunMasterLocalFlaskSkillManaCostDuringFlaskEffect": 8,
     "JunMasterLocalFlaskAvoidStunChanceAndMovementSpeedDuringFlaskEffect": 7,
     "JunMasterLocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect": 8,
-    "FlaskBuffFreezeShockIgniteChanceWhileHealing": 0,
-    "FlaskBuffCastSpeedWhileHealing": 0,
-    "FlaskBuffAttackSpeedWhileHealing": 0,
-    "FlaskManaRecoveryAtEnd" : 0,
-    "FlaskBuffReducedManaCostWhileHealing" : 0,
-    "FlaskFullRechargeOnHit" : 0,
-	"FlaskEffectNotRemovedOnFullMana" : 0
   }
 }
