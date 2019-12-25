@@ -147,7 +147,8 @@
     "FlaskBuffResistancesWhileHealing": 5,
     "FlaskRemovesBleeding": 13,
     "FlaskCurseImmunity": 14,
-    "flaskBuffAttackLifeLeechWhileHealing":  5, 
+    "FlaskBuffAttackLifeLeechWhileHealing": 5,
+    "FlaskFullRechargeOnHit":  0, 
     
 	"JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect": 8,
 	"JunMasterLocalFlaskLifeLeechOnDamageTakenPermyriadDuringFlaskEffect": 2,

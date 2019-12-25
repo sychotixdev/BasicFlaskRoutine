@@ -8,7 +8,6 @@ using ExileCore.PoEMemory.Components;
 using ExileCore.PoEMemory.MemoryObjects;
 using ExileCore.Shared.Enums;
 using TreeRoutine.Menu;
-
 namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
 {
     internal class NearbyMonstersCondition : ExtensionCondition
@@ -178,8 +177,18 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
                 // Make sure we create our own list to iterate as we may be adding/removing from the list
                 foreach (var monster in new List<Entity>(extensionParameter.Plugin.LoadedMonsters))
                 {
-                    if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile)
+                    // Sometimes this throws an exception. Ignore it and move on if it does.
+                    try
+                    {
+                        if (monster != null && !monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive ||
+                            !monster.IsHostile)
+                            continue;
+                    }
+                    catch (Exception)
+                    {
                         continue;
+                    }
+                    
 
                     var monsterType = monster.GetComponent<ObjectMagicProperties>().Rarity;
 
