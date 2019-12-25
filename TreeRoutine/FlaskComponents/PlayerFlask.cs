@@ -28,6 +28,7 @@ namespace TreeRoutine.FlaskComponents
         public FlaskActions Action2 { get; set; } = FlaskActions.None;
         public FlaskInstantType InstantType { get; set; }
         public Boolean Instant => InstantType != FlaskInstantType.None;
+        public bool RemovedWhenFull { get; set; } = true;
         public Mods Mods { get; set; } = null;
 
         public override string ToString()
