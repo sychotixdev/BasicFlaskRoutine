@@ -932,6 +932,7 @@ namespace TreeRoutine.Buffs
         bloodstained_banner_buff_aura,
         player_physical_damage_aura,
         royale_pain,
-        quick_guard
+        quick_guard,
+        corrosive_shroud_at_max_damage
     }
 }
