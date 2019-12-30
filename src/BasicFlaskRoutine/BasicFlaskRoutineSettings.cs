@@ -41,6 +41,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             DefensiveCountRareMonsters = new ToggleNode(false);
             DefensiveCountMagicMonsters = new ToggleNode(false);
             DefensiveCountUniqueMonsters = new ToggleNode(false);
+            DefensiveIgnoreFullHealthUniqueMonsters = new ToggleNode(false);
             OffensiveFlaskEnable = new ToggleNode(false);
             HPPercentOffensive = new RangeNode<int>(50, 0, 100);
             ESPercentOffensive = new RangeNode<int>(50, 0, 100);
@@ -50,6 +51,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             OffensiveCountRareMonsters = new ToggleNode(false);
             OffensiveCountMagicMonsters = new ToggleNode(false);
             OffensiveCountUniqueMonsters = new ToggleNode(false);
+            OffensiveIgnoreFullHealthUniqueMonsters = new ToggleNode(false);
             FlaskSettings = new FlaskSetting[5]
             {
                 new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D1), new RangeNode<int>(0, 0, 5)),
@@ -104,6 +106,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode DefensiveCountRareMonsters { get; set; }
         public ToggleNode DefensiveCountMagicMonsters { get; set; }
         public ToggleNode DefensiveCountUniqueMonsters { get; set; }
+        public ToggleNode DefensiveIgnoreFullHealthUniqueMonsters { get; set; }
 
 
         public ToggleNode OffensiveFlaskEnable { get; set; }
@@ -116,6 +119,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode OffensiveCountRareMonsters { get; set; }
         public ToggleNode OffensiveCountMagicMonsters { get; set; }
         public ToggleNode OffensiveCountUniqueMonsters { get; set; }
+        public ToggleNode OffensiveIgnoreFullHealthUniqueMonsters { get; set; }
+
 
         public FlaskSetting[] FlaskSettings { get; set; }
     }

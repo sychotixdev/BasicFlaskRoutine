@@ -185,7 +185,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite CreateDefensivePotionComposite()
         {
-            return new Decorator((x => Settings.DefensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentDefensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentDefensive) || Settings.DefensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.DefensiveMonsterCount, Settings.DefensiveMonsterDistance, Settings.DefensiveCountNormalMonsters, Settings.DefensiveCountRareMonsters, Settings.DefensiveCountMagicMonsters, Settings.DefensiveCountUniqueMonsters))),
+            return new Decorator((x => Settings.DefensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentDefensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentDefensive) || Settings.DefensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.DefensiveMonsterCount, Settings.DefensiveMonsterDistance, Settings.DefensiveCountNormalMonsters, Settings.DefensiveCountRareMonsters, Settings.DefensiveCountMagicMonsters, Settings.DefensiveCountUniqueMonsters, Settings.DefensiveIgnoreFullHealthUniqueMonsters))),
                 new PrioritySelector(
                     CreateUseFlaskAction(FlaskActions.Defense),
                     new Decorator((x => Settings.OffensiveAsDefensiveEnable), CreateUseFlaskAction(new List<FlaskActions> { FlaskActions.OFFENSE_AND_SPEEDRUN, FlaskActions.Defense }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ? new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid } : null)))
@@ -196,7 +196,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         private Composite CreateOffensivePotionComposite()
         {
             return new PrioritySelector(
-                new Decorator((x => Settings.OffensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive) || Settings.OffensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.OffensiveMonsterCount, Settings.OffensiveMonsterDistance, Settings.OffensiveCountNormalMonsters, Settings.OffensiveCountRareMonsters, Settings.OffensiveCountMagicMonsters, Settings.OffensiveCountUniqueMonsters))),
+                new Decorator((x => Settings.OffensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive) || Settings.OffensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.OffensiveMonsterCount, Settings.OffensiveMonsterDistance, Settings.OffensiveCountNormalMonsters, Settings.OffensiveCountRareMonsters, Settings.OffensiveCountMagicMonsters, Settings.OffensiveCountUniqueMonsters, Settings.OffensiveIgnoreFullHealthUniqueMonsters))),
                     CreateUseFlaskAction(new List<FlaskActions> { FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ?  new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid} : null)))
             );
         }
@@ -236,7 +236,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             });
         }
 
-        private Boolean HasEnoughNearbyMonsters(int minimumMonsterCount, int maxDistance, bool countNormal, bool countRare, bool countMagic, bool countUnique)
+        private Boolean HasEnoughNearbyMonsters(int minimumMonsterCount, int maxDistance, bool countNormal, bool countRare, bool countMagic, bool countUnique, bool ignoreUniqueIfFullHealth)
         {
             var mobCount = 0;
             var maxDistanceSquare = maxDistance * maxDistance;
@@ -265,6 +265,16 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         || monsterType == MonsterRarity.Magic && !countMagic
                         || monsterType == MonsterRarity.Unique && !countUnique)
                         continue;
+
+                    if (monsterType == MonsterRarity.Unique && ignoreUniqueIfFullHealth)
+                    {
+                        Life monsterLife = monster.GetComponent<Life>();
+                        if (monsterLife == null)
+                            continue;
+
+                        if (monsterLife.HPPercentage > 0.995)
+                            continue;
+                    }
 
                     var monsterPosition = monster.Pos;
 
@@ -548,6 +558,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         ImGuiExtension.Checkbox("Magic Monsters", Settings.DefensiveCountMagicMonsters);
                     Settings.DefensiveCountUniqueMonsters.Value =
                         ImGuiExtension.Checkbox("Unique Monsters", Settings.DefensiveCountUniqueMonsters);
+                    Settings.DefensiveIgnoreFullHealthUniqueMonsters.Value =
+                        ImGuiExtension.Checkbox("Ignore Full Health Unique Monsters", Settings.DefensiveIgnoreFullHealthUniqueMonsters);
                     ImGui.TreePop();
                 }
 
@@ -574,7 +586,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         ImGuiExtension.Checkbox("Magic Monsters", Settings.OffensiveCountMagicMonsters);
                     Settings.OffensiveCountUniqueMonsters.Value =
                         ImGuiExtension.Checkbox("Unique Monsters", Settings.OffensiveCountUniqueMonsters);
-
+                    Settings.OffensiveIgnoreFullHealthUniqueMonsters.Value =
+                        ImGuiExtension.Checkbox("Ignore Full Health Unique Monsters", Settings.OffensiveIgnoreFullHealthUniqueMonsters);
                     ImGui.TreePop();
                 }
 
