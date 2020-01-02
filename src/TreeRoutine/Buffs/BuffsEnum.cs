@@ -934,6 +934,7 @@ namespace TreeRoutine.Buffs
         royale_pain,
         quick_guard,
         corrosive_shroud_at_max_damage,
-        mine_mana_reservation
+        mine_mana_reservation,
+        cyclone_channelled_stage
     }
 }
