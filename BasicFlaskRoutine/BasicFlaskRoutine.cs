@@ -37,6 +37,24 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private const string basicFlaskRoutineChecker = "BasicFlaskRoutine Checker";
 
+        private readonly List<string> travelingSkills = new List<string>()
+        {
+            "Blink Arrow",
+            "Bodyswap",
+            "Dash",
+            "Flame Dash",
+            "Frostblink",
+            "Leap Slam",
+            "Lightning Warp",
+            "Mirror Arrow",
+            "Phase Run",
+            "Shield Charge",
+            "Smoke Mine",
+            "Vaal Lightning Warp",
+            "Whirling Blades",
+            "Withering Step"
+        };
+
 
 
         public override bool Initialise()
@@ -91,7 +109,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         private void UpdatePlayerMovingStopwatch()
         {
             var player = GameController.Player.GetComponent<Actor>();
-            if (player != null && player.Address != 0 && player.isMoving)
+            if (player != null && player.Address != 0 && player.isMoving 
+                || (player.isAttacking && isTravelingSkill(player.CurrentAction.Skill)) )
             {
                 if (!PlayerMovingStopwatch.IsRunning)
                     PlayerMovingStopwatch.Start();
@@ -100,6 +119,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             {
                 PlayerMovingStopwatch.Reset();
             }
+        }
+
+        private bool isTravelingSkill(ActorSkill skill)
+        {
+            return travelingSkills.Contains(skill.EffectsPerLevel.SkillGemWrapper.ActiveSkill.DisplayName);
         }
 
         private Composite CreateTree()
@@ -417,26 +441,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private bool IsCycloning()
         {
-            try
-            {
+            try {
                 var buffs = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs;
 
                 foreach (var buff in buffs)
-                {
-                    bool isCycloneBuff = buff.Name.ToLower().Equals("cyclone_channelled_stage");
-
-                    if (isCycloneBuff)
-                    {
-                        return float.IsInfinity(buff.Timer);
-                    }
-
-                }
-            }
-            catch
-            {
+                    if (buff.Name.ToLower().Equals("cyclone_channelled_stage"))
+                        return float.IsInfinity(buff.Timer);}
+            catch {
                 if (Settings.Debug)
-                    LogError("BasicFlaskRoutine: Using Speed Flasks while Cycloning is enabled, but cannot get player buffs. Try to update PoeHUD.", 5);
-            }
+                    LogError("BasicFlaskRoutine: Using Speed Flasks while Cycloning is enabled, but cannot get player buffs. Try to update PoeHUD.", 5);}
 
             return false;
         }
