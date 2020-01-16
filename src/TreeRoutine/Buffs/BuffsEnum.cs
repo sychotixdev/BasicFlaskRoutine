@@ -935,6 +935,7 @@ namespace TreeRoutine.Buffs
         quick_guard,
         corrosive_shroud_at_max_damage,
         mine_mana_reservation,
+        cyclone_channelled_stage
         Summoned_Spider_Buff,
     }
 }
