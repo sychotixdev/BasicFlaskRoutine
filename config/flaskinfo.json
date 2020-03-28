@@ -135,6 +135,7 @@
     "FlaskHealsMinions": 0,
     "FlaskBuffManaLeechPermyriadWhileHealing": 0,
     "FlaskBuffLifeLeechPermyriadWhileHealing": 0,
+    "FlaskBuffSpellEnergyShieldLeechWhileHealing": 0,
     "FlaskBuffKnockbackWhileHealing": 0,
     "FlaskBuffStunRecoveryWhileHealing": 0,
     "FlaskBuffMovementSpeedWhileHealing": 7,
