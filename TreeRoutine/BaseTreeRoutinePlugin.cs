@@ -92,7 +92,6 @@ namespace TreeRoutine
                         LogError("Plugin " + Name + " tree root function returned null. Plugin is either still initialising, or has an error.", ErrmsgTime);
                     return;
                 }
-
                 if (treeRoot.LastStatus != null)
                 {
                     treeRoot.Tick(null);

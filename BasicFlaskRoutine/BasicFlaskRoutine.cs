@@ -128,7 +128,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite CreateTree()
         {
-            return new Decorator(x => TreeHelper.CanTick() && !PlayerHelper.isPlayerDead() && (!Cache.InHideout || Settings.EnableInHideout) && PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "grace_period" }),
+            return new Decorator(x => TreeHelper.CanTick() && !PlayerHelper.isPlayerDead() && 
+            (!Cache.InHideout || Settings.EnableInHideout) && PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "grace_period" }),
                     new PrioritySelector
                     (
                         new Decorator(x => Settings.AutoFlask,
@@ -149,7 +150,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite CreateInstantHPPotionComposite()
         {
-            return new Decorator((x => PlayerHelper.isHealthBelowPercentage(Settings.InstantHPPotion) 
+            return new Decorator((x => !Settings.BossingMode && PlayerHelper.isHealthBelowPercentage(Settings.InstantHPPotion)
                                         || (Settings.AllocatedSupremeDecadence && PlayerHelper.isEnergyShieldBelowPercentage(Settings.InstantESPotion))
                                 ),
                 new PrioritySelector(
@@ -164,7 +165,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite CreateHPPotionComposite()
         {
-            return new Decorator((x => PlayerHelper.isHealthBelowPercentage(Settings.HPPotion)
+            return new Decorator((x => !Settings.BossingMode && PlayerHelper.isHealthBelowPercentage(Settings.HPPotion)
                                         || (Settings.AllocatedSupremeDecadence && PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPotion))
                                 ),
                 new Decorator((x => PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_effect_life" })),
@@ -181,10 +182,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return new Decorator((x => PlayerHelper.isManaBelowPercentage(Settings.InstantManaPotion)),
                 new PrioritySelector(
                     CreateUseFlaskAction(FlaskActions.Mana, true, true),
-                    CreateUseFlaskAction(FlaskActions.Hybrid, true, true),
-                    CreateUseFlaskAction(FlaskActions.Mana),
-                    CreateUseFlaskAction(FlaskActions.Hybrid)
-
+                    CreateUseFlaskAction(FlaskActions.Hybrid, true, true)
                 )
             );
         }
@@ -227,7 +225,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private Composite CreateDefensivePotionComposite()
         {
-            return new Decorator((x => Settings.DefensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentDefensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentDefensive) || Settings.DefensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.DefensiveMonsterCount, Settings.DefensiveMonsterDistance, Settings.DefensiveCountNormalMonsters, Settings.DefensiveCountRareMonsters, Settings.DefensiveCountMagicMonsters, Settings.DefensiveCountUniqueMonsters, Settings.DefensiveIgnoreFullHealthUniqueMonsters))),
+            return new Decorator((x => Settings.DefensiveFlaskEnable && !Settings.BossingMode &&
+            (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentDefensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentDefensive) || 
+            Settings.DefensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.DefensiveMonsterCount, Settings.DefensiveMonsterDistance, Settings.DefensiveCountNormalMonsters, Settings.DefensiveCountRareMonsters, Settings.DefensiveCountMagicMonsters, Settings.DefensiveCountUniqueMonsters, Settings.DefensiveIgnoreFullHealthUniqueMonsters))),
                 new PrioritySelector(
                     CreateUseFlaskAction(FlaskActions.Defense),
                     new Decorator((x => Settings.OffensiveAsDefensiveEnable), CreateUseFlaskAction(new List<FlaskActions> { FlaskActions.OFFENSE_AND_SPEEDRUN, FlaskActions.Defense }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ? new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid } : null)))
@@ -238,14 +238,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         private Composite CreateOffensivePotionComposite()
         {
             return new PrioritySelector(
-                new Decorator((x => Settings.OffensiveFlaskEnable && (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive) || Settings.OffensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.OffensiveMonsterCount, Settings.OffensiveMonsterDistance, Settings.OffensiveCountNormalMonsters, Settings.OffensiveCountRareMonsters, Settings.OffensiveCountMagicMonsters, Settings.OffensiveCountUniqueMonsters, Settings.OffensiveIgnoreFullHealthUniqueMonsters))),
+                new Decorator((x => Settings.OffensiveFlaskEnable && !Settings.BossingMode && 
+                (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive) || Settings.OffensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.OffensiveMonsterCount, Settings.OffensiveMonsterDistance, Settings.OffensiveCountNormalMonsters, Settings.OffensiveCountRareMonsters, Settings.OffensiveCountMagicMonsters, Settings.OffensiveCountUniqueMonsters, Settings.OffensiveIgnoreFullHealthUniqueMonsters))),
                     CreateUseFlaskAction(new List<FlaskActions> { FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ?  new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid} : null)))
             );
         }
 
         private Composite CreateAilmentPotionComposite()
         {
-            return new Decorator(x => Settings.RemAilment,
+            return new Decorator(x => Settings.RemAilment && !Settings.BossingMode,
                 new PrioritySelector(
                     new Decorator(x => Settings.RemBleed, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Bleeding, CreateUseFlaskAction(FlaskActions.BleedImmune, isCleansing:true))),
                     new Decorator(x => Settings.RemBurning, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Burning, CreateUseFlaskAction(FlaskActions.IgniteImmune, isCleansing: true))),
@@ -299,8 +300,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     if (!monster.HasComponent<Monster>() || !monster.IsValid || !monster.IsAlive || !monster.IsHostile)
                         continue;
 
-                    var monsterType = monster.GetComponent<ObjectMagicProperties>().Rarity;
-
+                    var monsterType = monster.GetComponent<ObjectMagicProperties>()?.Rarity ?? null;
+                    if (monsterType == null) continue;
                     // Don't count this monster type if we are ignoring it
                     if (monsterType == MonsterRarity.White && !countNormal
                         || monsterType == MonsterRarity.Rare && !countRare
@@ -486,6 +487,12 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             base.Render();
             if (!Settings.Enable.Value) return;
+            if (Settings.BossingModeToggle && Settings.BossingModeHotkey.PressedOnce())
+            {
+                Settings.BossingMode = !Settings.BossingMode;
+                if (Settings.BossingMode) LogMessage("BossingMode Activated! No automatic flasking until disabled.", 5, Color.Red);
+                else LogMessage("BossingMode deactivated.", 5);
+            }
         }
 
         public override void DrawSettings()
@@ -502,6 +509,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 ImGuiExtension.ToolTipWithText("(?)", "Determines how many times the plugin checks flasks every second.\nLower for less resources, raise for faster response (but higher chance to chug potions).");
                 ImGui.Separator();
                 Settings.Debug.Value = ImGuiExtension.Checkbox("Debug Mode", Settings.Debug);
+                ImGui.Separator();
+                Settings.BossingModeToggle.Value = ImGuiExtension.Checkbox("Disable Defensive and Offensive Flasking", Settings.BossingModeToggle);
+                ImGui.Separator();
+                Settings.BossingModeHotkey.Value = ImGuiExtension.HotkeySelector("BossingModeHotkey", Settings.BossingModeHotkey.Value);
                 ImGui.TreePop();
             }
 

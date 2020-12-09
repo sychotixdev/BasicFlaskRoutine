@@ -63,6 +63,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             OffensiveCountMagicMonsters = new ToggleNode(false);
             OffensiveCountUniqueMonsters = new ToggleNode(false);
             OffensiveIgnoreFullHealthUniqueMonsters = new ToggleNode(false);
+            BossingModeToggle = new ToggleNode(false);
+            BossingMode = false;
+            BossingModeHotkey = new HotkeyNode(Keys.T);
             FlaskSettings = new FlaskSetting[5]
             {
                 new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D1), new RangeNode<int>(0, 0, 5)),
@@ -131,6 +134,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode DefensiveCountMagicMonsters { get; set; }
         public ToggleNode DefensiveCountUniqueMonsters { get; set; }
         public ToggleNode DefensiveIgnoreFullHealthUniqueMonsters { get; set; }
+        public ToggleNode BossingModeToggle { get; set; }
+        public bool BossingMode;
+        public HotkeyNode BossingModeHotkey { get; set; }
 
 
         public ToggleNode OffensiveFlaskEnable { get; set; }
