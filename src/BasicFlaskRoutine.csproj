@@ -35,6 +35,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExileCore">
+      <HintPath>..\..\..\PoeHelper\ExileCore.dll</HintPath>
+    </Reference>
     <Reference Include="ImGui.NET">
       <HintPath>..\..\..\PoeHelper\ImGui.NET.dll</HintPath>
       <Private>False</Private>
@@ -180,13 +183,6 @@
     <Compile Include="TreeRoutine\TreeSharp\UntilFailure.cs" />
     <Compile Include="TreeRoutine\TreeSharp\UntilSuccess.cs" />
     <Compile Include="TreeRoutine\TreeSharp\Wait.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\PrivateExileApi\Core\Core.csproj">
-      <Project>{5539d732-34a7-44ab-9e28-116c3429b12a}</Project>
-      <Name>Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="config\FlaskBuffDetails.json">
