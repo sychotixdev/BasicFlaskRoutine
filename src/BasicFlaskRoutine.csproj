@@ -36,24 +36,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ImGui.NET">
-      <HintPath>..\..\..\..\..\PoeHelper\ImGui.NET.dll</HintPath>
+      <HintPath>..\..\..\PoeHelper\ImGui.NET.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\PoeHelper\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\PoeHelper\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\..\..\PoeHelper\SharpDX.dll</HintPath>
+      <HintPath>..\..\..\PoeHelper\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Desktop">
-      <HintPath>..\..\..\..\..\PoeHelper\SharpDX.Desktop.dll</HintPath>
+      <HintPath>..\..\..\PoeHelper\SharpDX.Desktop.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\..\..\PoeHelper\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>..\..\..\PoeHelper\SharpDX.Mathematics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -182,7 +182,7 @@
     <Compile Include="TreeRoutine\TreeSharp\Wait.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Core\Core.csproj">
+    <ProjectReference Include="..\..\..\PrivateExileApi\Core\Core.csproj">
       <Project>{5539d732-34a7-44ab-9e28-116c3429b12a}</Project>
       <Name>Core</Name>
       <Private>False</Private>
