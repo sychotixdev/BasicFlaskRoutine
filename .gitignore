@@ -2,6 +2,7 @@
 # Invoke-WebRequest https://gist.githubusercontent.com/kmorcinek/2710267/raw/ -OutFile .gitignore
 # or wget:
 # wget --no-check-certificate http://gist.githubusercontent.com/kmorcinek/2710267/raw/.gitignore
+/src/.vs/BasicFlaskRoutine/v16/.suo
 
 # User-specific files
 *.suo

@@ -466,7 +466,9 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator((x =>
             {
-                var buffs = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>().Buffs;
+                var life = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
+                if (life == null) return false;
+                var buffs = life.Buffs;
                 foreach (var buff in buffs)
                 {
                     if (float.IsInfinity(buff.Timer))
