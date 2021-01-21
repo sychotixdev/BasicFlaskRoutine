@@ -114,7 +114,7 @@ namespace TreeRoutine
             }
             catch (Exception e)
             {
-                LogError(Name + ": Exception! Printscreen this and post it.\n" + e.Message + "\n" + e.StackTrace, 30);
+                LogError(Name + ": Exception! Printscreen this and post it.\n" + e.Message + "\n" + e.StackTrace, 1);
                 throw e;
             }
         }
