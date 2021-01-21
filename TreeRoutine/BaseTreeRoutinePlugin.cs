@@ -33,7 +33,7 @@ namespace TreeRoutine
             if (!File.Exists(fileName))
             {
                 LogError("BaseTreeRoutinePlugin: Cannot find " + fileName + " file. This plugin will exit.", 10);
-                return null;
+                return default(TSettingType);
             }
 
             return JsonConvert.DeserializeObject<TSettingType>(File.ReadAllText(fileName));
