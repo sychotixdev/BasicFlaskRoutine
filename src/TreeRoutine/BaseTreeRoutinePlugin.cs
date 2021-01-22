@@ -92,7 +92,6 @@ namespace TreeRoutine
                         LogError("Plugin " + Name + " tree root function returned null. Plugin is either still initialising, or has an error.", ErrmsgTime);
                     return;
                 }
-
                 if (treeRoot.LastStatus != null)
                 {
                     treeRoot.Tick(null);
@@ -115,7 +114,7 @@ namespace TreeRoutine
             }
             catch (Exception e)
             {
-                LogError(Name + ": Exception! Printscreen this and post it.\n" + e.Message + "\n" + e.StackTrace, 30);
+                LogError(Name + ": Exception! Printscreen this and post it.\n" + e.Message + "\n" + e.StackTrace, 1);
                 throw e;
             }
         }

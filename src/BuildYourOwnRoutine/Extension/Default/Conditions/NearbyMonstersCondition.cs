@@ -188,8 +188,8 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
                     {
                         continue;
                     }
-                    
-
+                    if (monster == null) continue;
+                    if (monster.GetComponent<ObjectMagicProperties>() == null) continue;
                     var monsterType = monster.GetComponent<ObjectMagicProperties>().Rarity;
 
                     // Don't count this monster type if we are ignoring it
@@ -224,6 +224,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
                         {
                             // We care about resists. Only increment IF we are above the threshold
                             var monsterStats = monster.GetComponent<Stats>();
+                            if (monsterStats == null) continue;
                             int tempRes = 0;
                             if (ColdResistanceThreshold > 0 && monsterStats.StatDictionary.TryGetValue((GameStat)extensionParameter.Plugin.GameController.Files.Stats.records["cold_damage_resistance_%"].ID, out tempRes) && tempRes >= ColdResistanceThreshold)
                             {
