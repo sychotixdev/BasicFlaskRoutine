@@ -188,7 +188,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
                     {
                         continue;
                     }
-
+                    if (monster == null) continue;
                     if (monster.GetComponent<ObjectMagicProperties>() == null) continue;
                     var monsterType = monster.GetComponent<ObjectMagicProperties>().Rarity;
 
