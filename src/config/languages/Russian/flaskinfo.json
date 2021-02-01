@@ -1,4 +1,4 @@
-﻿/*
+/*
   IGNORE = 0,		// ignore mods/flask type/flask name and don't give error
   NONE = 1,		// mod/flask type/flask name isn't found.
   LIFE = 2,
@@ -52,6 +52,9 @@
     "Vessel of Vinktar": 8,
     "The Wise Oak": 8,
     "Witchfire Brew": 8,
+    "Soul Ripper": 5,
+    "Soul Catcher": 5,
+    "Cinderswallow Urn": 16,
 
 //ru names:
 
@@ -80,7 +83,10 @@
     "Печаль божества": 8,
     "Сосуд Винктара": 8,
     "Мудный дуб": 8,
-    "Отвар ведьмовского огня": 8
+    "Отвар ведьмовского огня": 8,
+    "Жнец душ": 5,
+    "Душелов": 5,
+    "Урна глотателя пепла": 16
   },
 
   "FlaskTypes": {
@@ -184,31 +190,32 @@
     "Алмазный флакон": 8
 	
   },
-  "FlaskMods": {
-    "FlaskLevelRequirement": 0,
-    "FlaskLevelRequirementHybrid": 0,
-    "FlaskLevelRequirementUtilityResists": 0,
-    "FlaskLevelRequirement14Real": 0,
-    "UtilityFlaskConsecrate": 0,
-    "UtilityFlaskSmokeCloud": 0,
-    "UtilityFlaskChilledGround": 0,
+	"FlaskMods": {
+		"FlaskLevelRequirement": 0,
+		"FlaskLevelRequirementHybrid": 0,
+		"FlaskLevelRequirementUtilityResists": 0,
+		"FlaskLevelRequirement14Real": 0,
+		"UtilityFlaskConsecrate": 0,
+		"UtilityFlaskSmokeCloud": 0,
+		"UtilityFlaskChilledGround": 0,
 
-    "FlaskEffectReducedDuration": 0,
-    "FlaskExtraCharges": 0,
-    "FlaskFullRechargeOnCrit": 0,
-    "FlaskFullRechargeOnTakeCrit": 0,
-    "FlaskPartialInstantRecovery": 0,
-    "FlaskIncreasedRecoverySpeed": 0,
-    "FlaskExtraManaCostsLife": 0,
-    "FlaskIncreasedRecoveryOnLowLife": 0,
-    "FlaskChargesUsed": 0,
-    "FlaskIncreasedDuration": 0,
-    "FlaskInstantRecoveryOnLowLife": 0,
-    "FlaskChargesAddedIncreasePercent": 0,
-    "FlaskExtraLifeCostsMana": 0,
-    "FlaskIncreasedRecoveryAmount": 0,
-    "FlaskFullInstantRecovery": 0,
-    "FlaskChanceRechargeOnCrit": 0,
+		"FlaskEffectReducedDuration": 0,
+		"FlaskExtraCharges": 0,
+		"FlaskFullRechargeOnCrit": 0,
+		"FlaskFullRechargeOnTakeCrit": 0,
+		"FlaskPartialInstantRecovery": 0,
+		"FlaskIncreasedRecoverySpeed": 0,
+		"FlaskExtraManaCostsLife": 0,
+		"FlaskIncreasedRecoveryOnLowLife": 0,
+		"FlaskChargesUsed": 0,
+		"FlaskIncreasedDuration": 0,
+		"FlaskInstantRecoveryOnLowLife": 0,
+		"FlaskChargesAddedIncreasePercent": 0,
+		"FlaskExtraLifeCostsMana": 0,
+		"FlaskIncreasedRecoveryAmount": 0,
+		"FlaskFullInstantRecovery": 0,
+		"FlaskChanceRechargeOnCrit": 0,
+		"FlaskIncreasedHealingCharges": 0,
 
     "FlaskHealsMinions": 0,
     "FlaskBuffManaLeechPermyriadWhileHealing": 0,
@@ -224,6 +231,21 @@
     "FlaskBuffEvasionWhileHealing": 5,
     "FlaskBuffResistancesWhileHealing": 5,
     "FlaskRemovesBleeding": 13,
-    "FlaskCurseImmunity": 14
+    "FlaskCurseImmunity": 14,
+    
+	"JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect": 8,
+	"JunMasterLocalFlaskLifeLeechOnDamageTakenPermyriadDuringFlaskEffect": 2,
+    "JunMasterLocalFlaskItemFoundRarityDuringFlaskEffect": 0,
+    "JunMasterLocalFlaskSkillManaCostDuringFlaskEffect": 8,
+    "JunMasterLocalFlaskAvoidStunChanceAndMovementSpeedDuringFlaskEffect": 7,
+    "JunMasterLocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect": 8,
+    "FlaskBuffFreezeShockIgniteChanceWhileHealing": 0,
+    "FlaskBuffCastSpeedWhileHealing": 0,
+    "FlaskBuffAttackSpeedWhileHealing": 0,
+    "FlaskManaRecoveryAtEnd" : 0,
+    "FlaskBuffReducedManaCostWhileHealing" : 0,
+    "FlaskFullRechargeOnHit" : 0,
+	"FlaskEffectNotRemovedOnFullMana" : 0,
+	"FlaskBuffAttackLifeLeechWhileHealing" : 5
   }
 }
