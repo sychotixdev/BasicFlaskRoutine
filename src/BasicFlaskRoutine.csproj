@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\PoeHelper\Plugins\Compiled\BasicFlaskRoutine\</OutputPath>
+    <OutputPath>..\..\PoeHelper\Plugins\Compiled\BasicFlaskRoutine\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\..\PoeHelper\Plugins\Compiled\BasicFlaskRoutine\</OutputPath>
+    <OutputPath>..\..\PoeHelper\Plugins\Compiled\BasicFlaskRoutine\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -36,28 +36,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ExileCore">
-      <HintPath>..\..\..\PoeHelper\ExileCore.dll</HintPath>
+      <HintPath>..\..\PoeHelper\ExileCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ImGui.NET">
-      <HintPath>..\..\..\PoeHelper\ImGui.NET.dll</HintPath>
+      <HintPath>..\..\PoeHelper\ImGui.NET.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\PoeHelper\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\PoeHelper\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\..\PoeHelper\SharpDX.dll</HintPath>
+      <HintPath>..\..\PoeHelper\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Desktop">
-      <HintPath>..\..\..\PoeHelper\SharpDX.Desktop.dll</HintPath>
+      <HintPath>..\..\PoeHelper\SharpDX.Desktop.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Mathematics">
-      <HintPath>..\..\..\PoeHelper\SharpDX.Mathematics.dll</HintPath>
+      <HintPath>..\..\PoeHelper\SharpDX.Mathematics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -99,6 +99,8 @@
     <Compile Include="BuildYourOwnRoutine\Extension\Default\Actions\UseFlaskTypeActionFactory.cs" />
     <Compile Include="BuildYourOwnRoutine\Extension\Default\Actions\UseVaalSkillAction.cs" />
     <Compile Include="BuildYourOwnRoutine\Extension\Default\Actions\UseVaalSkillActionFactory.cs" />
+    <Compile Include="BuildYourOwnRoutine\Extension\Default\Conditions\CanUseSkillConditionFactory.cs" />
+    <Compile Include="BuildYourOwnRoutine\Extension\Default\Conditions\CanUseSkillCondition.cs" />
     <Compile Include="BuildYourOwnRoutine\Extension\Default\Conditions\CanUseFlaskCondition.cs" />
     <Compile Include="BuildYourOwnRoutine\Extension\Default\Conditions\CanUseFlaskConditionFactory.cs" />
     <Compile Include="BuildYourOwnRoutine\Extension\Default\Conditions\EnergyShieldPercentCondition.cs" />
