@@ -91,7 +91,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
             {
                 if (extensionParameter.Plugin.Settings.Debug)
                 {
-                    var foundBuff = extensionParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.Buffs.FirstOrDefault(x =>
+                    var foundBuff = extensionParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Buffs>().BuffsList.FirstOrDefault(x =>
                         x.Name == HasBuffReady);
                     if (foundBuff != null)
                     {
@@ -102,7 +102,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
 
                 }
 
-                return extensionParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.Buffs.Any(x => x.Name == HasBuffReady && (x.Timer >= (1.0 * RemainingDuration / 1000)) && x.Charges >= MinimumCharges);
+                return extensionParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Buffs>().BuffsList.Any(x => x.Name == HasBuffReady && (x.Timer >= (1.0 * RemainingDuration / 1000)) && x.Charges >= MinimumCharges);
             };
         }
 

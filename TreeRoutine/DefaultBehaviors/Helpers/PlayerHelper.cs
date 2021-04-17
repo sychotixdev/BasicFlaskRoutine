@@ -56,8 +56,8 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             if (buffs == null || buffs.Count == 0)
                 return false;
 
-            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
-            var playerBuffs = playerLife.Buffs;
+            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Buffs>();
+            var playerBuffs = playerLife.BuffsList;
 
             if (playerBuffs == null)
                 return false;
@@ -87,8 +87,8 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             if (buffs == null || buffs.Count == 0)
                 return true;
 
-            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
-            var playerBuffs = playerLife.Buffs;
+            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Buffs>();
+            var playerBuffs = playerLife.BuffsList;
 
             if (playerBuffs == null)
                 return true;
