@@ -114,7 +114,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
 
         private bool hasAilment(ExtensionParameter profileParameter, Dictionary<string, int> dictionary, Func<int> minCharges = null)
         {
-            var buffs = profileParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Buffs>().BuffsList;
+            var buffs = profileParameter.Plugin.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<ExileCore.PoEMemory.Components.Buffs>().BuffsList;
             foreach (var buff in buffs)
             {
                 if (!IgnoreInfiniteTimer && float.IsInfinity(buff.Timer))

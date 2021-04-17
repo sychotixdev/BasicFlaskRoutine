@@ -443,7 +443,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         private bool IsCycloning()
         {
             try {
-                var buffs = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Buffs>().BuffsList;
+                var buffs = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<ExileCore.PoEMemory.Components.Buffs>().BuffsList;
 
                 foreach (var buff in buffs)
                     if (buff.Name.ToLower().Equals("cyclone_channelled_stage"))
@@ -466,7 +466,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator((x =>
             {
-                var life = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Buffs>();
+                var life = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<ExileCore.PoEMemory.Components.Buffs>();
                 if (life == null) return false;
                 var buffs = life.BuffsList;
                 foreach (var buff in buffs)
