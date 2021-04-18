@@ -57,7 +57,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
                 return false;
 
             var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
-            var playerBuffs = playerLife.Buffs;
+            var playerBuffs = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<ExileCore.PoEMemory.Components.Buffs>().BuffsList;
 
             if (playerBuffs == null)
                 return false;
@@ -88,7 +88,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
                 return true;
 
             var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
-            var playerBuffs = playerLife.Buffs;
+            var playerBuffs = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<ExileCore.PoEMemory.Components.Buffs>().BuffsList;
 
             if (playerBuffs == null)
                 return true;
