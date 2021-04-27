@@ -14,10 +14,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             ForceBubblingAsInstantOnly = new ToggleNode(false);
             ForcePanickedAsInstantOnly = new ToggleNode(false);
             HPPotion = new RangeNode<int>(65, 0, 100);
-            InstantHPPotion = new RangeNode<int>(35, 0, 100);
+            InstantHPPotion = new RangeNode<int>(50, 0, 100);
             AllocatedSupremeDecadence = new ToggleNode(false);
             ESPotion = new RangeNode<int>(65, 0, 100);
-            InstantESPotion = new RangeNode<int>(35, 0, 100);
+            InstantESPotion = new RangeNode<int>(50, 0, 100);
             DisableLifeSecUse = new ToggleNode(false);
             ManaPotion = new RangeNode<int>(65, 0, 100);
             InstantManaPotion = new RangeNode<int>(35, 0, 100);
