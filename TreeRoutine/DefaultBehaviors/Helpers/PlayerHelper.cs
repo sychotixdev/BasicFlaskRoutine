@@ -107,5 +107,23 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             return playerLife.CurHP <= 0;
         }
 
+        public Boolean CanUseSkill(String skillName)
+        {
+            var actorComponent = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Actor>();
+            var actorSkills = actorComponent?.ActorSkills;
+            if (actorSkills != null && actorSkills.Count > 0)
+            {
+                foreach(var actorSkill in actorSkills)
+                {
+                    if (skillName.Equals(actorSkill.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return actorSkill.CanBeUsed;
+                    }
+                }
+            }
+
+            return false;
+        }
+
     }
 }
