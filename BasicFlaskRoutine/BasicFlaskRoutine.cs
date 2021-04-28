@@ -424,7 +424,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             // If the flask is instant, no special logic needed
             return playerFlask.InstantType == FlaskInstantType.Partial
                     || playerFlask.InstantType == FlaskInstantType.Full
-                    || (playerFlask.InstantType == FlaskInstantType.LowLife && (PlayerHelper.isHealthBelowPercentage(35)
+                    || (playerFlask.InstantType == FlaskInstantType.LowLife && (PlayerHelper.isHealthBelowPercentage(50)
                                                                                 || Settings.AllocatedSupremeDecadence && IsReallyLowLife()));
         }
 
@@ -459,7 +459,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         private bool IsReallyLowLife()
         {
             var playerLife = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
-            return (playerLife.CurHP / playerLife.MaxHP) * 100 < 35;
+            return (playerLife.CurHP / playerLife.MaxHP) * 100 < 50;
         }
 
         private Decorator CreateCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null)
