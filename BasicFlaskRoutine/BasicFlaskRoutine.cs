@@ -213,7 +213,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                                                                            Settings.CycloningCountMagicMonsters, 
                                                                            Settings.CycloningCountUniqueMonsters,
                                                                            Settings.CycloningIgnoreFullHealthUniqueMonsters))) 
-                                    && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint" }) 
+                                    && (PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_bonus_movement_speed", "flask_utility_sprint","flask_utility_phase"}) 
                                         || (!Settings.SilverFlaskEnable 
                                             || PlayerHelper.playerDoesNotHaveAnyOfBuffs(new List<string>() { "flask_utility_haste" })))),
                 new PrioritySelector(
