@@ -142,7 +142,7 @@
 		"FlaskDispellsPoison": 9,
 		"FlaskDispellsBurning": 11,
 		"FlaskRemovesShock": 12,
-		"FlaskDispellsChill": 10,
+		"FlaskEnchantmentInjectorOnAffectedByChill": 10,
 		"FlaskBuffArmourWhileHealing": 5,
 		"FlaskBuffEvasionWhileHealing": 5,
 		"FlaskBuffResistancesWhileHealing": 5,
@@ -150,7 +150,7 @@
 		"FlaskCurseImmunity": 14,
 		"FlaskBuffAvoidStunWhileHealing": 0,
 
-		"JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect": 8,
+		"JunMaster2LocalFlaskCriticalStrikeChanceDuringFlaskEffect1": 8,
 		"JunMasterLocalFlaskLifeLeechOnDamageTakenPermyriadDuringFlaskEffect": 2,
 		"JunMasterLocalFlaskItemFoundRarityDuringFlaskEffect": 0,
 		"JunMasterLocalFlaskSkillManaCostDuringFlaskEffect": 8,
