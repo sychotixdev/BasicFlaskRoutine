@@ -140,6 +140,7 @@
 		"FlaskBuffStunRecoveryWhileHealing": 0,
 		"FlaskBuffMovementSpeedWhileHealing": 7,
 		"FlaskDispellsPoison": 9,
+		"FlaskDispellsChill": 10,
 		"FlaskDispellsBurning": 11,
 		"FlaskRemovesShock": 12,
 		"FlaskEnchantmentInjectorOnAffectedByChill": 10,
