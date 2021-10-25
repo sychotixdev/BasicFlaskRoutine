@@ -96,7 +96,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
 
         private void UpdateCoroutineWaitRender()
         {
-            TreeCoroutine.UpdateCondtion(new WaitTime(1000 / Settings.TicksPerSecond));
+            TreeCoroutine.UpdateCondition(new WaitTime(1000 / Settings.TicksPerSecond));
         }
 
         protected override void UpdateCache()
