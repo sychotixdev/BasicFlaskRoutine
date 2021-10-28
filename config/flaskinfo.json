@@ -105,7 +105,6 @@
     "Iron Flask": 5
   },
   "FlaskMods": {
-    // Base Item Properties
     "FlaskLevelRequirement": 0,
     "UtilityFlaskChilledGround": 0,
     "UtilityFlaskConsecrate": 0,
@@ -114,7 +113,6 @@
     "UtilityFlaskTaunt": 0,
     "UtilityFlaskWard": 0,
 
-    // Prefix Mods
     "FlaskBuffReducedManaCostWhileHealing": 0,
     "FlaskChanceRechargeOnCrit": 0,
     "FlaskChargesAddedIncreasePercent": 0,
@@ -137,7 +135,6 @@
     "FlaskPartialInstantRecovery": 0,
     "LocalLifeFlaskAdditionalLifeRecovery": 0,
 
-    // Suffix Mods
     "FlaskBleedCorruptingBloodImmunity": 13,
     "FlaskBleedingAndCorruptedBloodImmunityDuringEffect": 13,
     "FlaskBuffArmourWhileHealing": 5,
@@ -172,7 +169,6 @@
     "LocalLifeFlaskHinderNearbyEnemies": 5,
     "LocalManaFlaskHinderNearbyEnemies": 5,
 
-    // Instilling Orb Crafted Mods
     "FlaskEnchantmentInjectorAdjacentFlasks": 0,
     "FlaskEnchantmentInjectorFlaskEffectEnd": 0,
     "FlaskEnchantmentInjectorOnAffectedByBleed": 0,
@@ -189,14 +185,12 @@
     "FlaskEnchantmentInjectorOnTravelSkillUsed": 0,
     "FlaskEnchantmentInjectorOnUsingLifeFlask": 0,
 
-    // Enkindling Orb Crafted Mods
     "FlaskEnchantmentSealIncreasedChargesGained": 0,
     "FlaskEnchantmentSealIncreasedDuration": 0,
     "FlaskEnchantmentSealIncreasedEffect": 0,
     "FlaskEnchantmentSealMaximumCharges": 0,
     "FlaskEnchantmentSealReducedChargesUsed": 0,
 
-    // Mastermind Mods
     "JunMaster2LocalFlaskAvoidStunChanceAndMovementSpeedDuringFlaskEffect1__": 7,
     "JunMaster2LocalFlaskAvoidStunChanceDuringFlaskEffect1": 5,
     "JunMaster2LocalFlaskCriticalStrikeChanceDuringFlaskEffect1": 8,
@@ -205,7 +199,6 @@
     "JunMaster2LocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect1_": 5,
     "JunMaster2LocalFlaskSkillManaCostDuringFlaskEffect1": 8,
 
-    // Legacy Mastermind Mods
     "JunMasterLocalFlaskAvoidStunChanceAndMovementSpeedDuringFlaskEffect1": 7,
     "JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect1": 8,
     "JunMasterLocalFlaskItemFoundRarityDuringFlaskEffect1": 6,
@@ -213,13 +206,11 @@
     "JunMasterLocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect1": 5,
     "JunMasterLocalFlaskSkillManaCostDuringFlaskEffect1": 8,
 
-    // Harvest Enchant Mods
     "HarvestFlaskEnchantmentChargesUsedLoweredOnUse4": 0,
     "HarvestFlaskEnchantmentDurationEffectLoweredOnUse2": 0,
     "HarvestFlaskEnchantmentDurationLoweredOnUse1": 0,
     "HarvestFlaskEnchantmentMaximumChargesLoweredOnUse3": 0,
 
-    // Legacy Mods for Standard Players
     "FlaskLevelRequirement14Real": 0,
     "FlaskLevelRequirementHybrid": 0,
     "FlaskLevelRequirementUtilityResists": 0,
