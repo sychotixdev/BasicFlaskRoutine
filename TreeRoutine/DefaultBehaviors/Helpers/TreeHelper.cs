@@ -16,7 +16,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
                     Core.LogMessage("Game is loading...", 0.2f);
                 return false;
             }
-            if (!Core.GameController.Game.IngameState.ServerData.IsInGame)
+            if (!Core.GameController.Game.IngameState.Data.ServerData.IsInGame)
             {
                 if (Core.Settings.Debug)
                     Core.LogMessage("Currently not in the game (Charactor selection maybe).", 0.2f);

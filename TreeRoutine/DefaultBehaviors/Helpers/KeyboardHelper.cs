@@ -43,7 +43,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
         public bool KeyPressRelease(Keys key)
         {
             KeyDown(key);
-            var lat = (int)(_gameHandle.Game.IngameState.ServerData.Latency);
+            var lat = (int)(_gameHandle.Game.IngameState.Data.ServerData.Latency);
             if (lat < 1000)
             {
                 Thread.Sleep(lat);
