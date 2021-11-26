@@ -157,7 +157,7 @@
     "FlaskBuffWardWhileHealing": 5,
     "FlaskChillFreezeImmunity": 10,
     "FlaskCurseImmunity": 14,
-    "FlaskBuffCurseEffect": 14,
+    "FlaskBuffCurseEffect": 0,
     "FlaskFreezeAndChillImmunityDuringEffect": 10,
     "FlaskHealsMinions": 0,
     "FlaskIgniteImmunity": 11,
