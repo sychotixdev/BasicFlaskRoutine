@@ -14,10 +14,14 @@
   FREEZE_IMMUNE = 10,       // of the Dear/Walrus/Penguin (Utility Flask), of Convection/Thermodynamics/Entropy/Thawing (Other Flasks)
   IGNITE_IMMUNE = 11,       // of the Urchin/Mussel/Starfish (Utility Flask), of Damping/Quashing/Quelling/Quenching (Other Flasks)
   SHOCK_IMMUNE = 12,        // of the Conger/Moray/Eel (Utility Flask), of Earthing/Grounding/Insulation/the Dielectric (Other Flasks)
-  BLEED_IMMUNE = 13,        // of the Lizard/Skink/Iguana (Utility Flask), of Sealing/Alleviation/Allaying/Assuaging (Other Flasks)
-  CURSE_IMMUNE = 14,        // of Warding
-  UNIQUE_FLASK = 15,	      // Doesn't actually function.
-  OFFENSE_AND_SPEEDRUN = 16 // Silver flask (Onslaught provides movement and attack speed)
+  // of the Lizard/Skink/Iguana (Utility Flask), of Sealing/Alleviation/Allaying/Assuaging (Other Flasks)
+  BLEED_IMMUNE = 13,        
+  CORRUPTED_BLOOD_AND_BLEED_IMMUNE = 14
+  // of Warding
+  CURSE_IMMUNE = 15,        
+  MAIM_AND_HINDER_IMMUNE = 16
+  UNIQUE_FLASK = 17,	      // Doesn't actually function.
+  OFFENSE_AND_SPEEDRUN = 18  // Silver flask (Onslaught provides movement and attack speed)
 */
 
 {
@@ -50,7 +54,7 @@
     "Witchfire Brew": 8,
     "Soul Ripper": 5,
     "Soul Catcher": 5,
-    "Cinderswallow Urn": 16
+    "Cinderswallow Urn": 18
   },
   "FlaskTypes": {
     "Small Life Flask": 2,
@@ -92,7 +96,7 @@
     "Sapphire Flask": 5,
     "Amethyst Flask": 5,
     "Topaz Flask": 5,
-    "Silver Flask": 16,
+    "Silver Flask": 18,
     "Aquamarine Flask": 5,
     "Granite Flask": 5,
     "Jade Flask": 5,
@@ -135,10 +139,12 @@
     "FlaskPartialInstantRecovery": 0,
     "LocalLifeFlaskAdditionalLifeRecovery": 0,
     "FlaskRemovesBleeding": 13,
-    "FlaskBleedCorruptingBloodImmunity": 13,
-    "FlaskBleedingAndCorruptedBloodImmunityDuringEffect": 13,
+    "FlaskBleedCorruptingBloodImmunity": 14,
+    "FlaskBleedingAndCorruptedBloodImmunityDuringEffect": 14,
     "FlaskBuffArmourWhileHealing": 5,
+    "FlaskBuffArmourWhileHealing1": 5,
     "FlaskBuffAttackLifeLeechWhileHealing": 5,
+    "FlaskBuffAttackLifeLeechWhileHealing1": 5,
     "FlaskBuffAttackSpeedWhileHealing": 8,
     "FlaskBuffAvoidChillFreeze": 10,
     "FlaskBuffAvoidIgnite": 11,
@@ -156,8 +162,8 @@
     "FlaskBuffStunRecoveryWhileHealing": 5,
     "FlaskBuffWardWhileHealing": 5,
     "FlaskChillFreezeImmunity": 10,
-    "FlaskCurseImmunity": 14,
-    "FlaskBuffCurseEffect": 14,
+    "FlaskCurseImmunity": 15,
+    "FlaskBuffCurseEffect": 15,
     "FlaskFreezeAndChillImmunityDuringEffect": 10,
     "FlaskHealsMinions": 0,
     "FlaskIgniteImmunity": 11,
@@ -166,7 +172,7 @@
     "FlaskPoisonImmunityDuringEffect": 9,
     "FlaskShockImmunity": 12,
     "FlaskShockImmunityDuringEffect": 12,
-    "LocalFlaskImmuneToMaimAndHinder": 0,
+    "LocalFlaskImmuneToMaimAndHinder": 16,
     "LocalLifeFlaskHinderNearbyEnemies": 5,
     "LocalManaFlaskHinderNearbyEnemies": 5,
 

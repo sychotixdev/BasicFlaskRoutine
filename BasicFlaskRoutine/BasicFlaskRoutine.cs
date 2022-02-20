@@ -248,13 +248,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         {
             return new Decorator(x => Settings.RemAilment && !Settings.BossingMode,
                 new PrioritySelector(
-                    new Decorator(x => Settings.RemBleed, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Bleeding, CreateUseFlaskAction(FlaskActions.BleedImmune, isCleansing:true))),
+                    new Decorator(x => Settings.RemBleed, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Bleeding, CreateUseFlaskAction(new List<FlaskActions> { FlaskActions.CorruptedBloodAndBleedImmune, FlaskActions.BleedImmune}, isCleansing:true))),
                     new Decorator(x => Settings.RemBurning, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Burning, CreateUseFlaskAction(FlaskActions.IgniteImmune, isCleansing: true))),
-                    CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Corruption, CreateUseFlaskAction(FlaskActions.BleedImmune, isCleansing: true), (() => Settings.CorruptCount)),
+                    CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Corruption, CreateUseFlaskAction(FlaskActions.CorruptedBloodAndBleedImmune, isCleansing: true), () => Settings.CorruptCount, () => Settings.RemCorruptingBlood),
                     new Decorator(x => Settings.RemFrozen, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Frozen, CreateUseFlaskAction(FlaskActions.FreezeImmune, isCleansing: true))),
                     new Decorator(x => Settings.RemPoison, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Poisoned, CreateUseFlaskAction(FlaskActions.PoisonImmune, isCleansing: true))),
                     new Decorator(x => Settings.RemShocked, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Shocked, CreateUseFlaskAction(FlaskActions.ShockImmune, isCleansing: true))),
-                    new Decorator(x => Settings.RemCurse, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.WeakenedSlowed, CreateUseFlaskAction(FlaskActions.CurseImmune, isCleansing: true)))
+                    new Decorator(x => Settings.RemCurse, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.WeakenedSlowed, CreateUseFlaskAction(FlaskActions.CurseImmune, isCleansing: true))),
+                    new Decorator(x => Settings.RemMaimed, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Maimed, CreateUseFlaskAction(FlaskActions.MaimAndHinderImmune, isCleansing: true))),
+                    CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Hindered, CreateUseFlaskAction(FlaskActions.MaimAndHinderImmune, isCleansing: true), () => Settings.HinderCount, () => Settings.RemHindered)
                     )
                 );
         }
@@ -462,10 +464,15 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return (playerLife.CurHP / playerLife.MaxHP) * 100 < 50;
         }
 
-        private Decorator CreateCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null)
+        private Decorator CreateCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null, Func<bool> isEnabled = null)
         {
             return new Decorator((x =>
             {
+                if (isEnabled != null && !isEnabled())
+                {
+                    return false;
+                }
+
                 var buffs = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<ExileCore.PoEMemory.Components.Buffs>().BuffsList;
                 if (buffs == null) return false;
                 foreach (var buff in buffs)
@@ -589,14 +596,23 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.RemFrozen.Value = ImGuiExtension.Checkbox("Frozen", Settings.RemFrozen);
                     ImGui.SameLine();
                     Settings.RemBurning.Value = ImGuiExtension.Checkbox("Burning", Settings.RemBurning);
+
                     Settings.RemShocked.Value = ImGuiExtension.Checkbox("Shocked", Settings.RemShocked);
                     ImGui.SameLine();
                     Settings.RemCurse.Value = ImGuiExtension.Checkbox("Cursed", Settings.RemCurse);
-                    Settings.RemPoison.Value = ImGuiExtension.Checkbox("Poison", Settings.RemPoison);
-                    ImGui.SameLine();
+
+                    Settings.RemPoison.Value = ImGuiExtension.Checkbox("Poisoned", Settings.RemPoison);
+
                     Settings.RemBleed.Value = ImGuiExtension.Checkbox("Bleed", Settings.RemBleed);
-                    Settings.CorruptCount.Value =
-                        ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.CorruptCount);
+                    ImGui.SameLine();
+                    Settings.RemCorruptingBlood.Value = ImGuiExtension.Checkbox("Corrupting Blood", Settings.RemCorruptingBlood);
+                    Settings.CorruptCount.Value = ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.CorruptCount);
+
+                    Settings.RemMaimed.Value = ImGuiExtension.Checkbox("Maimed", Settings.RemMaimed);
+                    ImGui.SameLine();
+                    Settings.RemHindered.Value = ImGuiExtension.Checkbox("Hindered", Settings.RemHindered);
+                    Settings.HinderCount.Value = ImGuiExtension.IntSlider("Hindered strength", Settings.HinderCount);
+
                     ImGui.TreePop();
                 }
 
