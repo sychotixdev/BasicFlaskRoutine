@@ -1,28 +1,29 @@
 /*
-  IGNORE = 0,		// ignore mods/flask type/flask name and don't give error
-  NONE = 1,		// mod/flask type/flask name isn't found.
+  IGNORE = 0,               // ignore mods/flask type/flask name and don't give error
+  NONE = 1,                 // mod/flask type/flask name isn't found.
   LIFE = 2,
   MANA = 3,
   HYBRID = 4,
   DEFENSE = 5,
-  UTILITY = 6,	// Currently This type won't pop.
-  SPEEDRUN = 7,           //quick silver, MOD: adrenaline,
-  OFFENSE = 8,            //sulphur, basalt, diamond,Taste of Hate,
-            //Kiara's Determination, Lion's Roar, The Overflowing Chalice,
-            //The Sorrow of the Divine,Rotgut, Witchfire Brew, Atziri's Promise,
-            //Dying Sun,Vessel of Vinktar
-            //MOD: Fending
-  POISON_IMMUNE = 9,      // MOD: curing
-  FREEZE_IMMUNE = 10,      // MOD: heat
-  IGNITE_IMMUNE = 11,      // MOD: dousing
-  SHOCK_IMMUNE = 12,       // MOD: grounding
-  BLEED_IMMUNE = 13,       // MOD: staunching
-  CURSE_IMMUNE = 14,       // MOD: warding
-  UNIQUE_FLASK = 15,	// Currently This type won't pop.
-  OFFENSE_AND_SPEEDRUN = 16 // Silver flask
-                            // as Onslaught provide
-                            // movement speed and attack speed
+  UTILITY = 6,              // Doesn't actually function.
+  SPEEDRUN = 7,             // Quicksilver Flask. Mods: of the Hare/Lynx/Cheetah
+  OFFENSE = 8,              // Types: Sulphur Flask, Basalt Flask, Diamond Flask, and more
+                            // Unique Names: Taste of Hate, Dying Sun Bottled Faith, Witchfire Brew, and more
+                            // MOD: of Stinging/Piercing/Rupturing/Penetrating/Incision (Increased Crit Chance during Flask Effect)
+  POISON_IMMUNE = 9,        // of the Skunk/Hedgehog/Opossum (Utility Flask), of the AntiToxin/Remedy/Cure/Antidote (Other Flasks)
+  FREEZE_IMMUNE = 10,       // of the Dear/Walrus/Penguin (Utility Flask), of Convection/Thermodynamics/Entropy/Thawing (Other Flasks)
+  IGNITE_IMMUNE = 11,       // of the Urchin/Mussel/Starfish (Utility Flask), of Damping/Quashing/Quelling/Quenching (Other Flasks)
+  SHOCK_IMMUNE = 12,        // of the Conger/Moray/Eel (Utility Flask), of Earthing/Grounding/Insulation/the Dielectric (Other Flasks)
+  // of the Lizard/Skink/Iguana (Utility Flask), of Sealing/Alleviation/Allaying/Assuaging (Other Flasks)
+  BLEED_IMMUNE = 13,        
+  CORRUPTED_BLOOD_AND_BLEED_IMMUNE = 14
+  // of Warding
+  CURSE_IMMUNE = 15,        
+  MAIM_AND_HINDER_IMMUNE = 16
+  UNIQUE_FLASK = 17,	      // Doesn't actually function.
+  OFFENSE_AND_SPEEDRUN = 18  // Silver flask (Onslaught provides movement and attack speed)
 */
+
 
 {
   "UniqueFlaskNames": {
@@ -54,7 +55,7 @@
     "Witchfire Brew": 8,
     "Soul Ripper": 5,
     "Soul Catcher": 5,
-    "Cinderswallow Urn": 16,
+    "Cinderswallow Urn": 18,
 
     //ru names:
 
@@ -86,7 +87,7 @@
     "Отвар ведьмовского огня": 8,
     "Жнец душ": 5,
     "Душелов": 5,
-    "Урна глотателя пепла": 16
+    "Урна глотателя пепла": 18
   },
 
   "FlaskTypes": {
@@ -162,11 +163,11 @@
     "Sapphire Flask": 5,
     "Amethyst Flask": 5,
     "Topaz Flask": 5,
-    "Silver Flask": 16,
+    "Silver Flask": 18,
     "Aquamarine Flask": 5,
     "Granite Flask": 5,
     "Jade Flask": 5,
-    "Quartz Flask": 2,
+    "Quartz Flask": 5,
     "Sulphur Flask": 8,
     "Basalt Flask": 5,
     "Diamond Flask": 8,
@@ -183,11 +184,11 @@
     "Сапфировый флакон": 5,
     "Аметистовый флакон": 5,
     "Топазовый флакон": 5,
-    "Серебряный флакон": 16,
+    "Серебряный флакон": 18,
     "Аквамариновый флакон": 5,
     "Гранитный флакон": 5,
     "Нефритовый флакон": 5,
-    "Кварцевый флакон": 2,
+    "Кварцевый флакон": 5,
     "Серный флакон": 8,
     "Базальтовый флакон": 5,
     "Алмазный флакон": 8,
@@ -198,43 +199,72 @@
   },
   "FlaskMods": {
     "FlaskLevelRequirement": 0,
-    "FlaskLevelRequirementHybrid": 0,
-    "FlaskLevelRequirementUtilityResists": 0,
-    "FlaskLevelRequirement14Real": 0,
-    "UtilityFlaskConsecrate": 0,
-    "UtilityFlaskSmokeCloud": 0,
     "UtilityFlaskChilledGround": 0,
+    "UtilityFlaskConsecrate": 0,
+    "UtilityFlaskOnslaught": 0,
+    "UtilityFlaskSmokeCloud": 0,
     "UtilityFlaskTaunt": 0,
+    "UtilityFlaskWard": 0,
 
+    "FlaskBuffReducedManaCostWhileHealing": 0,
+    "FlaskChanceRechargeOnCrit": 0,
+    "FlaskChargesAddedIncreasePercent": 0,
+    "FlaskChargesUsed": 0,
+    "FlaskEffectNotRemovedOnFullMana": 0,
     "FlaskEffectReducedDuration": 0,
     "FlaskExtraCharges": 0,
-    "FlaskFullRechargeOnCrit": 0,
-    "FlaskFullRechargeOnTakeCrit": 0,
-    "FlaskPartialInstantRecovery": 0,
-    "FlaskIncreasedRecoverySpeed": 0,
-    "FlaskExtraManaCostsLife": 0,
-    "FlaskIncreasedRecoveryOnLowLife": 0,
-    "FlaskChargesUsed": 0,
-    "FlaskIncreasedDuration": 0,
-    "FlaskInstantRecoveryOnLowLife": 0,
-    "FlaskChargesAddedIncreasePercent": 0,
     "FlaskExtraLifeCostsMana": 0,
-    "FlaskIncreasedRecoveryAmount": 0,
+    "FlaskExtraManaCostsLife": 0,
     "FlaskFullInstantRecovery": 0,
-    "FlaskChanceRechargeOnCrit": 0,
+    "FlaskFullRechargeOnHit": 0,
+    "FlaskIncreasedDuration": 0,
     "FlaskIncreasedHealingCharges": 0,
-
-    "FlaskHealsMinions": 0,
-    "FlaskBuffManaLeechPermyriadWhileHealing": 0,
-    "FlaskBuffLifeLeechPermyriadWhileHealing": 0,
-    "FlaskBuffSpellEnergyShieldLeechWhileHealing": 0,
-    "FlaskBuffKnockbackWhileHealing": 0,
-    "FlaskBuffStunRecoveryWhileHealing": 0,
+    "FlaskIncreasedRecoveryAmount": 0,
+    "FlaskIncreasedRecoveryOnLowLife": 0,
+    "FlaskIncreasedRecoveryReducedEffect": 0,
+    "FlaskIncreasedRecoverySpeed": 0,
+    "FlaskInstantRecoveryOnLowLife": 0,
+    "FlaskManaRecoveryAtEnd": 0,
+    "FlaskPartialInstantRecovery": 0,
+    "LocalLifeFlaskAdditionalLifeRecovery": 0,
+    "FlaskRemovesBleeding": 13,
+    "FlaskBleedCorruptingBloodImmunity": 14,
+    "FlaskBleedingAndCorruptedBloodImmunityDuringEffect": 14,
+    "FlaskBuffArmourWhileHealing": 5,
+    "FlaskBuffArmourWhileHealing1": 5,
+    "FlaskBuffAttackLifeLeechWhileHealing": 5,
+    "FlaskBuffAttackLifeLeechWhileHealing1": 5,
+    "FlaskBuffAttackSpeedWhileHealing": 8,
+    "FlaskBuffAvoidChillFreeze": 10,
+    "FlaskBuffAvoidIgnite": 11,
+    "FlaskBuffAvoidShock": 12,
+    "FlaskBuffAvoidStunWhileHealing": 5,
+    "FlaskBuffCastSpeedWhileHealing": 8,
+    "FlaskBuffChillFreezeDuration": 8,
+    "FlaskBuffCriticalChanceWhileHealing": 8,
+    "FlaskBuffEvasionWhileHealing": 5,
+    "FlaskBuffFreezeShockIgniteChanceWhileHealing": 8,
     "FlaskBuffMovementSpeedWhileHealing": 7,
-    "FlaskDispellsPoison": 9,
-    "FlaskDispellsChill": 10,
-    "FlaskDispellsBurning": 11,
-    "FlaskRemovesShock": 12,
+    "FlaskBuffResistancesWhileHealing": 5,
+    "FlaskBuffShockEffect": 12,
+    "FlaskBuffSpellEnergyShieldLeechWhileHealing": 5,
+    "FlaskBuffStunRecoveryWhileHealing": 5,
+    "FlaskBuffWardWhileHealing": 5,
+    "FlaskChillFreezeImmunity": 10,
+    "FlaskCurseImmunity": 15,
+    "FlaskBuffCurseEffect": 15,
+    "FlaskFreezeAndChillImmunityDuringEffect": 10,
+    "FlaskHealsMinions": 0,
+    "FlaskIgniteImmunity": 11,
+    "FlaskIgniteImmunityDuringEffect": 11,
+    "FlaskPoisonImmunity": 9,
+    "FlaskPoisonImmunityDuringEffect": 9,
+    "FlaskShockImmunity": 12,
+    "FlaskShockImmunityDuringEffect": 12,
+    "LocalFlaskImmuneToMaimAndHinder": 16,
+    "LocalLifeFlaskHinderNearbyEnemies": 5,
+    "LocalManaFlaskHinderNearbyEnemies": 5,
+
     "FlaskEnchantmentInjectorAdjacentFlasks": 0,
     "FlaskEnchantmentInjectorFlaskEffectEnd": 0,
     "FlaskEnchantmentInjectorOnAffectedByBleed": 0,
@@ -244,44 +274,59 @@
     "FlaskEnchantmentInjectorOnAffectedByPoison": 0,
     "FlaskEnchantmentInjectorOnAffectedByShock": 0,
     "FlaskEnchantmentInjectorOnDamageBlocked": 0,
-    "FlaskEnchantmentInjectorOnTakingSavageHit": 0,
     "FlaskEnchantmentInjectorOnFullCharges": 0,
-    "FlaskEnchantmentInjectorOnGuardSkillExpired": 0,
     "FlaskEnchantmentInjectorOnGuardSkillUsed": 0,
-    "FlaskEnchantmentInjectorOnHittingRareOrUnique_": 0,
+    "FlaskEnchantmentInjectorOnHittingRareOrUnique": 0,
+    "FlaskEnchantmentInjectorOnTakingSavageHit": 0,
     "FlaskEnchantmentInjectorOnTravelSkillUsed": 0,
     "FlaskEnchantmentInjectorOnUsingLifeFlask": 0,
-    "FlaskEnchantmentSealIncreasedEffect": 0,
-    "FlaskEnchantmentSealIncreasedDuration": 0,
-    "FlaskEnchantmentSealIncreasedChargesGained": 0,
-    "FlaskEnchantmentSealReducedChargesUsed": 0,
-    "FlaskEnchantmentSealMaximumCharges": 0,
-    "FlaskBuffArmourWhileHealing": 5,
-    "FlaskBuffEvasionWhileHealing": 5,
-    "FlaskBuffResistancesWhileHealing": 5,
-    "FlaskRemovesBleeding": 13,
-    "FlaskCurseImmunity": 14,
-    "FlaskBuffAvoidStunWhileHealing": 0,
 
-    "JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect": 8,
+    "FlaskEnchantmentSealIncreasedChargesGained": 0,
+    "FlaskEnchantmentSealIncreasedDuration": 0,
+    "FlaskEnchantmentSealIncreasedEffect": 0,
+    "FlaskEnchantmentSealMaximumCharges": 0,
+    "FlaskEnchantmentSealReducedChargesUsed": 0,
+
+    "JunMaster2LocalFlaskAvoidStunChanceAndMovementSpeedDuringFlaskEffect1__": 7,
+    "JunMaster2LocalFlaskAvoidStunChanceDuringFlaskEffect1": 5,
+    "JunMaster2LocalFlaskCriticalStrikeChanceDuringFlaskEffect1": 8,
+    "JunMaster2LocalFlaskItemFoundRarityDuringFlaskEffect1": 6,
+    "JunMaster2LocalFlaskLifeLeechOnDamageTakenPermyriadDuringFlaskEffect1": 5,
+    "JunMaster2LocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect1_": 5,
+    "JunMaster2LocalFlaskSkillManaCostDuringFlaskEffect1": 8,
+
+    "JunMasterLocalFlaskAvoidStunChanceAndMovementSpeedDuringFlaskEffect1": 7,
+    "JunMasterLocalFlaskCriticalStrikeChanceDuringFlaskEffect1": 8,
+    "JunMasterLocalFlaskItemFoundRarityDuringFlaskEffect1": 6,
+    "JunMasterLocalFlaskLifeLeechOnDamageTakenPermyriadDuringFlaskEffect1": 5,
+    "JunMasterLocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect1": 5,
+    "JunMasterLocalFlaskSkillManaCostDuringFlaskEffect1": 8,
+
+    "HarvestFlaskEnchantmentChargesUsedLoweredOnUse4": 0,
+    "HarvestFlaskEnchantmentDurationEffectLoweredOnUse2": 0,
+    "HarvestFlaskEnchantmentDurationLoweredOnUse1": 0,
+    "HarvestFlaskEnchantmentMaximumChargesLoweredOnUse3": 0,
+
+    "FlaskLevelRequirement14Real": 0,
+    "FlaskLevelRequirementHybrid": 0,
+    "FlaskLevelRequirementUtilityResists": 0,
+
+    "FlaskFullRechargeOnCrit": 0,
+    "FlaskFullRechargeOnTakeCrit": 0,
+
+    "FlaskBuffManaLeechPermyriadWhileHealing": 0,
+    "FlaskBuffLifeLeechPermyriadWhileHealing": 0,
+    "FlaskBuffKnockbackWhileHealing": 0,
+    "FlaskDispellsPoison": 9,
+    "FlaskDispellsChill": 10,
+    "FlaskDispellsBurning": 11,
+    "FlaskDurationConsumedPerUse": 0,
+    "FlaskRemovesShock": 12,
+
     "JunMasterLocalFlaskLifeLeechOnDamageTakenPermyriadDuringFlaskEffect": 2,
     "JunMasterLocalFlaskItemFoundRarityDuringFlaskEffect": 0,
     "JunMasterLocalFlaskSkillManaCostDuringFlaskEffect": 8,
     "JunMasterLocalFlaskAvoidStunChanceAndMovementSpeedDuringFlaskEffect": 7,
-    "JunMasterLocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect": 8,
-    "FlaskBuffFreezeShockIgniteChanceWhileHealing": 0,
-    "FlaskBuffCastSpeedWhileHealing": 0,
-    "FlaskBuffAttackSpeedWhileHealing": 0,
-    "FlaskManaRecoveryAtEnd": 0,
-    "FlaskBuffReducedManaCostWhileHealing": 0,
-    "FlaskFullRechargeOnHit": 0,
-    "FlaskEffectNotRemovedOnFullMana": 0,
-    "FlaskBuffAttackLifeLeechWhileHealing": 5,
-
-    "FlaskDurationConsumedPerUse": 0,
-    "HarvestFlaskEnchantmentDurationLoweredOnUse1": 0,
-    "HarvestFlaskEnchantmentDurationEffectLoweredOnUse2": 0,
-    "HarvestFlaskEnchantmentMaximumChargesLoweredOnUse3": 0,
-    "HarvestFlaskEnchantmentChargesUsedLoweredOnUse4": 0
+    "JunMasterLocalFlaskLifeRegenerationPerMinuteDuringFlaskEffect": 8
   }
 }
