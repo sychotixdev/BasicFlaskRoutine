@@ -52,6 +52,9 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions
         private bool useBleed { get; set; } = false;
         private const String useBleedString = "useBleed";
 
+        private bool useCorruptedBloodAndBleed { get; set; } = false;
+        private const String useCorruptedBloodAndBleedString = "useCorruptedBloodAndBleed";
+
         private bool useCurse { get; set; } = false;
         private const String useCurseString = "useCurse";
 
@@ -64,6 +67,8 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions
         private int reserveFlaskCharges { get; set; } = 0;
         private const String reserveFlaskChargesString = "reserveFlaskCharges";
 
+        private bool useMaimAndHinder { get; set; } = false;
+        private const String useMaimAndHinderString = "useMaimAndHinder";
 
         public UseFlaskTypeAction(string owner, string name) : base(owner, name)
         {
@@ -85,10 +90,12 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions
             useIgnite = ExtensionComponent.InitialiseParameterBoolean(useIgniteString, useIgnite, ref Parameters);
             useShock = ExtensionComponent.InitialiseParameterBoolean(useShockString, useShock, ref Parameters);
             useBleed = ExtensionComponent.InitialiseParameterBoolean(useBleedString, useBleed, ref Parameters);
+            useCorruptedBloodAndBleed = ExtensionComponent.InitialiseParameterBoolean(useCorruptedBloodAndBleedString, useCorruptedBloodAndBleed, ref Parameters);
             useCurse = ExtensionComponent.InitialiseParameterBoolean(useCurseString, useCurse, ref Parameters);
             useUnique = ExtensionComponent.InitialiseParameterBoolean(useUniqueString, useUnique, ref Parameters);
             useOffenseAndSpeedrun = ExtensionComponent.InitialiseParameterBoolean(useOffenseAndSpeedrunString, useOffenseAndSpeedrun, ref Parameters);
             reserveFlaskCharges = ExtensionComponent.InitialiseParameterInt32(reserveFlaskChargesString, reserveFlaskCharges, ref Parameters);
+            useMaimAndHinder = ExtensionComponent.InitialiseParameterBoolean(useMaimAndHinderString, useMaimAndHinder, ref Parameters);
         }
 
         public override bool CreateConfigurationMenu(ExtensionParameter extensionParameter, ref Dictionary<String, Object> Parameters)
@@ -158,9 +165,15 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions
             useBleed = ImGuiExtension.Checkbox("Bleed", useBleed);
             Parameters[useBleedString] = useBleed.ToString();
 
+            useCorruptedBloodAndBleed = ImGuiExtension.Checkbox("Bleed and Corrupted Blood", useCorruptedBloodAndBleed);
+            Parameters[useCorruptedBloodAndBleedString] = useCorruptedBloodAndBleed.ToString();
+
             ImGui.SameLine();
             useCurse = ImGuiExtension.Checkbox("Curse", useCurse);
             Parameters[useCurseString] = useCurse.ToString();
+
+            useMaimAndHinder = ImGuiExtension.Checkbox("Maim And Hinder", useMaimAndHinder);
+            Parameters[useMaimAndHinderString] = useMaimAndHinder.ToString();
 
             ImGui.Spacing();
             ImGui.Separator();
@@ -187,17 +200,19 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions
             if (useIgnite) actions.Add(FlaskActions.IgniteImmune);
             if (useShock) actions.Add(FlaskActions.ShockImmune);
             if (useBleed) actions.Add(FlaskActions.BleedImmune);
+            if (useCorruptedBloodAndBleed) actions.Add(FlaskActions.CorruptedBloodAndBleedImmune);
             if (useCurse) actions.Add(FlaskActions.CurseImmune);
+            if (useMaimAndHinder) actions.Add(FlaskActions.MaimAndHinderImmune);
             if (useUnique) actions.Add(FlaskActions.UniqueFlask);
             if (useOffenseAndSpeedrun) actions.Add(FlaskActions.OFFENSE_AND_SPEEDRUN);
 
-            if(actions.Count == 0)
+            if (actions.Count == 0)
             {
                 profileParameter.Plugin.Log("No actions selected.", 5);
                 return new TreeSharp.Action();
             }
 
-            bool cleansing = usePoison || useFreeze || useIgnite || useShock || useBleed || useCurse;
+            bool cleansing = usePoison || useFreeze || useIgnite || useShock || useBleed || useCorruptedBloodAndBleed || useCurse | useMaimAndHinder;
 
             return createUseFlaskAction(profileParameter, actions, cleansing ? null : (bool?)useInstant, useInstant, null);
         }
@@ -320,7 +335,9 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions
                 if (useIgnite) displayName += ("Ignite,");
                 if (useShock) displayName += ("Shock,");
                 if (useBleed) displayName += ("Bleed,");
+                if (useCorruptedBloodAndBleed) displayName += ("Corrupt Blood and Bleed,");
                 if (useCurse) displayName += ("Curse,");
+                if (useMaimAndHinder) displayName += ("Maim and Hinder,");
                 if (useUnique) displayName += ("Unique,");
                 if (useOffenseAndSpeedrun) displayName += ("Off&Def,");
                 if (reserveFlaskCharges > 0) displayName += ("Reserved=" + reserveFlaskCharges);

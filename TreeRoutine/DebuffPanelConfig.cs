@@ -15,6 +15,8 @@ namespace TreeRoutine
         public Dictionary<string, int> Chilled { get; set; }
         public Dictionary<string, int> Burning { get; set; }
         public Dictionary<string, int> Shocked { get; set; }
+        public Dictionary<string, int> Maimed { get; set; }
+        public Dictionary<string, int> Hindered { get; set; }
         public Dictionary<string, int> WeakenedSlowed { get; set; }
     }
 }

@@ -32,6 +32,12 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
         public int CorruptCount { get; set; } = 0;
         public string CorruptCountString { get; set; } = "CorruptCount";
 
+        public bool RemMaim { get; set; } = false;
+        public string RemMaimString { get; set; } = "RemMaim";
+
+        public int HinderCount { get; set; } = 0;
+        public string HinderCountString { get; set; } = "RemHinder";
+
         public bool IgnoreInfiniteTimer { get; set; } = false;
         public string IgnoreInfiniteTimerString { get; set; } = "IgnoreInfiniteTimer";
 
@@ -53,6 +59,8 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
             RemPoison = ExtensionComponent.InitialiseParameterBoolean(RemPoisonString, RemPoison, ref Parameters);
             RemBleed = ExtensionComponent.InitialiseParameterBoolean(RemBleedString, RemBleed, ref Parameters);
             CorruptCount = ExtensionComponent.InitialiseParameterInt32(CorruptCountString, CorruptCount, ref Parameters);
+            RemMaim = ExtensionComponent.InitialiseParameterBoolean(RemMaimString, RemMaim, ref Parameters);
+            HinderCount = ExtensionComponent.InitialiseParameterInt32(HinderCountString, HinderCount, ref Parameters);
             IgnoreInfiniteTimer = ExtensionComponent.InitialiseParameterBoolean(IgnoreInfiniteTimerString, IgnoreInfiniteTimer, ref Parameters);
         }
 
@@ -84,6 +92,12 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
             CorruptCount = ImGuiExtension.IntSlider("Corruption Count", CorruptCount, 0, 20);
             Parameters[CorruptCountString] = CorruptCount.ToString();
 
+            RemMaim = ImGuiExtension.Checkbox("Maim", RemMaim);
+            Parameters[RemMaimString] = RemMaim.ToString();
+
+            HinderCount = ImGuiExtension.IntSlider("Hinder Count", HinderCount, 0, 20);
+            Parameters[HinderCountString] = HinderCount.ToString();
+
             IgnoreInfiniteTimer = ImGuiExtension.Checkbox("Ignore Infinite Timer", IgnoreInfiniteTimer);
             Parameters[IgnoreInfiniteTimerString] = IgnoreInfiniteTimer.ToString();
             return true;
@@ -106,6 +120,10 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
                 if (RemBleed && hasAilment(extensionParameter, extensionParameter.Plugin.Cache.DebuffPanelConfig.Bleeding))
                     return true;
                 if (CorruptCount > 0 && hasAilment(extensionParameter, extensionParameter.Plugin.Cache.DebuffPanelConfig.Corruption, () => CorruptCount))
+                    return true;
+                if (RemMaim && hasAilment(extensionParameter, extensionParameter.Plugin.Cache.DebuffPanelConfig.Maimed))
+                    return true;
+                if (HinderCount > 0 && hasAilment(extensionParameter, extensionParameter.Plugin.Cache.DebuffPanelConfig.Hindered))
                     return true;
 
                 return false;
@@ -144,6 +162,8 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Conditions
                 if (RemPoison) displayName += ("Poison,");
                 if (RemBleed) displayName += ("Bleed,");
                 if (CorruptCount > 0) displayName += ("Corrupt,");
+                if (RemMaim) displayName += ("Maim,");
+                if (HinderCount > 0) displayName += ("Hinder,");
                 displayName += "]";
 
             }

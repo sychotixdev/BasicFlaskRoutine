@@ -9,7 +9,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public BasicFlaskRoutineSettings()
         {
             TicksPerSecond = new RangeNode<int>(10, 1, 30);
-            EnableInHideout  = new ToggleNode(false);
+            EnableInHideout = new ToggleNode(false);
             AutoFlask = new ToggleNode(false);
             ForceBubblingAsInstantOnly = new ToggleNode(false);
             ForcePanickedAsInstantOnly = new ToggleNode(false);
@@ -29,7 +29,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             RemCurse = new ToggleNode(false);
             RemPoison = new ToggleNode(false);
             RemBleed = new ToggleNode(false);
+            RemCorruptingBlood = new ToggleNode(false);
+            RemMaimed = new ToggleNode(false);
+            RemMaimed = new ToggleNode(false);
             CorruptCount = new RangeNode<int>(10, 0, 20);
+            HinderCount = new RangeNode<int>(10, 0, 20);
             SpeedFlaskEnable = new ToggleNode(false);
             QuicksilverFlaskEnable = new ToggleNode(false);
             SilverFlaskEnable = new ToggleNode(false);
@@ -104,7 +108,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode RemCurse { get; set; }
         public ToggleNode RemPoison { get; set; }
         public ToggleNode RemBleed { get; set; }
+        public ToggleNode RemCorruptingBlood { get; set; }
+        public ToggleNode RemMaimed { get; set; }
+        public ToggleNode RemHindered { get; set; }
         public RangeNode<int> CorruptCount { get; set; }
+        public RangeNode<int> HinderCount { get; set; }
 
 
         public ToggleNode SpeedFlaskEnable { get; set; }
@@ -112,7 +120,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         public ToggleNode SilverFlaskEnable { get; set; }
         public RangeNode<int> MinMsPlayerMoving { get; set; }
 
-        public ToggleNode UseWhileCycloning { get; set; } 
+        public ToggleNode UseWhileCycloning { get; set; }
         public RangeNode<int> CycloningMonsterCount { get; set; }
         public RangeNode<int> CycloningMonsterDistance { get; set; }
         public ToggleNode CycloningCountNormalMonsters { get; set; }
