@@ -134,7 +134,7 @@
     "FlaskManaRecoveryAtEnd": 0,
     "FlaskPartialInstantRecovery": 0,
     "LocalLifeFlaskAdditionalLifeRecovery": 0,
-
+    "FlaskRemovesBleeding": 13, 
     "FlaskBleedCorruptingBloodImmunity": 13,
     "FlaskBleedingAndCorruptedBloodImmunityDuringEffect": 13,
     "FlaskBuffArmourWhileHealing": 5,
@@ -157,6 +157,7 @@
     "FlaskBuffWardWhileHealing": 5,
     "FlaskChillFreezeImmunity": 10,
     "FlaskCurseImmunity": 14,
+    "FlaskBuffCurseEffect": 14, 
     "FlaskFreezeAndChillImmunityDuringEffect": 10,
     "FlaskHealsMinions": 0,
     "FlaskIgniteImmunity": 11,
