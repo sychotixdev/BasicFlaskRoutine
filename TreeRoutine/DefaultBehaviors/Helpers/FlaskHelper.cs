@@ -31,7 +31,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             return flaskList;
         }
 
-        public PlayerFlask GetFlaskInfo(int index, Entity foundFlask=null)
+        public PlayerFlask GetFlaskInfo(int index, Entity foundFlask = null)
         {
 
             if (Core.Cache.MiscBuffInfo == null)
@@ -61,7 +61,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
                 Core.LogErr(Core.Name + ": Ignoring Flask " + index + ". No base item was found! Path: " + currentFlask.Path, 5);
                 return null;
             }
-            
+
             simplePlayerFlask.Name = baseItem.BaseName;
 
 
@@ -71,6 +71,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             var useCharge = CalculateUseCharges(flaskChargesStruct.ChargesPerUse, flaskMods.ItemMods);
             if (useCharge > 0)
                 simplePlayerFlask.TotalUses = flaskChargesStruct.NumCharges / useCharge;
+            simplePlayerFlask.IsFull = flaskChargesStruct.NumCharges >= flaskChargesStruct.ChargesMax;
 
             //TreeRoutine.LogError("Flask: " + simplePlayerFlask.Name + "Num Charges: " + flaskChargesStruct.NumCharges + " Use Charges: " + useCharge + " Charges Per use: " + flaskChargesStruct.ChargesPerUse + " Total Uses: " + simplePlayerFlask.TotalUses, 5);
 
@@ -182,7 +183,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             return CanUsePotion(flask, reservedUses, ignoreActionType);
         }
 
-        public Boolean CanUsePotion(PlayerFlask flask, int reservedUses=0, bool ignoreActionType = false)
+        public Boolean CanUsePotion(PlayerFlask flask, int reservedUses = 0, bool ignoreActionType = false)
         {
             if (flask == null)
             {
@@ -190,7 +191,7 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
                     Core.Log(Core.Name + ": Cannot use a null flask.", 1);
                 return false;
             }
-                
+
 
             if (flask.TotalUses - reservedUses <= 0)
             {

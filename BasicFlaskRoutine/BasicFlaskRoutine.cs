@@ -143,7 +143,8 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         CreateAilmentPotionComposite(),
                         CreateDefensivePotionComposite(),
                         CreateSpeedPotionComposite(),
-                        CreateOffensivePotionComposite()
+                        CreateOffensivePotionComposite(),
+                        CreateUseWhenFlaskFullComposite()
                     )
                 );
         }
@@ -242,6 +243,46 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                 (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive) || Settings.OffensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.OffensiveMonsterCount, Settings.OffensiveMonsterDistance, Settings.OffensiveCountNormalMonsters, Settings.OffensiveCountRareMonsters, Settings.OffensiveCountMagicMonsters, Settings.OffensiveCountUniqueMonsters, Settings.OffensiveIgnoreFullHealthUniqueMonsters))),
                     CreateUseFlaskAction(new List<FlaskActions> { FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ? new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid } : null)))
             );
+        }
+
+        private Composite CreateUseWhenFlaskFullComposite()
+        {
+            // Fill a composite of decors based on each flask slot to use
+            Composite[] composites = new Composite[Settings.FlaskSettings.Length];
+            for (int i = 0; i < composites.Length; i++)
+            {
+                // Localize the scope of i (for those who don't understand how lamba functions handle scopes)
+                int index = i;
+
+                // Use flask when full and at least 1 use
+                CanRunDecoratorDelegate checkFlaskFull = x =>
+                {
+                    var flasks = FlaskHelper.GetAllFlaskInfo();
+                    if (flasks == null)
+                    {
+                        return false;
+                    }
+
+                    return flasks
+                        .Where(f => f != null && f.Index == index)
+                        .Any(f => f.IsFull && f.TotalUses > 0);
+                };
+
+                // Press hotkey on action
+                var useFlaskAction = new UseHotkeyAction(KeyboardHelper, (x) => Settings.FlaskSettings[index].Hotkey);
+
+                // Create decorator for use
+                var useFlaskWhenFull = new Decorator(checkFlaskFull, useFlaskAction);
+
+                // Create decorator that first checks if enabled
+                var decor = new Decorator(x => Settings.FlaskSettings[index].Enabled && Settings.FlaskSettings[index].UseWhenChargesFilled, useFlaskWhenFull);
+
+                // Set decor at that index
+                composites[index] = decor;
+            }
+
+            // Return group of decor
+            return new Parallel(composites);
         }
 
         private Composite CreateAilmentPotionComposite()
@@ -540,11 +581,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         if (ImGui.TreeNode("Flask " + (i + 1) + " Settings"))
                         {
                             currentFlask.Enabled.Value = ImGuiExtension.Checkbox("Enable", currentFlask.Enabled);
+                            currentFlask.UseWhenChargesFilled.Value = ImGuiExtension.Checkbox("Use when Charges Reach Full (instead of relying on enchant)", currentFlask.UseWhenChargesFilled);
                             currentFlask.Hotkey.Value = ImGuiExtension.HotkeySelector("Hotkey", currentFlask.Hotkey);
-                            currentFlask.ReservedUses.Value =
-                                ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses);
-                            ImGuiExtension.ToolTipWithText("(?)",
-                                "The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
+                            currentFlask.ReservedUses.Value = ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses);
+                            ImGuiExtension.ToolTipWithText("(?)", "The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
                             ImGui.TreePop();
                         }
                     }

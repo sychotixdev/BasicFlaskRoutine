@@ -72,11 +72,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             BossingModeHotkey = new HotkeyNode(Keys.T);
             FlaskSettings = new FlaskSetting[5]
             {
-                new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D1), new RangeNode<int>(0, 0, 5)),
-                new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D2), new RangeNode<int>(0, 0, 5)),
-                new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D3), new RangeNode<int>(0, 0, 5)),
-                new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D4), new RangeNode<int>(0, 0, 5)),
-                new FlaskSetting(new ToggleNode(true), new HotkeyNode(Keys.D5), new RangeNode<int>(0, 0, 5))
+                new FlaskSetting(Keys.D1),
+                new FlaskSetting(Keys.D2),
+                new FlaskSetting(Keys.D3),
+                new FlaskSetting(Keys.D4),
+                new FlaskSetting(Keys.D5)
             };
         }
 
