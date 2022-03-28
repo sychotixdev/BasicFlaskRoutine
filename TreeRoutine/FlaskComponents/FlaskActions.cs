@@ -32,9 +32,7 @@
         IgniteImmune,      // MOD: dousing
         ShockImmune,       // MOD: grounding
         BleedImmune,       // MOD: staunching
-        CorruptedBloodAndBleedImmune,
         CurseImmune,       // MOD: warding
-        MaimAndHinderImmune,
         UniqueFlask,       // All the milk shakes
         OFFENSE_AND_SPEEDRUN,//Silver Flask, for SpeedFlaskLogic and OffensiveFlask
     }
