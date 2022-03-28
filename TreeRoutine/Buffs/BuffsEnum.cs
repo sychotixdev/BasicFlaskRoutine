@@ -12,8 +12,6 @@ namespace TreeRoutine.Buffs
         chilled,
         frozen,
         shocked,
-        maimed,
-        hindered,
         sprinting,
         flask_effect_life,
         grace_period,

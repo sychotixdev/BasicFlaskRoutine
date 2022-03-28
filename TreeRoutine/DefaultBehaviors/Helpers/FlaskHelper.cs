@@ -71,7 +71,6 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
             var useCharge = CalculateUseCharges(flaskChargesStruct.ChargesPerUse, flaskMods.ItemMods);
             if (useCharge > 0)
                 simplePlayerFlask.TotalUses = flaskChargesStruct.NumCharges / useCharge;
-            simplePlayerFlask.IsFull = flaskChargesStruct.NumCharges >= flaskChargesStruct.ChargesMax;
 
             //TreeRoutine.LogError("Flask: " + simplePlayerFlask.Name + "Num Charges: " + flaskChargesStruct.NumCharges + " Use Charges: " + useCharge + " Charges Per use: " + flaskChargesStruct.ChargesPerUse + " Total Uses: " + simplePlayerFlask.TotalUses, 5);
 

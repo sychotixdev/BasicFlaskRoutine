@@ -526,7 +526,6 @@
                   "RemCurse": "False",
                   "RemPoison": "False",
                   "RemBleed": "True",
-                  "RemCorruptingBlood": "True",
                   "CorruptCount": "0"
                 },
                 "Linker": null,
@@ -559,7 +558,6 @@
                     "useIgnite": "False",
                     "useShock": "False",
                     "useBleed": "True",
-                    "useCorruptedBloodAndBleed": "true",
                     "useCurse": "False",
                     "useUnique": "False",
                     "useOffenseAndSpeedrun": "False"

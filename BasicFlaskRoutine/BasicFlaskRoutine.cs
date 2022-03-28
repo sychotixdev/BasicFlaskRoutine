@@ -143,8 +143,7 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         CreateAilmentPotionComposite(),
                         CreateDefensivePotionComposite(),
                         CreateSpeedPotionComposite(),
-                        CreateOffensivePotionComposite(),
-                        CreateUseWhenFlaskFullComposite()
+                        CreateOffensivePotionComposite()
                     )
                 );
         }
@@ -239,65 +238,23 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
         private Composite CreateOffensivePotionComposite()
         {
             return new PrioritySelector(
-                new Decorator((x => Settings.OffensiveFlaskEnable && !Settings.BossingMode &&
+                new Decorator((x => Settings.OffensiveFlaskEnable && !Settings.BossingMode && 
                 (PlayerHelper.isHealthBelowPercentage(Settings.HPPercentOffensive) || PlayerHelper.isEnergyShieldBelowPercentage(Settings.ESPercentOffensive) || Settings.OffensiveMonsterCount > 0 && HasEnoughNearbyMonsters(Settings.OffensiveMonsterCount, Settings.OffensiveMonsterDistance, Settings.OffensiveCountNormalMonsters, Settings.OffensiveCountRareMonsters, Settings.OffensiveCountMagicMonsters, Settings.OffensiveCountUniqueMonsters, Settings.OffensiveIgnoreFullHealthUniqueMonsters))),
-                    CreateUseFlaskAction(new List<FlaskActions> { FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ? new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid } : null)))
+                    CreateUseFlaskAction(new List<FlaskActions> { FlaskActions.Offense, FlaskActions.OFFENSE_AND_SPEEDRUN }, ignoreFlasksWithAction: (() => Settings.DisableLifeSecUse ?  new List<FlaskActions>() { FlaskActions.Life, FlaskActions.Mana, FlaskActions.Hybrid} : null)))
             );
-        }
-
-        private Composite CreateUseWhenFlaskFullComposite()
-        {
-            // Fill a composite of decors based on each flask slot to use
-            Composite[] composites = new Composite[Settings.FlaskSettings.Length];
-            for (int i = 0; i < composites.Length; i++)
-            {
-                // Localize the scope of i (for those who don't understand how lamba functions handle scopes)
-                int index = i;
-
-                // Use flask when full and at least 1 use
-                CanRunDecoratorDelegate checkFlaskFull = x =>
-                {
-                    var flasks = FlaskHelper.GetAllFlaskInfo();
-                    if (flasks == null)
-                    {
-                        return false;
-                    }
-
-                    return flasks
-                        .Where(f => f != null && f.Index == index)
-                        .Any(f => f.IsFull && f.TotalUses > 0);
-                };
-
-                // Press hotkey on action
-                var useFlaskAction = new UseHotkeyAction(KeyboardHelper, (x) => Settings.FlaskSettings[index].Hotkey);
-
-                // Create decorator for use
-                var useFlaskWhenFull = new Decorator(checkFlaskFull, useFlaskAction);
-
-                // Create decorator that first checks if enabled
-                var decor = new Decorator(x => Settings.FlaskSettings[index].Enabled && Settings.FlaskSettings[index].UseWhenChargesFillled, useFlaskWhenFull); 
-
-                // Set decor at that index
-                composites[index] = decor;
-            }
-
-            // Return group of decor
-            return new Parallel(composites);
         }
 
         private Composite CreateAilmentPotionComposite()
         {
             return new Decorator(x => Settings.RemAilment && !Settings.BossingMode,
                 new PrioritySelector(
-                    new Decorator(x => Settings.RemBleed, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Bleeding, CreateUseFlaskAction(new List<FlaskActions> { FlaskActions.CorruptedBloodAndBleedImmune, FlaskActions.BleedImmune}, isCleansing:true))),
+                    new Decorator(x => Settings.RemBleed, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Bleeding, CreateUseFlaskAction(FlaskActions.BleedImmune, isCleansing:true))),
                     new Decorator(x => Settings.RemBurning, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Burning, CreateUseFlaskAction(FlaskActions.IgniteImmune, isCleansing: true))),
-                    CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Corruption, CreateUseFlaskAction(FlaskActions.CorruptedBloodAndBleedImmune, isCleansing: true), () => Settings.CorruptCount, () => Settings.RemCorruptingBlood),
+                    CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Corruption, CreateUseFlaskAction(FlaskActions.BleedImmune, isCleansing: true), (() => Settings.CorruptCount)),
                     new Decorator(x => Settings.RemFrozen, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Frozen, CreateUseFlaskAction(FlaskActions.FreezeImmune, isCleansing: true))),
                     new Decorator(x => Settings.RemPoison, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Poisoned, CreateUseFlaskAction(FlaskActions.PoisonImmune, isCleansing: true))),
                     new Decorator(x => Settings.RemShocked, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Shocked, CreateUseFlaskAction(FlaskActions.ShockImmune, isCleansing: true))),
-                    new Decorator(x => Settings.RemCurse, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.WeakenedSlowed, CreateUseFlaskAction(FlaskActions.CurseImmune, isCleansing: true))),
-                    new Decorator(x => Settings.RemMaimed, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Maimed, CreateUseFlaskAction(FlaskActions.MaimAndHinderImmune, isCleansing: true))),
-                    CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.Hindered, CreateUseFlaskAction(FlaskActions.MaimAndHinderImmune, isCleansing: true), () => Settings.HinderCount, () => Settings.RemHindered)
+                    new Decorator(x => Settings.RemCurse, CreateCurableDebuffDecorator(Cache.DebuffPanelConfig.WeakenedSlowed, CreateUseFlaskAction(FlaskActions.CurseImmune, isCleansing: true)))
                     )
                 );
         }
@@ -505,15 +462,10 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
             return (playerLife.CurHP / playerLife.MaxHP) * 100 < 50;
         }
 
-        private Decorator CreateCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null, Func<bool> isEnabled = null)
+        private Decorator CreateCurableDebuffDecorator(Dictionary<string, int> dictionary, Composite child, Func<int> minCharges = null)
         {
             return new Decorator((x =>
             {
-                if (isEnabled != null && !isEnabled())
-                {
-                    return false;
-                }
-
                 var buffs = GameController.Game.IngameState.Data.LocalPlayer.GetComponent<ExileCore.PoEMemory.Components.Buffs>().BuffsList;
                 if (buffs == null) return false;
                 foreach (var buff in buffs)
@@ -576,10 +528,11 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                         if (ImGui.TreeNode("Flask " + (i + 1) + " Settings"))
                         {
                             currentFlask.Enabled.Value = ImGuiExtension.Checkbox("Enable", currentFlask.Enabled);
-                            currentFlask.UseWhenChargesFillled.Value = ImGuiExtension.Checkbox("Used when Charges reach full", currentFlask.UseWhenChargesFillled);
                             currentFlask.Hotkey.Value = ImGuiExtension.HotkeySelector("Hotkey", currentFlask.Hotkey);
-                            currentFlask.ReservedUses.Value = ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses);
-                            ImGuiExtension.ToolTipWithText("(?)", "The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
+                            currentFlask.ReservedUses.Value =
+                                ImGuiExtension.IntSlider("Reserved Uses", currentFlask.ReservedUses);
+                            ImGuiExtension.ToolTipWithText("(?)",
+                                "The absolute number of uses reserved on a flask.\nSet to 1 to always have 1 use of the flask available for manual use.");
                             ImGui.TreePop();
                         }
                     }
@@ -636,23 +589,14 @@ namespace TreeRoutine.Routine.BasicFlaskRoutine
                     Settings.RemFrozen.Value = ImGuiExtension.Checkbox("Frozen", Settings.RemFrozen);
                     ImGui.SameLine();
                     Settings.RemBurning.Value = ImGuiExtension.Checkbox("Burning", Settings.RemBurning);
-
                     Settings.RemShocked.Value = ImGuiExtension.Checkbox("Shocked", Settings.RemShocked);
                     ImGui.SameLine();
                     Settings.RemCurse.Value = ImGuiExtension.Checkbox("Cursed", Settings.RemCurse);
-
-                    Settings.RemPoison.Value = ImGuiExtension.Checkbox("Poisoned", Settings.RemPoison);
-
+                    Settings.RemPoison.Value = ImGuiExtension.Checkbox("Poison", Settings.RemPoison);
+                    ImGui.SameLine();
                     Settings.RemBleed.Value = ImGuiExtension.Checkbox("Bleed", Settings.RemBleed);
-                    ImGui.SameLine();
-                    Settings.RemCorruptingBlood.Value = ImGuiExtension.Checkbox("Corrupting Blood", Settings.RemCorruptingBlood);
-                    Settings.CorruptCount.Value = ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.CorruptCount);
-
-                    Settings.RemMaimed.Value = ImGuiExtension.Checkbox("Maimed", Settings.RemMaimed);
-                    ImGui.SameLine();
-                    Settings.RemHindered.Value = ImGuiExtension.Checkbox("Hindered", Settings.RemHindered);
-                    Settings.HinderCount.Value = ImGuiExtension.IntSlider("Hindered strength", Settings.HinderCount);
-
+                    Settings.CorruptCount.Value =
+                        ImGuiExtension.IntSlider("Corrupting Blood Stacks", Settings.CorruptCount);
                     ImGui.TreePop();
                 }
 
