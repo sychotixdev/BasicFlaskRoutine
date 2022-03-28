@@ -20,6 +20,7 @@ namespace TreeRoutine.FlaskComponents
         public int Index { get; set; } = 0;
         public String Name { get; set; } = "None";
         public int TotalUses { get; set; } = 0;
+        public bool IsFull { get; set; }
         public String BuffString1 { get; set; } = "";
         //For Hybrid Flask as Hybrid flask have two buffs.
         public String BuffString2 { get; set; } = "";
