@@ -39,7 +39,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.Extension.Default.Actions
         {
             ImGui.TextDisabled("Action Info");
             ImGuiExtension.ToolTipWithText("(?)", "This timer is used to begin or end a specific timer");
-            TimerName = ImGuiExtension.InputText("Timer Name", TimerName, 30, ImGuiInputTextFlags.AlwaysInsertMode);
+            TimerName = ImGuiExtension.InputText("Timer Name", TimerName, 30, ImGuiInputTextFlags.AlwaysOverwrite);
             ImGuiExtension.ToolTipWithText("(?)", "Name for this timer");
             Parameters[TimerNameString] = TimerName.ToString();
 
