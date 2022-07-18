@@ -51,7 +51,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.UI
 
         public bool Render()
         {
-            TriggerComposite.Name = ImGuiExtension.InputText("Trigger Name", TriggerComposite.Name, 50, ImGuiInputTextFlags.AlwaysInsertMode);
+            TriggerComposite.Name = ImGuiExtension.InputText("Trigger Name", TriggerComposite.Name, 50, ImGuiInputTextFlags.AlwaysOverwrite);
 
             bool shouldPerformClear = false;
             int radioTarget = (int)TriggerComposite.Type;

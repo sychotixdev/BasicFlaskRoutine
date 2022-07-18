@@ -300,7 +300,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.UI.MenuItem
         {
             ImGui.Text(label);
 
-            if (ImGui.IsItemHovered(ImGuiHoveredFlags.AnyWindow) && ImGui.IsMouseClicked(1))
+            if (ImGui.IsItemHovered(ImGuiHoveredFlags.AnyWindow) && ImGui.IsMouseClicked(ImGuiMouseButton.Right))
             {
                 ImGui.OpenPopup("Trigger Menu Context");
             }
@@ -485,7 +485,7 @@ namespace TreeRoutine.Routine.BuildYourOwnRoutine.UI.MenuItem
             if (ImGui.BeginPopupModal($"Save Profile", ref open, ImGuiWindowFlags.AlwaysAutoResize))
             {
 
-                currentFileName = ImGuiExtension.InputText("File Name", currentFileName, 100, ImGuiInputTextFlags.AlwaysInsertMode);
+                currentFileName = ImGuiExtension.InputText("File Name", currentFileName, 100, ImGuiInputTextFlags.AlwaysOverwrite);
                 if (!String.IsNullOrEmpty(currentFileName))
                 {
                     if (ImGui.Button("Save"))

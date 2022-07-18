@@ -48,56 +48,56 @@ namespace TreeRoutine.Menu
         public static float FloatSlider(string labelString, float value, float minValue, float maxValue)
         {
             var refValue = value;
-            ImGui.SliderFloat(labelString, ref refValue, minValue, maxValue, "%.00f", 1f);
+            ImGui.SliderFloat(labelString, ref refValue, minValue, maxValue, "%.00f");
             return refValue;
         }
 
         public static float FloatSlider(string labelString, float value, float minValue, float maxValue, float power)
         {
             var refValue = value;
-            ImGui.SliderFloat(labelString, ref refValue, minValue, maxValue, "%.00f", power);
+            ImGui.SliderFloat(labelString, ref refValue, minValue, maxValue, "%.00f");
             return refValue;
         }
 
         public static float FloatSlider(string labelString, string sliderString, float value, float minValue, float maxValue)
         {
             var refValue = value;
-            ImGui.SliderFloat(labelString, ref refValue, minValue, maxValue, $"{sliderString}: {value}", 1f);
+            ImGui.SliderFloat(labelString, ref refValue, minValue, maxValue, $"{sliderString}: {value}");
             return refValue;
         }
 
         public static float FloatSlider(string labelString, string sliderString, float value, float minValue, float maxValue, float power)
         {
             var refValue = value;
-            ImGui.SliderFloat(labelString, ref refValue, minValue, maxValue, $"{sliderString}: {value}", power);
+            ImGui.SliderFloat(labelString, ref refValue, minValue, maxValue, $"{sliderString}: {value}");
             return refValue;
         }
 
         public static float FloatSlider(string labelString, RangeNode<float> setting)
         {
             var refValue = setting.Value;
-            ImGui.SliderFloat(labelString, ref refValue, setting.Min, setting.Max, "%.00f", 1f);
+            ImGui.SliderFloat(labelString, ref refValue, setting.Min, setting.Max, "%.00f");
             return refValue;
         }
 
         public static float FloatSlider(string labelString, RangeNode<float> setting, float power)
         {
             var refValue = setting.Value;
-            ImGui.SliderFloat(labelString, ref refValue, setting.Min, setting.Max, "%.00f", power);
+            ImGui.SliderFloat(labelString, ref refValue, setting.Min, setting.Max, "%.00f");
             return refValue;
         }
 
         public static float FloatSlider(string labelString, string sliderString, RangeNode<float> setting)
         {
             var refValue = setting.Value;
-            ImGui.SliderFloat(labelString, ref refValue, setting.Min, setting.Max, $"{sliderString}: {setting.Value}", 1f);
+            ImGui.SliderFloat(labelString, ref refValue, setting.Min, setting.Max, $"{sliderString}: {setting.Value}");
             return refValue;
         }
 
         public static float FloatSlider(string labelString, string sliderString, RangeNode<float> setting, float power)
         {
             var refValue = setting.Value;
-            ImGui.SliderFloat(labelString, ref refValue, setting.Min, setting.Max, $"{sliderString}: {setting.Value}", power);
+            ImGui.SliderFloat(labelString, ref refValue, setting.Min, setting.Max, $"{sliderString}: {setting.Value}");
             return refValue;
         }
 
