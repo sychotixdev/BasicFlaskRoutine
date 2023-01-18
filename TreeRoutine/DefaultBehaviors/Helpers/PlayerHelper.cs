@@ -1,4 +1,4 @@
-﻿using SharpDX;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,37 +17,37 @@ namespace TreeRoutine.DefaultBehaviors.Helpers
 
         public Boolean isHealthBelowPercentage(int healthPercentage)
         {
-            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
+            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponentFromMemory<Life>();
             return playerLife.HPPercentage * 100 < healthPercentage;
         }
 
         public Boolean isHealthBelowValue(int healthValue)
         {
-            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
+            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponentFromMemory<Life>();
             return playerLife.CurHP < healthValue;
         }
 
         public Boolean isManaBelowPercentage(int manaPercentage)
         {
-            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
+            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponentFromMemory<Life>();
             return playerLife.MPPercentage * 100 < manaPercentage;
         }
 
         public Boolean isManaBelowValue(int manaValue)
         {
-            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
+            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponentFromMemory<Life>();
             return playerLife.CurMana < manaValue;
         }
 
         public Boolean isEnergyShieldBelowPercentage(int energyShieldPercentage)
         {
-            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
+            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponentFromMemory<Life>();
             return playerLife.MaxES > 0 && playerLife.ESPercentage * 100 < energyShieldPercentage;
         }
 
         public Boolean isEnergyShieldBelowValue(int energyShieldValue)
         {
-            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponent<Life>();
+            var playerLife = Core.GameController.Game.IngameState.Data.LocalPlayer.GetComponentFromMemory<Life>();
             return playerLife.MaxES > 0 && playerLife.CurMana < energyShieldValue;
         }
 
